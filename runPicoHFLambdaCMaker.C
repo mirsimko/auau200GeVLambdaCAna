@@ -4,7 +4,7 @@
  * --------------------------------------------------
  *   
  *  - Different modes to use the  class
- *    - StPicoHFMaker::kAnalyse - don't write candidate trees, just fill histograms
+ *    - StPicoHFMaker::kAnalyze - don't write candidate trees, just fill histograms
  *        inputFile : fileList of PicoDst files or single picoDst file
  *        outputFile: baseName for outfile 
  *    - StPicoHFMaker::kWrite   - write candidate trees
@@ -34,7 +34,7 @@ class StPicoDstMaker;
 
 StChain *chain;
 
-void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName",  unsigned int makerMode = 1 /*kAnalyse*/) { 
+void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName",  unsigned int makerMode = 1 /*kAnalyze*/) { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
   string SL_version = "SL15c";
@@ -56,7 +56,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   chain = new StChain();
 
   // ========================================================================================
-  //makerMode    = StPicoHFMaker::kAnalyse;
+  //makerMode    = StPicoHFMaker::kAnalyze;
   //  unsigned int decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;
   unsigned int decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
   // ========================================================================================
@@ -67,7 +67,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   TString sInputFile(inputFile);
   TString sInputListHF("");  
 
-  if (makerMode == StPicoHFMaker::kAnalyse) {
+  if (makerMode == StPicoHFMaker::kAnalyze) {
     if (!sInputFile.Contains(".list") && !sInputFile.Contains("picoDst.root")) {
       cout << "No input list or picoDst root file provided! Exiting..." << endl;
       exit(1);
