@@ -65,11 +65,11 @@ int StPicoHFLambdaCMaker::MakeHF() {
   }
   else if (isMakerMode() == StPicoHFMaker::kRead) {
     // -- the reading back of the perviously written trees happens in the background
-    analyseCandidates();
+    analyzeCandidates();
   }
-  else if (isMakerMode() == StPicoHFMaker::kAnalyse) {
+  else if (isMakerMode() == StPicoHFMaker::kAnalyze) {
     createCandidates();
-    analyseCandidates();
+    analyzeCandidates();
   }
 
   return kStOK;
@@ -155,8 +155,8 @@ int StPicoHFLambdaCMaker::createCandidates() {
 }
 
 // _________________________________________________________
-int StPicoHFLambdaCMaker::analyseCandidates() {
-  // -- analyse pairs/triplet, which have been filled in arrays 
+int StPicoHFLambdaCMaker::analyzeCandidates() {
+  // -- analyze pairs/triplet, which have been filled in arrays 
   //    (in StPicoHFEvent) before ( via createCandidates() or via readCandidates() )
   //    fill histograms or nTuples ... etc
 
