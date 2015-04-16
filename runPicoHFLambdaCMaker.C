@@ -34,7 +34,8 @@ class StPicoDstMaker;
 
 StChain *chain;
 
-void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName",  unsigned int makerMode = 1 /*kAnalyze*/) { 
+void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName",  unsigned int makerMode = 0 /*kAnalyze*/, 
+       	                   const Char_t * badRunListFileName = "picoList_bad_MB.list") { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
   string SL_version = "SL15c";
@@ -109,6 +110,10 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
   // ---------------------------------------------------
   // -- Set Base cuts for HF analysis
+
+  // -- File name of bad run list
+  hfCuts->setBadRunListFileName(badRunListFileName);
+
   hfCuts->setCutVzMax(6.);
   hfCuts->setCutVzVpdVzMax(3.);
   hfCuts->setCutTriggerWord(0x1F);
