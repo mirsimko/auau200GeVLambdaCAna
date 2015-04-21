@@ -44,9 +44,7 @@
  *       isProton
  *
  *  --------------------------------------------------
- *  Authors:  Xin Dong (xdong@lbl.gov)
- *            Michael Lomnitz (mlomitz@lbl.gov)
- *            Mustafa Mustafa (mmustafa@lbl.gov)
+ *  Authors: 
  *            Jochen Thaeder (jmthader@lbl.gov)   
  *
  * **************************************************

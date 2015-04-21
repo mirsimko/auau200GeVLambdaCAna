@@ -260,39 +260,21 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isPion(StPicoTrack const * const trk) const {
   // -- is good pion 
-  float tofBeta = 0;
-  return isPion(trk, tofBeta);
-}
 
-// _________________________________________________________
-bool StPicoHFLambdaCMaker::isPion(StPicoTrack const * const trk, float const & tofBeta = 0) const {
-  // -- is good pion 
   return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk)); 
 }
 
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isKaon(StPicoTrack const * const trk) const {
   // -- is good kaon 
-  float tofBeta = getTofBeta(trk);
-  return isKaon(trk, tofBeta);
-} 
 
-// _________________________________________________________
-bool StPicoHFLambdaCMaker::isKaon(StPicoTrack const * const trk, float const & tofBeta =0) const {
-  // -- is good kaon
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCKaon(trk) && mHFCuts->isTOFKaon(trk, tofBeta));
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCKaon(trk) && mHFCuts->isTOFKaon(trk));
 } 
 
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isProton(StPicoTrack const * const trk) const {
   // -- good proton
-  float tofBeta = getTofBeta(trk);
-  return isProton(trk, tofBeta);
-}
 
-// _________________________________________________________
-bool StPicoHFLambdaCMaker::isProton(StPicoTrack const * const trk, float const & tofBeta = 0) const {
-  // -- good proton
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCProton(trk) && mHFCuts->isTOFProton(trk, tofBeta));
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCProton(trk) && mHFCuts->isHybridTOFProton(trk));
 }
 
