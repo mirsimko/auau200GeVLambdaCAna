@@ -51,6 +51,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   loadSharedLibraries();
   
   gSystem->Load("StPicoDstMaker");
+  gSystem->Load("StPicoPrescales");
   gSystem->Load("StPicoHFMaker");
   gSystem->Load("StPicoHFLambdaCMaker");
 
@@ -120,7 +121,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
   hfCuts->setCutNHitsFitMax(20); 
   hfCuts->setCutRequireHFT(true);
-  hfCuts->setCutNHitsFitnHitsMax(0.52);
+  //  hfCuts->setCutNHitsFitnHitsMax(0.52);
   // ---------------------------------------------------
 
   // -- Lc -> p + Ks0 , Ks0 -> pi+ + pi-
@@ -133,10 +134,10 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutTPCNSigmaProton(2.5);
     hfCuts->setCutProtonPt(0.7, 999.);
     
-    float dcaDaughtersMax = 10.008;  // maximum
-    float decayLengthMin  = 0.1; // minimum  (cT 2.68 cm)
+    float dcaDaughtersMax = 0.1;  // maximum
+    float decayLengthMin  = 1.5; // minimum  (cT 2.68 cm)
     float decayLengthMax  = 999999; //std::numeric_limits<float>::max();
-    float cosThetaMin     = 0.0;   // minimum
+    float cosThetaMin     = 0.991;   // minimum
     float minMass         = 0.3;
     float maxMass         = 0.7;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
