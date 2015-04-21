@@ -79,15 +79,11 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
   enum eDecayChannel {kPionKaonProton, kProtonK0short, kPionLambda};
 
  protected:
-  virtual bool isPion(StPicoTrack const*, float const & bTofBeta) const;
-  virtual bool isKaon(StPicoTrack const*, float const & bTofBeta) const;
-  virtual bool isProton(StPicoTrack const*, float const & bTofBeta) const;
-  
- private:
-  bool isPion(StPicoTrack const*) const;
-  bool isKaon(StPicoTrack const*) const;
-  bool isProton(StPicoTrack const*) const;
-  
+  virtual bool isPion(StPicoTrack const*) const;
+  virtual bool isKaon(StPicoTrack const*) const;
+  virtual bool isProton(StPicoTrack const*) const;
+
+private:
   int createCandidates();
   int analyzeCandidates();
 
