@@ -76,7 +76,7 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
   
   void setDecayChannel(unsigned int u) { mDecayChannel = u; }
 
-  enum eDecayChannel {kPionKaonProton, kProtonK0short, kPionLambda};
+  enum eDecayChannel {kPionKaonProton, kProtonK0short, kLambdaPion};
 
  protected:
   virtual bool isPion(StPicoTrack const*) const;

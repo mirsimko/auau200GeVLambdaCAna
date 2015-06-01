@@ -79,46 +79,129 @@ int StPicoHFLambdaCMaker::MakeHF() {
 int StPicoHFLambdaCMaker::createCandidates() {
   // create candidate pairs/ triplet and fill them in arrays (in StPicoHFEvent)
 
+  // cout << " N pions    : " << mIdxPicoPions.size()  << endl;
+  // cout << " N kaons    : " << mIdxPicoKaons.size()  << endl;
+  // cout << " N protons  : " << mIdxPicoProtons.size()  << endl;
+  
   // -- Decay channel proton - K0Short (pi+ - pi-)
   if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
-
-    // cout << " N pions    : " << mIdxPicoPions.size()  << endl;
-    // cout << " N kaons    : " << mIdxPicoKaons.size()  << endl;
-    // cout << " N protons  : " << mIdxPicoProtons.size()  << endl;
 
     createTertiaryK0Shorts();
 
     if (mPicoHFEvent->nHFTertiaryVertices() > 0) {
       TClonesArray const * ak0Short = mPicoHFEvent->aHFTertiaryVertices();
-      
-      for (unsigned int idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
-	StPicoTrack const *proton = mPicoDst->track(mIdxPicoProtons[idxProton]);
+
+      for (unsigned int idxK0Short = 0; idxK0Short < mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
+	StHFPair* k0Short = static_cast<StHFPair*>(ak0Short->At(idxK0Short));
+
+	if (k0Short->particle1Idx() > mPicoDst->numberOfTracks())
+	  cout << k0Short << " xx " << k0Short->particle1Idx() << " N " <<  mPicoDst->numberOfTracks() << endl;
+	if (k0Short->particle2Idx() > mPicoDst->numberOfTracks())
+	  cout << k0Short << " yy " << k0Short->particle2Idx() << " N " <<  mPicoDst->numberOfTracks() << endl;
+
+	continue;
+
 	
-	for (unsigned int idxK0Short = 0; idxK0Short < mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
-	  StHFPair const* k0Short = static_cast<StHFPair*>(ak0Short->At(idxK0Short));
+	for (unsigned int idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
+	  StPicoTrack const *proton = mPicoDst->track(mIdxPicoProtons[idxProton]);
 	  
 	  if (mIdxPicoProtons[idxProton] == k0Short->particle1Idx() || mIdxPicoProtons[idxProton] == k0Short->particle1Idx()) 
 	    continue;
 	  
-	  // -- JMT UPDATE tertiary vertex
+	  // -- Secondary vertex
 	  StHFPair lambdaC(proton, k0Short, M_PROTON, M_KAON_0_SHORT, 
 			   mIdxPicoProtons[idxProton], idxK0Short, mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
 	    continue;
 	  
-	  mPicoHFEvent->addHFSecondaryVertexPair(&lambdaC);
+	  // -- get corrected TOF beta
+	  // ----------------------------
+
+	  // -- check if proton is still good proton
+	  if ( ! mHFCuts->isTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex())) )
+	    continue;
 	  
-	} // for (unsigned int idxK0Short = 0; idxK0Short <  mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
-      } // for (unsigned int idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
+	  // -- check if both pions are still good pions
+	  StPicoTrack const *pion1 = mPicoDst->track(k0Short->particle1Idx());	  
+	  StPicoTrack const *pion2 = mPicoDst->track(k0Short->particle2Idx());	  
+
+	  if ( ! mHFCuts->isTOFPion(pion1, mHFCuts->getTofBeta(pion1, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
+							       k0Short->lorentzVector(), k0Short->decayVertex())) ||
+	       ! mHFCuts->isTOFPion(pion2, mHFCuts->getTofBeta(pion2, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
+							       k0Short->lorentzVector(), k0Short->decayVertex())) )
+	    continue;
+
+	  mPicoHFEvent->addHFSecondaryVertexPair(&lambdaC);
+
+	} // for (unsigned int idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {	  
+      } // for (unsigned int idxK0Short = 0; idxK0Short <  mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
     } //  if (mPicoHFEvent->nHFTertiaryVertices() > 0) {
 
-    // cout << "      N K0Shorts : " << mPicoHFEvent->nHFTertiaryVertices() << endl;
-    // cout << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endl;
+    //    cout << "      N K0Shorts : " << mPicoHFEvent->nHFTertiaryVertices() << endl;
+    //    cout << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endl;
 
   } // if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+
+  // -- Decay channel  pi+ - lambda (proton - pi-)
+  else if (mDecayChannel == StPicoHFLambdaCMaker::kLambdaPion) {
+
+    createTertiaryLambdas();
+
+    if (mPicoHFEvent->nHFTertiaryVertices() > 0) {
+      TClonesArray const *aLambda = mPicoHFEvent->aHFTertiaryVertices();
+      
+      for (unsigned int idxLambda = 0; idxLambda < mPicoHFEvent->nHFTertiaryVertices(); ++idxLambda) {
+	StHFPair const* lambda = static_cast<StHFPair*>(aLambda->At(idxLambda));
+	
+	for (unsigned int idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
+	  StPicoTrack const *pion = mPicoDst->track(mIdxPicoPions[idxPion]);
+	  
+	  if (mIdxPicoPions[idxPion] == lambda->particle1Idx() || mIdxPicoPions[idxPion] == lambda->particle1Idx()) 
+	    continue;
+
+	  // -- Secondary vertex
+	  StHFPair lambdaC(pion, lambda, M_PION_PLUS, M_LAMBDA, mIdxPicoPions[idxPion], idxLambda, mPrimVtx, mBField);
+	  if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
+	    continue;
+
+	  // -- get corrected TOF beta
+	  // ----------------------------
+
+	  // -- check if pion is still good pion
+	  if ( ! mHFCuts->isTOFPion(pion, mHFCuts->getTofBeta(pion, lambdaC.lorentzVector(), lambdaC.decayVertex())) )
+	    continue;
+
+	  // -- check if both lambda daughthers (proton + pi-) are still good 
+	  StPicoTrack const *proton1 = mPicoDst->track(lambda->particle1Idx());	  
+	  StPicoTrack const *pion2   = mPicoDst->track(lambda->particle2Idx());	  
+
+	  if ( ! mHFCuts->isTOFProton(proton1, mHFCuts->getTofBeta(proton1, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
+								   lambda->lorentzVector(), lambda->decayVertex())) ||
+	       ! mHFCuts->isTOFPion(pion2, mHFCuts->getTofBeta(pion2, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
+							       lambda->lorentzVector(), lambda->decayVertex())) )
+	    continue;
+
+	  mPicoHFEvent->addHFSecondaryVertexPair(&lambdaC);
+
+	} // for (unsigned int idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
+      } // for (unsigned int idxLambda = 0; idxLambda <  mPicoHFEvent->nHFTertiaryVertices(); ++idxLambda) {
+    } //  if (mPicoHFEvent->nHFTertiaryVertices() > 0) {
+
+    // cout << "      N Lambdas  : " << mPicoHFEvent->nHFTertiaryVertices() << endl;
+    // cout << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endl;
+  }
+
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+
   // -- Decay channel proton pi+ K-
   else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
+
     for (unsigned short idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
       StPicoTrack const *proton = mPicoDst->track(mIdxPicoProtons[idxProton]);
       
@@ -139,19 +222,31 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  if (mIdxPicoProtons[idxProton] == mIdxPicoPions[idxPion] || mIdxPicoKaons[idxKaon] == mIdxPicoPions[idxPion]) 
 	    continue;
 	  
-	  StHFTriplet triplet(kaon, proton, pion, M_KAON_PLUS, M_PROTON, M_PION_PLUS, 
+	  StHFTriplet lambdaC(kaon, proton, pion, M_KAON_PLUS, M_PROTON, M_PION_PLUS, 
 			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
-	  if (!mHFCuts->isGoodSecondaryVertexTriplet(triplet)) 
+	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	    continue;
 	  
-	  mPicoHFEvent->addHFSecondaryVertexTriplet(&triplet);
+	  // -- get corrected TOF beta
+	  // ----------------------------
+
+	  // -- check if all particles are still good
+	  if ( ! mHFCuts->isTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex())) ||
+	       ! mHFCuts->isTOFProton(kaon,   mHFCuts->getTofBeta(kaon,   lambdaC.lorentzVector(), lambdaC.decayVertex())) ||
+	       ! mHFCuts->isTOFProton(pion,   mHFCuts->getTofBeta(pion,   lambdaC.lorentzVector(), lambdaC.decayVertex())) )
+	    continue;
+
+	  mPicoHFEvent->addHFSecondaryVertexTriplet(&lambdaC);
 	  
 	} // for (unsigned short idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
       } // for (unsigned short idxKaon = 0; idxKaon < mIdxPicoKaons.size(); ++idxKaon) {
     } // for (unsigned short idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
-  } // else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
 
- return kStOK;
+    //    cout << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endl;
+    
+  } // else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
+  
+  return kStOK;
 }
 
 // _________________________________________________________
@@ -173,12 +268,12 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* pion1  = mPicoDst->track(k0Short->particle1Idx());
       StPicoTrack const* pion2  = mPicoDst->track(k0Short->particle2Idx());
       
-      if (!isPion(pion1) || !isPion(pion1))
-	continue;
+      // if (!isPion(pion1) || !isPion(pion1))
+      // 	continue;
 
-      if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
-	continue;
-      
+      // if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
+      // 	continue;
+
       mNtupleTertiary->Fill(pion1->gPt(), pion2->gPt(), pion1->charge()*pion2->charge(),
 			    k0Short->m(), k0Short->pt(), k0Short->eta(), k0Short->phi(), std::cos(k0Short->pointingAngle()),
 			    k0Short->decayLength(), k0Short->particle1Dca(), k0Short->particle2Dca(),  
@@ -199,19 +294,15 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* pion1  = mPicoDst->track(k0Short->particle1Idx());
       StPicoTrack const* pion2  = mPicoDst->track(k0Short->particle2Idx());
 
-      if (!isProton(proton) || !isPion(pion1) || !isPion(pion1))
-	continue;
+      // if (!isProton(proton) || !isPion(pion1) || !isPion(pion1))
+      // 	continue;
       
-      // if (pion1->charge() == pion2->charge())
+      
+      // if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
       // 	continue;
 
-      // JMT - recalculate topological cuts with updated secondary vertex
-      
-      if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
-	continue;
-
-      if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
-	continue;
+      // if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
+      // 	continue;
      
       mNtupleSecondary->Fill(proton->gPt(), k0Short->pt(), pion1->charge()*pion2->charge(),
 			     lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), std::cos(lambdaC->pointingAngle()),
@@ -220,6 +311,71 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
             
     } // for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
   } // if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
+
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+
+  // -- Decay channel pi+ - lambda (proton - pi-)
+  if (mDecayChannel == StPicoHFLambdaCMaker::kLambdaPion) {
+
+    // -- fill nTuple / hists for tertiary Lambda
+    // -----------------------------------------------
+    TClonesArray const * aLambda = mPicoHFEvent->aHFTertiaryVertices();
+
+    for (unsigned int idxLambda = 0; idxLambda < mPicoHFEvent->nHFTertiaryVertices(); ++idxLambda) {
+      StHFPair const* lambda = static_cast<StHFPair*>(aLambda->At(idxLambda));
+
+      StPicoTrack const* proton = mPicoDst->track(lambda->particle1Idx());
+      StPicoTrack const* pion   = mPicoDst->track(lambda->particle2Idx());
+      
+      // if (!isPion(pion1) || !isPion(pion1))
+      // 	continue;
+
+      // if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
+      // 	continue;
+      
+      mNtupleTertiary->Fill(proton->gPt(), pion->gPt(), proton->charge()*pion->charge(),
+			    lambda->m(), lambda->pt(), lambda->eta(), lambda->phi(), std::cos(lambda->pointingAngle()),
+			    lambda->decayLength(), lambda->particle1Dca(), lambda->particle2Dca(),  
+			    lambda->cosThetaStar(), lambda->dcaDaughters());
+			    			 
+    } // for (unsigned int idxLambda = 0; idxLambda < mPicoHFEvent->nHFTertiaryVertices(); ++idxLambda) {
+
+
+    // -- fill nTuple / hists for secondary lambdaCs
+    // -----------------------------------------------
+    TClonesArray const * aLambdaC = mPicoHFEvent->aHFSecondaryVertices();
+    
+    for (unsigned int idxLambdaC = 0; idxLambdaC < mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
+      StHFPair const* lambdaC = static_cast<StHFPair*>(aLambdaC->At(idxLambdaC));
+      StHFPair const* lambda = static_cast<StHFPair*>(aLambda->At(lambdaC->particle2Idx()));
+
+      StPicoTrack const* pion1 = mPicoDst->track(lambdaC->particle1Idx());
+      StPicoTrack const* proton  = mPicoDst->track(lambda->particle1Idx());
+      StPicoTrack const* pion2  = mPicoDst->track(lambda->particle2Idx());
+
+      // if (!isProton(proton) || !isPion(pion1) || !isPion(pion1))
+      // 	continue;
+      
+      
+      // if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
+      // 	continue;
+
+      // if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
+      // 	continue;
+     
+      mNtupleSecondary->Fill(pion1->gPt(), lambda->pt(), proton->charge()*pion2->charge(),
+			     lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), std::cos(lambdaC->pointingAngle()),
+			     lambdaC->decayLength(), lambdaC->particle1Dca(), lambdaC->particle2Dca(), 
+			     lambdaC->cosThetaStar(), lambdaC->dcaDaughters());
+            
+    } // for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
+  } // if (mDecayChannel == StPicoHFLambdaCMaker::kLambdaPion) {
+
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
+  // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
 
   // -- Decay channel proton pi+ K-
   else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
@@ -235,8 +391,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* kaon   = mPicoDst->track(lambdaC->particle2Idx());
       StPicoTrack const* pion   = mPicoDst->track(lambdaC->particle3Idx());
 
-      if (!isProton(proton) || !isKaon(kaon) || !isPion(pion))
-	continue;
+      // if (!isProton(proton) || !isKaon(kaon) || !isPion(pion))
+      // 	continue;
       
       // JMT - recalculate topological cuts with updated secondary vertex
       
@@ -260,21 +416,21 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isPion(StPicoTrack const * const trk) const {
   // -- is good pion 
-
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk)); 
+  //    -> used for initial filling of vectors only
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk) && mHFCuts->isTOFPion(trk));
 }
 
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isKaon(StPicoTrack const * const trk) const {
   // -- is good kaon 
-
+  //    -> used for initial filling of vectors only
   return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCKaon(trk) && mHFCuts->isTOFKaon(trk));
 } 
 
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isProton(StPicoTrack const * const trk) const {
   // -- good proton
-
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCProton(trk) && mHFCuts->isHybridTOFProton(trk));
+  //    -> used for initial filling of vectors only
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCProton(trk) && mHFCuts->isTOFProton(trk));
 }
 
