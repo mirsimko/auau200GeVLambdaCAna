@@ -38,10 +38,15 @@ StPicoHFLambdaCMaker::~StPicoHFLambdaCMaker() {
 // _________________________________________________________
 int StPicoHFLambdaCMaker::InitHF() {
 
-  mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers");
 
-  if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay)
+
+  if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay) {
+    mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers:Dm:DcosPntAngle:DdLength:Dp1Dca:Dp2Dca:DcosThetaStar:DdcaDaugthers");
+
     mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
+  }
+  else
+    mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers");
 
   return kStOK;
 }
@@ -94,14 +99,6 @@ int StPicoHFLambdaCMaker::createCandidates() {
       for (unsigned int idxK0Short = 0; idxK0Short < mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
 	StHFPair* k0Short = static_cast<StHFPair*>(ak0Short->At(idxK0Short));
 
-	if (k0Short->particle1Idx() > mPicoDst->numberOfTracks())
-	  cout << k0Short << " xx " << k0Short->particle1Idx() << " N " <<  mPicoDst->numberOfTracks() << endl;
-	if (k0Short->particle2Idx() > mPicoDst->numberOfTracks())
-	  cout << k0Short << " yy " << k0Short->particle2Idx() << " N " <<  mPicoDst->numberOfTracks() << endl;
-
-	continue;
-
-	
 	for (unsigned int idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
 	  StPicoTrack const *proton = mPicoDst->track(mIdxPicoProtons[idxProton]);
 	  
@@ -109,8 +106,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	    continue;
 	  
 	  // -- Secondary vertex
-	  StHFPair lambdaC(proton, k0Short, M_PROTON, M_KAON_0_SHORT, 
-			   mIdxPicoProtons[idxProton], idxK0Short, mPrimVtx, mBField);
+	  StHFPair lambdaC(proton, k0Short, M_PROTON, M_KAON_0_SHORT, mIdxPicoProtons[idxProton], idxK0Short, mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
 	    continue;
 	  
@@ -274,10 +270,11 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       // if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
       // 	continue;
 
-      mNtupleTertiary->Fill(pion1->gPt(), pion2->gPt(), pion1->charge()*pion2->charge(),
-			    k0Short->m(), k0Short->pt(), k0Short->eta(), k0Short->phi(), std::cos(k0Short->pointingAngle()),
-			    k0Short->decayLength(), k0Short->particle1Dca(), k0Short->particle2Dca(),  
-			    k0Short->cosThetaStar(), k0Short->dcaDaughters());
+      float aTertiary[] = {pion1->gPt(), pion2->gPt(), Float_t(pion1->charge()*pion2->charge()),
+			   k0Short->m(), k0Short->pt(), k0Short->eta(), k0Short->phi(), std::cos(k0Short->pointingAngle()),
+			   k0Short->decayLength(), k0Short->particle1Dca(), k0Short->particle2Dca(),  
+			   k0Short->cosThetaStar(), k0Short->dcaDaughters()};
+      mNtupleTertiary->Fill(aTertiary);
 			    			 
     } // for (unsigned int idxK0Short = 0; idxK0Short <  mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
 
@@ -304,10 +301,15 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       // if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
       // 	continue;
      
-      mNtupleSecondary->Fill(proton->gPt(), k0Short->pt(), pion1->charge()*pion2->charge(),
-			     lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), std::cos(lambdaC->pointingAngle()),
-			     lambdaC->decayLength(), lambdaC->particle1Dca(), lambdaC->particle2Dca(), 
-			     lambdaC->cosThetaStar(), lambdaC->dcaDaughters());
+      float aSecondary[] = {proton->gPt(), k0Short->pt(), Float_t(pion1->charge()*pion2->charge()),
+			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), std::cos(lambdaC->pointingAngle()),
+			    lambdaC->decayLength(), lambdaC->particle1Dca(), lambdaC->particle2Dca(), 
+			    lambdaC->cosThetaStar(), lambdaC->dcaDaughters(),
+			    k0Short->m(), std::cos(k0Short->pointingAngle()),
+			    k0Short->decayLength(), k0Short->particle1Dca(), k0Short->particle2Dca(),  
+			    k0Short->cosThetaStar(), k0Short->dcaDaughters() };
+
+      mNtupleSecondary->Fill(aSecondary);
             
     } // for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
   } // if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
@@ -335,10 +337,12 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       // if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
       // 	continue;
       
-      mNtupleTertiary->Fill(proton->gPt(), pion->gPt(), proton->charge()*pion->charge(),
-			    lambda->m(), lambda->pt(), lambda->eta(), lambda->phi(), std::cos(lambda->pointingAngle()),
-			    lambda->decayLength(), lambda->particle1Dca(), lambda->particle2Dca(),  
-			    lambda->cosThetaStar(), lambda->dcaDaughters());
+      float aTertiary[] = {proton->gPt(), pion->gPt(), Float_t(proton->charge()*pion->charge()),
+			   lambda->m(), lambda->pt(), lambda->eta(), lambda->phi(), std::cos(lambda->pointingAngle()),
+			   lambda->decayLength(), lambda->particle1Dca(), lambda->particle2Dca(),  
+			   lambda->cosThetaStar(), lambda->dcaDaughters()};
+
+      mNtupleTertiary->Fill(aTertiary);
 			    			 
     } // for (unsigned int idxLambda = 0; idxLambda < mPicoHFEvent->nHFTertiaryVertices(); ++idxLambda) {
 
@@ -365,10 +369,15 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       // if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
       // 	continue;
      
-      mNtupleSecondary->Fill(pion1->gPt(), lambda->pt(), proton->charge()*pion2->charge(),
-			     lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), std::cos(lambdaC->pointingAngle()),
-			     lambdaC->decayLength(), lambdaC->particle1Dca(), lambdaC->particle2Dca(), 
-			     lambdaC->cosThetaStar(), lambdaC->dcaDaughters());
+      float aSecondary[] = {pion1->gPt(), lambda->pt(), Float_t(proton->charge()*pion2->charge()),
+			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), std::cos(lambdaC->pointingAngle()),
+			    lambdaC->decayLength(), lambdaC->particle1Dca(), lambdaC->particle2Dca(), 
+			    lambdaC->cosThetaStar(), lambdaC->dcaDaughters(),
+			    lambda->m(), std::cos(lambda->pointingAngle()),
+			    lambda->decayLength(), lambda->particle1Dca(), lambda->particle2Dca(),  
+			    lambda->cosThetaStar(), lambda->dcaDaughters()};
+
+      mNtupleSecondary->Fill(aSecondary);
             
     } // for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
   } // if (mDecayChannel == StPicoHFLambdaCMaker::kLambdaPion) {

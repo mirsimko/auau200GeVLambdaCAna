@@ -69,9 +69,9 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   chain = new StChain();
 
   // ========================================================================================
-  unsigned int decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
+  //unsigned int decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
   //unsigned int decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;
-  //unsigned int decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
+  unsigned int decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
   // ========================================================================================
   
   cout << "Maker Mode    " << makerMode << endl;
@@ -160,19 +160,19 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     // -- Ks0
     float dcaDaughtersMax = 0.01;    // maximum  (100 um)
     float decayLengthMin  = 1.5;     // minimum  (cT 2.68 cm)
-    float decayLengthMax  = 999999; 
-    float cosThetaMin     = 0.98;   // minimum
+    float decayLengthMax  = 300;
+    float cosThetaMin     = 0.98;    // minimum
     float minMass         = 0.4;
     float maxMass         = 0.6;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
 
     // -- LambdaC
-    dcaDaughtersMax = 0.02;   // maximum (80 um)
-    decayLengthMin  = 0.003;   // minimum (30 um)
+    dcaDaughtersMax = 0.02;   // maximum (200 um)
+    decayLengthMin  = 0.003;  // minimum (30 um)
     decayLengthMax  = 4.; 
     cosThetaMin     = 0.98;   // minimum
-    minMass         = 1.8;
-    maxMass         = 2.8;
+    minMass         = 2.0;
+    maxMass         = 2.5;
     hfCuts->setCutSecondaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
   }
   // == == == == == == == == == == == == == == == == == == == == == == == == == == == == == 
@@ -201,19 +201,19 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     // -- Lambda
     float dcaDaughtersMax = 0.01;    // maximum  (100 um)
     float decayLengthMin  = 5.;      // minimum  (cT )
-    float decayLengthMax  = 999999; 
-    float cosThetaMin     = 0.991;   // minimum
+    float decayLengthMax  = 300; 
+    float cosThetaMin     = 0.98;   // minimum
     float minMass         = 0.9;
-    float maxMass         = 1.3;
+    float maxMass         = 1.15;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
 
     // -- LambdaC
-    dcaDaughtersMax = 0.008;   // maximum (80 um)
+    dcaDaughtersMax = 0.02;    // maximum (80 um)
     decayLengthMin  = 0.003;   // minimum (30 um)
-    decayLengthMax  = 999999; 
-    cosThetaMin     = 0.994;   // minimum
-    minMass         = 1.8;
-    maxMass         = 2.8;
+    decayLengthMax  = 4.; 
+    cosThetaMin     = 0.98;   // minimum
+    minMass         = 2.0;
+    maxMass         = 2.5;
     hfCuts->setCutSecondaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
   }
 
@@ -240,21 +240,13 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutTOFDeltaOneOverBetaKaon(0.04);
     hfCuts->setCutKaonPtotRangeTOF(0.5, 999.);
 
-    // -- Lambda
-    float dcaDaughtersMax = 0.008;   // maximum
-    float decayLengthMin  = 0.003;  // minimum  (30 um)
-    float decayLengthMax  = 999999; 
-    float cosThetaMin     = 0.996;   // minimum
-    float minMass         = 0.9;
-    float maxMass         = 1.3;
-
     // -- LambdaC
-    dcaDaughtersMax = 0.008;  // maximum
-    decayLengthMin  = 0.003;  // minimum
-    decayLengthMax  = 999999; 
-    cosThetaMin     = 0.994;   // minimum
-    minMass         = 1.8;
-    maxMass         = 2.8;
+    float dcaDaughtersMax = 0.02;  // maximum
+    float decayLengthMin  = 0.003;  // minimum
+    float decayLengthMax  = 4.;
+    float cosThetaMin     = 0.98;   // minimum
+    float minMass         = 2.0;
+    float maxMass         = 2.5;
     hfCuts->setCutSecondaryTriplet(dcaDaughtersMax,dcaDaughtersMax,dcaDaughtersMax, 
 				   decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
   }
