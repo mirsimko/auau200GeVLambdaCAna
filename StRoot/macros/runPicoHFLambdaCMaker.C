@@ -69,9 +69,9 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   chain = new StChain();
 
   // ========================================================================================
-  //unsigned int decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
+  unsigned int decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
   //unsigned int decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;
-  unsigned int decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
+  //unsigned int decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
   // ========================================================================================
   
   cout << "Maker Mode    " << makerMode << endl;
@@ -140,7 +140,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   if (decayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
     picoHFLambdaCMaker->setDecayMode(StPicoHFEvent::kTwoAndTwoParticleDecay);
     
-    hfCuts->setCutPrimaryDCAtoVtxMax(10.0);  // DCA to check for TOF usage
+    hfCuts->setCutPrimaryDCAtoVtxMax(100.0);  // DCA to check for TOF usage
 
     hfCuts->setCutPionPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaPion(3);
@@ -181,7 +181,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   else if (decayChannel == StPicoHFLambdaCMaker::kLambdaPion) {
     picoHFLambdaCMaker->setDecayMode(StPicoHFEvent::kTwoAndTwoParticleDecay);
     
-    hfCuts->setCutPrimaryDCAtoVtxMax(10.0);  // DCA to check for TOF usage
+    hfCuts->setCutPrimaryDCAtoVtxMax(100.0);  // DCA to check for TOF usage
 
     hfCuts->setCutPionPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaPion(3);
@@ -203,12 +203,12 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     float decayLengthMin  = 5.;      // minimum  (cT )
     float decayLengthMax  = 300; 
     float cosThetaMin     = 0.98;   // minimum
-    float minMass         = 0.9;
+    float minMass         = 1.08;
     float maxMass         = 1.15;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
 
     // -- LambdaC
-    dcaDaughtersMax = 0.02;    // maximum (80 um)
+    dcaDaughtersMax = 0.02;    // 200 um maximum (80 um)
     decayLengthMin  = 0.003;   // minimum (30 um)
     decayLengthMax  = 4.; 
     cosThetaMin     = 0.98;   // minimum
