@@ -38,27 +38,29 @@ StPicoHFLambdaCMaker::~StPicoHFLambdaCMaker() {
 // _________________________________________________________
 int StPicoHFLambdaCMaker::InitHF() {
 
-
-
-  if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay) {
-    mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers:Dm:DcosPntAngle:DdLength:Dp1Dca:Dp2Dca:DcosThetaStar:DdcaDaugthers");
-
-    mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
+  if (isMakerMode() != StPicoHFMaker::kWrite) {
+    if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay) {
+      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers:Dm:DcosPntAngle:DdLength:Dp1Dca:Dp2Dca:DcosThetaStar:DdcaDaugthers");
+      
+      mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
+    }
+    else
+      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers");
   }
-  else
-    mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers");
-
+  
   return kStOK;
 }
 
 // _________________________________________________________
 int StPicoHFLambdaCMaker::FinishHF() {
   
-  mNtupleSecondary->Write();
+  if (isMakerMode() != StPicoHFMaker::kWrite) {
+    mNtupleSecondary->Write();
+    
+    if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay)
+      mNtupleTertiary->Write();
+  }
   
-  if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay)
-    mNtupleTertiary->Write();
-   
   return kStOK;
 }
 
@@ -106,7 +108,9 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	    continue;
 	  
 	  // -- Secondary vertex
-	  StHFPair lambdaC(proton, k0Short, M_PROTON, M_KAON_0_SHORT, mIdxPicoProtons[idxProton], idxK0Short, mPrimVtx, mBField);
+	  StHFPair lambdaC(proton, k0Short, 
+			   mHFCuts->getHypotheticalMass(StHFCuts::kProton), mHFCuts->getHypotheticalMass(StHFCuts::kK0Short), 
+			   mIdxPicoProtons[idxProton], idxK0Short, mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
 	    continue;
 	  
@@ -160,7 +164,9 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	    continue;
 
 	  // -- Secondary vertex
-	  StHFPair lambdaC(pion, lambda, M_PION_PLUS, M_LAMBDA, mIdxPicoPions[idxPion], idxLambda, mPrimVtx, mBField);
+	  StHFPair lambdaC(pion, lambda, 
+			   mHFCuts->getHypotheticalMass(StHFCuts::kPion), mHFCuts->getHypotheticalMass(StHFCuts::kLambda), 
+			   mIdxPicoPions[idxPion], idxLambda, mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexPair(lambdaC)) 
 	    continue;
 
@@ -207,7 +213,8 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	if (mIdxPicoKaons[idxKaon] == mIdxPicoProtons[idxProton]) 
 	  continue;
 	
-	StHFPair tmpProtonKaon(kaon, proton, M_KAON_PLUS, M_PROTON, 
+	StHFPair tmpProtonKaon(kaon, proton, 
+			       mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
 			       mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mPrimVtx, mBField);
 	if (!mHFCuts->isClosePair(tmpProtonKaon)) 
 	  continue;
@@ -218,7 +225,9 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  if (mIdxPicoProtons[idxProton] == mIdxPicoPions[idxPion] || mIdxPicoKaons[idxKaon] == mIdxPicoPions[idxPion]) 
 	    continue;
 	  
-	  StHFTriplet lambdaC(kaon, proton, pion, M_KAON_PLUS, M_PROTON, M_PION_PLUS, 
+	  StHFTriplet lambdaC(kaon, proton, pion, 
+			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
+			      mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
 			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	    continue;
