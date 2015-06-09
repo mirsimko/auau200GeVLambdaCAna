@@ -21,14 +21,16 @@
 #
 # ###############################################
 
-
 set tree=LambdaC.kProtonK0short.picoHFtree
+
+# ###############################################
+
 # -- baseFolder of job
 set baseFolder=/project/projectdirs/star/rnc/jthaeder/analysis/200GeV/lambdaC
 
 # --input file 
 #    makerMode 0,1 : list must contain picoDst.root files
-#    makerMode 2   : list must contain picoHFtree.root files
+#    makerMode 2   : list must contain ${treeName}.root files
 #set input=${baseFolder}/lists/test.list
 #set input=${baseFolder}/picoLists/picoList_all.list
 set input=${baseFolder}/lists/${tree}/${tree}_all.list
