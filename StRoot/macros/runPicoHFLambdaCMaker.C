@@ -49,7 +49,9 @@ class StChain;
 StChain *chain;
 
 void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName",  unsigned int makerMode = 0 /*kAnalyze*/, 
-       	                   const Char_t *badRunListFileName = "picoList_bad_MB.list") { 
+       	                   const Char_t *badRunListFileName = "picoList_bad_MB.list", const Char_t *treeName = "picoHFtree",
+			   const Char_t *productionBasePath = "/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic",
+			   unsigned int decayChannel = 0 /* kPionKaonProton */) { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
   string SL_version = "SL15c";
@@ -69,16 +71,19 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   chain = new StChain();
 
   // ========================================================================================
-  unsigned int decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
-  //unsigned int decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;
-  //unsigned int decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
+  //  decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
+  //  decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;
+  //  decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
   // ========================================================================================
   
   cout << "Maker Mode    " << makerMode << endl;
+  cout << "TreeName      " << treeName << endl; 
   cout << "Decay Channel " << decayChannel << endl; 
 
   TString sInputFile(inputFile);
   TString sInputListHF("");  
+  TString sProductionBasePath(productionBasePath);
+  TString sTreeName(treeName);
 
   if (makerMode == StPicoHFMaker::kAnalyze) {
     if (!sInputFile.Contains(".list") && !sInputFile.Contains("picoDst.root")) {
@@ -98,13 +103,14 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
    }
    
-   // -- prepare filelist for picoDst from hfTrees
+   // -- prepare filelist for picoDst from trees
    sInputListHF = sInputFile;
    sInputFile = "tmpPico.list";
-   TString command = "sed 's|^.*hfTree|/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics/P15ic|g' "
-     + sInputListHF + " > " + sInputFile;
+   TString command = "sed 's|^.*" + sTreeName + "|" + sProductionBasePath + "|g' " + sInputListHF + " > " + sInputFile;
+   cout << "COMMAND : " << command << endl; 
    gSystem->Exec(command.Data());
-   command = "sed -i 's|picoHFtree|picoDst|g' " + sInputFile;
+   command = "sed -i 's|" + sTreeName + "|picoDst|g' " + sInputFile;
+   cout << "COMMAND : " << command << endl; 
    gSystem->Exec(command.Data());
   }
   else {
@@ -116,6 +122,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   StPicoHFLambdaCMaker* picoHFLambdaCMaker = new StPicoHFLambdaCMaker("picoHFLambdaCMaker", picoDstMaker, outputFile, sInputListHF);
   picoHFLambdaCMaker->setMakerMode(makerMode);
   picoHFLambdaCMaker->setDecayChannel(decayChannel);
+  picoHFLambdaCMaker->setTreeName(treeName);
 
   StHFCuts* hfCuts = new StHFCuts("lambdaCBaseCuts");
   picoHFLambdaCMaker->setHFBaseCuts(hfCuts);
