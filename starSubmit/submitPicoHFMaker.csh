@@ -21,7 +21,19 @@
 #
 # ###############################################
 
-set tree=LambdaC.kProtonK0short.picoHFtree
+# -- set decay channel
+#    0 - kPionKaonProton
+#    1 - kProtonK0short
+#    2 - kLambdaPion
+set decayChannel=0
+
+if ( $decayChannel == 0 ) then
+    set tree=LambdaC.kPionKaonProton.picoHFtree
+else if ( $decayChannel == 1 ) then
+    set tree=LambdaC.kProtonK0short.picoHFtree
+else if ( $decayChannel == 2 ) then
+    set tree=LambdaC.kLambdaPion.picoHFtree
+endif
 
 # ###############################################
 
@@ -33,8 +45,9 @@ set baseFolder=/project/projectdirs/star/rnc/jthaeder/analysis/200GeV/lambdaC
 #    makerMode 2   : list must contain ${treeName}.root files
 #set input=${baseFolder}/lists/test.list
 #set input=${baseFolder}/picoLists/picoList_all.list
+#set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
 set input=${baseFolder}/lists/${tree}/${tree}_all.list
-
+#set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
 # -- set maker mode
 #    0 - kAnalyze, 
 #    1 - kWrite
@@ -46,12 +59,6 @@ set rootMacro=runPicoHFLambdaCMaker.C
 
 # -- set filename for bad run list
 set badRunListFileName="picoList_bad_MB.list"
-
-# -- set decay channel
-#    0 - kPionKaonProton
-#    1 - kProtonK0short
-#    2 - kLambdaPion
-set decayChannel=1
 
 # ###############################################
 # -- CHANGE CAREFULLY BELOW THAT LINE
