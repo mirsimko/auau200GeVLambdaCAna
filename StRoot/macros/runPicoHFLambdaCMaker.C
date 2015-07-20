@@ -48,10 +48,10 @@ class StChain;
 
 StChain *chain;
 
-void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName",  unsigned int makerMode = 0 /*kAnalyze*/, 
+void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", const unsigned int makerMode = 0 /*kAnalyze*/, 
        	                   const Char_t *badRunListFileName = "picoList_bad_MB.list", const Char_t *treeName = "picoHFtree",
 			   const Char_t *productionBasePath = "/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic",
-			   unsigned int decayChannel = 0 /* kPionKaonProton */) { 
+			   const unsigned int decayChannel = 0 /* kPionKaonProton */) { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
   string SL_version = "SL15c";
@@ -61,6 +61,9 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
+  //  bool useMC = true;
+
+
   Int_t nEvents = 10000000;
 
 #ifdef __CINT__
@@ -71,9 +74,9 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   chain = new StChain();
 
   // ========================================================================================
-  //  decayChannel = StPicoHFLambdaCMaker::kLambdaPion;
-  //  decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;
-  //  decayChannel = StPicoHFLambdaCMaker::kProtonK0short;
+  //  decayChannel = StPicoHFLambdaCMaker::kPionKaonProton;   -  0
+  //  decayChannel = StPicoHFLambdaCMaker::kProtonK0short;    -  1
+  //  decayChannel = StPicoHFLambdaCMaker::kLambdaPion;       -  2
   // ========================================================================================
   
   cout << "Maker Mode    " << makerMode << endl;
@@ -106,10 +109,12 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
    // -- prepare filelist for picoDst from trees
    sInputListHF = sInputFile;
    sInputFile = "tmpPico.list";
-   TString command = "sed 's|^.*" + sTreeName + "|" + sProductionBasePath + "|g' " + sInputListHF + " > " + sInputFile;
+
+   TString command = "sed 's|" + sTreeName + ".root|picoDst.root|g' " + sInputListHF + " > " + sInputFile;
    cout << "COMMAND : " << command << endl; 
    gSystem->Exec(command.Data());
-   command = "sed -i 's|" + sTreeName + "|picoDst|g' " + sInputFile;
+
+   command = "sed -i 's|^.*" + sTreeName + "|" + sProductionBasePath + "|g' " + sInputFile; // + " > " + sInputFile;
    cout << "COMMAND : " << command << endl; 
    gSystem->Exec(command.Data());
   }
@@ -147,28 +152,28 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   if (decayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
     picoHFLambdaCMaker->setDecayMode(StPicoHFEvent::kTwoAndTwoParticleDecay);
     
-    hfCuts->setCutPrimaryDCAtoVtxMax(100.0);  // DCA to check for TOF usage
+    hfCuts->setCutPrimaryDCAtoVtxMax(999.0);  // DCA to check for TOF usage
 
     hfCuts->setCutPionPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
-    hfCuts->setCutPionPtotRangeTOF(0.5, 999.);
-      
+    hfCuts->setCutPionPtotRangeHybridTOF(0.3, 999.);
+
     hfCuts->setCutProtonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
-    hfCuts->setCutProtonPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutProtonPtotRangeHybridTOF(0.3, 999.);
 
     hfCuts->setCutKaonPtRange(5., 999.);        // turn off kaons
     hfCuts->setCutTPCNSigmaKaon(0.);            // turn off kaons
     hfCuts->setCutTOFDeltaOneOverBetaKaon(0.);  // turn off kaons
-    hfCuts->setCutKaonPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
     // -- Ks0
-    float dcaDaughtersMax = 0.01;    // maximum  (100 um)
-    float decayLengthMin  = 1.5;     // minimum  (cT 2.68 cm)
+    float dcaDaughtersMax = 0.02;    // maximum  (100 um)
+    float decayLengthMin  = 0.1;     // 1 mm minimum  (cT 2.68 cm)
     float decayLengthMax  = 300;
-    float cosThetaMin     = 0.98;    // minimum
+    float cosThetaMin     = 0.98;    // minimum  >> dca2vtx = cosTheta * decaylength = 0.98*0.1 
     float minMass         = 0.4;
     float maxMass         = 0.6;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
@@ -176,7 +181,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     // -- LambdaC
     dcaDaughtersMax = 0.02;   // maximum (200 um)
     decayLengthMin  = 0.003;  // minimum (30 um)
-    decayLengthMax  = 4.; 
+    decayLengthMax  = 300.; 
     cosThetaMin     = 0.98;   // minimum
     minMass         = 2.0;
     maxMass         = 2.5;
@@ -193,21 +198,21 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutPionPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
-    hfCuts->setCutPionPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutPionPtotRangeHybridTOF(0.3, 999.);
       
     hfCuts->setCutProtonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
-    hfCuts->setCutProtonPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutProtonPtotRangeHybridTOF(0.3, 999.);
 
-    hfCuts->setCutKaonPtRange(0.5, 999.);
+    hfCuts->setCutKaonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaKaon(0.);            // turn off kaons
     hfCuts->setCutTOFDeltaOneOverBetaKaon(0.);  // turn off kaons
-    hfCuts->setCutKaonPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
     // -- Lambda
-    float dcaDaughtersMax = 0.01;    // maximum  (100 um)
-    float decayLengthMin  = 5.;      // minimum  (cT )
+    float dcaDaughtersMax = 0.02;    // maximum  (100 um)
+    float decayLengthMin  = 0.1;      // minimum  (cT )
     float decayLengthMax  = 300; 
     float cosThetaMin     = 0.98;   // minimum
     float minMass         = 1.08;
@@ -217,7 +222,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     // -- LambdaC
     dcaDaughtersMax = 0.02;    // 200 um maximum (80 um)
     decayLengthMin  = 0.003;   // minimum (30 um)
-    decayLengthMax  = 4.; 
+    decayLengthMax  = 300.; 
     cosThetaMin     = 0.98;   // minimum
     minMass         = 2.0;
     maxMass         = 2.5;
@@ -250,7 +255,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     // -- LambdaC
     float dcaDaughtersMax = 0.02;  // maximum
     float decayLengthMin  = 0.003;  // minimum
-    float decayLengthMax  = 4.;
+    float decayLengthMax  = 300.;
     float cosThetaMin     = 0.98;   // minimum
     float minMass         = 2.0;
     float maxMass         = 2.5;
