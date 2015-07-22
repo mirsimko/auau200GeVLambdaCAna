@@ -1,5 +1,4 @@
 #include <vector>
-
 #include "TNtuple.h"
 #include "TClonesArray.h"
 
@@ -45,7 +44,7 @@ int StPicoHFLambdaCMaker::InitHF() {
       mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
     }
     else
-      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:p3pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:p3Dca:cosThetaStar:dcaDaugthers12:dcaDaugthers23:dcaDaugthers31");
+      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:p3pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:p3Dca:cosThetaStar:dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:mLambda1520:mDelta:mKstar");
   }
   
   return kStOK;
@@ -417,6 +416,28 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	continue;
      
+
+      StHFPair KstarPair(pion, kaon,
+	  mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+	  mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
+	  mIdxPicoPions[lambdaC->particle3Idx()],
+	  mIdxPicoKaons[lambdaC->particle1Idx()],
+	  mPrimVtx, mBField);
+
+      StHFPair LambdaPair(proton, kaon,
+	  mHFCuts->getHypotheticalMass(StHFCuts::kProton),
+	  mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
+	  mIdxPicoProtons[ lambdaC->particle2Idx() ],
+	  mIdxPicoKaons[ lambdaC->particle1Idx() ],
+	  mPrimVtx, mBField);
+      
+      StHFPair DeltaPair(proton, pion,
+	  mHFCuts->getHypotheticalMass(StHFCuts::kProton),
+	  mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+	  mIdxPicoProtons[ lambdaC->particle2Idx() ],
+	  mIdxPicoPions[ lambdaC->particle3Idx() ],
+	  mPrimVtx, mBField);
+      
       float isCorrectSign = (kaon->charge() != pion->charge() && pion->charge() == proton->charge()) ? 1. : -1.;
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
@@ -425,7 +446,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    lambdaC->pointingAngle(), lambdaC->decayLength(), 
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
 			    lambdaC->cosThetaStar(),
-			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31()};
+			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
+			    LambdaPair.m(), DeltaPair.m(), KstarPair.m()};
 
       mNtupleSecondary->Fill(aSecondary);
       
