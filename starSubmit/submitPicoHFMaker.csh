@@ -38,7 +38,7 @@ endif
 # ###############################################
 
 # -- baseFolder of job
-set baseFolder=/project/projectdirs/star/rnc/jthaeder/analysis/200GeV/lambdaC
+set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 
 # --input file 
 #    makerMode 0,1 : list must contain picoDst.root files
@@ -123,7 +123,7 @@ if ( -e compileTest.log ) then
     rm compileTest.log
 endif
 
-echo -n "Testing compliation ...            "
+echo -n "Testing compilation ...            "
 root -l -b -q starSubmit/compileTest.C |& cat > compileTest.log 
 cat compileTest.log |& grep "Compilation failed!"
 if ( $status == 0 ) then

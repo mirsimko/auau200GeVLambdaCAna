@@ -64,7 +64,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   //  bool useMC = true;
 
 
-  Int_t nEvents = 10000;
+  Int_t nEvents = 10000000;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
