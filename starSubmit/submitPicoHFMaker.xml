@@ -12,10 +12,6 @@
   </Generator>
   
   <command>
-    if ( -e //global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/production/2015-07-27_21-59/2015-07-27_21-59_${JOBINDEX}.picoHFLambdaCMaker.root ) then
-      exit
-    endif
-
     starver SL15c
     
     setenv PRODPATH &basePath;/production/&prodId;
