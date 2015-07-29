@@ -12,12 +12,17 @@
   </Generator>
   
   <command>
+    if ( -e //global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/production/2015-07-27_21-59/2015-07-27_21-59_${JOBINDEX}.picoHFLambdaCMaker.root ) then
+      exit
+    endif
+
     starver SL15c
     
     setenv PRODPATH &basePath;/production/&prodId;
     setenv LOGPATH  &basePath;/jobs/log/&prodId;
     
     mkdir -p ${PRODPATH} ${LOGPATH}
+
 
     if ("&mMode;" == "1") then
         &basePath;/jobs/starSubmit/parseFileList.csh ${FILELIST} &basePath; &prodId; &mMode; &treeName; ${JOBID} &rootMacro; picoList_badRuns.list &productionBasePath; &decayChannel;
