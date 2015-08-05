@@ -72,7 +72,7 @@ TH1D* h1DcaZ[nCent][nPtBins];
 TH1D* h1DcaXY[nCent][nPtBins];
 
 string outFileName = "lambdaCTEST.root";
-std::pair<int, int> const decayChannels(1090, 1166); // decay table widened by 1 (the limits were 1090, 1165)
+std::pair<int, int> const decayChannels(4277, 4354); // first and last Lc decay annel number
 std::pair<float, float> const momentumRange(0.3, 12);
 
 float const acceptanceEta = 1.0;
@@ -80,27 +80,52 @@ float const sigmaPos0 = 15.2;
 float const pxlLayer1Thickness = 0.00486;
 float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4.};
 
+enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
+
 //============== main  program ==================
 void toyMcEffLambdaC(int npart = 100)
 {
-   enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
-   DecayMode mDecayMode = kKstarProton;
+   DecayMode mDecayMode = kPionKaonProton;
    
    gRandom->SetSeed();
    bookObjects();
 
    pydecay = TPythia6Decayer::Instance();
 
+   // Reading new decay channels
    pydecay-> SetDecayTableFile("StRoot/StLambdaCToyMC/macros/AddedDecays.list");
    pydecay-> ReadDecayTable();
+
    pydecay->Init();
-   // TPythia6::Instance()->Pylist(12);
+   // TPythia6::Instance()->Pylist(12); // this is for writing the Decay table to std_out
 
-   TPythia6::Instance()->SetMDME(617,1,1);
-   TPythia6::Instance()->SetMDME(618,1,0);
-   TPythia6::Instance()->SetMDME(619,1,0);
+   // selecting decay channels
+   switch(mDecayMode)
+   {
+     case kKstarProton:
+       TPythia6::Instance()->SetMDME(617,1,1);
+       TPythia6::Instance()->SetMDME(618,1,0);
+       TPythia6::Instance()->SetMDME(619,1,0);
 
-   setDecayChannels(1107); // 1107 is p, Kstar; 1156 is p, K, pi in the new decay table
+       setDecayChannels(4294);
+       break;
+     case kLambda1520Pion:
+       TPythia6::Instance()->SetMDME(4276,1,1);
+
+       setDecayChannels(4344);
+       break;
+     case kDeltaPPkaon:
+       TPythia6::Instance()->SetMDME(1052,1,1);
+
+       setDecayChannels(4315);
+       break;
+     case kPionKaonProton:
+       setDecayChannels(4343);
+       break;
+     default:
+       break;       
+   }
+
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
@@ -138,22 +163,22 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters)
    for (int iTrk = 0; iTrk < nTrk; ++iTrk)
    {
       TParticle* ptl0 = (TParticle*)daughters.At(iTrk);
-      // cout << "Daughter PDG number: " << ptl0->GetPdgCode() << endl;
+      cout << "Daughter PDG number: " << ptl0->GetPdgCode() << endl;
 
       switch (abs(ptl0->GetPdgCode()))
       {
          case 321:
             ptl0->Momentum(kMom);
             v00.SetXYZ(ptl0->Vx() * 1000., ptl0->Vy() * 1000., ptl0->Vz() * 1000.); // converted to μm
-	    // cout << "Kaon" << endl;
+	    cout << "Kaon" << endl;
             break;
          case 211:
             ptl0->Momentum(piMom);
-	    // cout << "Pion" << endl;
+	    cout << "Pion" << endl;
             break;
          case 2212:
             ptl0->Momentum(pMom);
-	    // cout << "Proton" << endl;
+	    cout << "Proton" << endl;
             break;
          default:
             break;
