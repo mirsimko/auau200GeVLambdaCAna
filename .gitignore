@@ -3,6 +3,7 @@
 *.lo
 *.o
 *.obj
+*.d
 
 # Precompiled Headers
 *.gch
@@ -29,3 +30,4 @@
 
 # backup
 *.bak
+*.swp
