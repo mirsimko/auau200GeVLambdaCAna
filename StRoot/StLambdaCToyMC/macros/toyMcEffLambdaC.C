@@ -38,8 +38,7 @@
 using namespace std;
 
 void setDecayChannels(int const mdme);
-void decayAndFill(int const kf, TLorentzVector* b, double const weight, TClonesArray& daughters);
-void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& kMom, TLorentzVector const& piMom, TVector3 const& v00);
+void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters);
 void getKinematics(TLorentzVector& b, double const mass);
 TLorentzVector smearMom(TLorentzVector const& b, TF1 const * const fMomResolution);
 TVector3 smearPos(TLorentzVector const& mom, TLorentzVector const& rMom, TVector3 const& pos);
@@ -47,7 +46,6 @@ TVector3 smearPosData(int const cent, TLorentzVector const& rMom, TVector3 const
 float dca(TVector3 const& p, TVector3 const& pos, TVector3 const& vertex);
 float dca1To2(TVector3 const& p1, TVector3 const& pos1, TVector3 const& p2, TVector3 const& pos2, TVector3& v0);
 bool matchHft(int const centrality, TLorentzVector const& mom);
-bool reconstructD0(int const centrality, TLorentzVector const& mom);
 void bookObjects();
 void write();
 int getptIndex(double);
@@ -58,8 +56,6 @@ TFile* result;
 
 TF1* fKaonMomResolution = NULL;
 TF1* fPionMomResolution = NULL;
-TF1* fWeightFunction = NULL;
-TGraph* grEff[3];
 const Int_t nCent = 9;
 const Int_t nPtBins = 35;
 const Double_t ptEdge[nPtBins + 1] = { 0.0, 0.2, 0.4,  0.6,  0.8,
@@ -75,25 +71,36 @@ TH1D* hHftRatio[nCent];
 TH1D* h1DcaZ[nCent][nPtBins];
 TH1D* h1DcaXY[nCent][nPtBins];
 
-string outFileName = "Lambda0.toyMc.root";
-std::pair<int, int> const decayChannels(613, 614);
+string outFileName = "lambdaCTEST.root";
+std::pair<int, int> const decayChannels(1090, 1166); // decay table widened by 1 (the limits were 1090, 1165)
 std::pair<float, float> const momentumRange(0.3, 12);
 
-float const acceptanceRapidity = 1.0;
+float const acceptanceEta = 1.0;
 float const sigmaPos0 = 15.2;
 float const pxlLayer1Thickness = 0.00486;
 float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4.};
 
 //============== main  program ==================
-void toyMcEffLambda0(int npart = 100)
+void toyMcEffLambdaC(int npart = 100)
 {
+   enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
+   DecayMode mDecayMode = kKstarProton;
+   
    gRandom->SetSeed();
    bookObjects();
 
    pydecay = TPythia6Decayer::Instance();
-   pydecay->Init();
 
-   setDecayChannels(613);
+   pydecay-> SetDecayTableFile("StRoot/StLambdaCToyMC/macros/AddedDecays.list");
+   pydecay-> ReadDecayTable();
+   pydecay->Init();
+   // TPythia6::Instance()->Pylist(12);
+
+   TPythia6::Instance()->SetMDME(617,1,1);
+   TPythia6::Instance()->SetMDME(618,1,0);
+   TPythia6::Instance()->SetMDME(619,1,0);
+
+   setDecayChannels(1107); // 1107 is p, Kstar; 1156 is p, K, pi in the new decay table
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
@@ -102,10 +109,10 @@ void toyMcEffLambda0(int npart = 100)
       if (!(ipart % 100000))
          cout << "____________ ipart = " << ipart << " ________________" << endl;
 
-      getKinematics(*b_d, M_KAON_0_SHORT);
+      getKinematics(*b_d, M_LAMBDA_C_PLUS);
 
-      decayAndFill(310, b_d, fWeightFunction->Eval(b_d->Perp()), ptl);
-      // decayAndFill(-310, b_d, fWeightFunction->Eval(b_d->Perp()), ptl);
+      decayAndFill(4122, b_d, ptl);
+      decayAndFill(-4122, b_d, ptl);
    }
 
    write();
@@ -117,54 +124,55 @@ void setDecayChannels(int const mdme)
    TPythia6::Instance()->SetMDME(mdme, 1, 1);
 }
 
-void decayAndFill(int const kf, TLorentzVector* b, double const weight, TClonesArray& daughters)
+void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters)
 {
    pydecay->Decay(kf, b);
    pydecay->ImportParticles(&daughters);
 
-   TLorentzVector pi1Mom;
-   TLorentzVector pi2Mom;
+   TLorentzVector kMom;
+   TLorentzVector piMom;
+   TLorentzVector pMom;
    TVector3 v00;
 
    int nTrk = daughters.GetEntriesFast();
    for (int iTrk = 0; iTrk < nTrk; ++iTrk)
    {
       TParticle* ptl0 = (TParticle*)daughters.At(iTrk);
+      // cout << "Daughter PDG number: " << ptl0->GetPdgCode() << endl;
 
       switch (abs(ptl0->GetPdgCode()))
       {
-         case 211:
-            if(!pi1Mom.P()) ptl0->Momentum(pi1Mom);
-            else ptl0->Momentum(pi2Mom);
+         case 321:
+            ptl0->Momentum(kMom);
             v00.SetXYZ(ptl0->Vx() * 1000., ptl0->Vy() * 1000., ptl0->Vz() * 1000.); // converted to μm
+	    // cout << "Kaon" << endl;
             break;
-         // case 2212:
-            // ptl0->Momentum(pMom);
-            // break;
+         case 211:
+            ptl0->Momentum(piMom);
+	    // cout << "Pion" << endl;
+            break;
+         case 2212:
+            ptl0->Momentum(pMom);
+	    // cout << "Proton" << endl;
+            break;
          default:
             break;
       }
    }
    daughters.Clear();
 
-   fill(kf,b,weight,pi1Mom,pi2Mom,v00);
-}
-
-void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& piMom, TLorentzVector const& pMom, TVector3 const& v00)
-{
    // smear momentum
+   TLorentzVector const kRMom = smearMom(kMom, fKaonMomResolution);
    TLorentzVector const piRMom = smearMom(piMom, fPionMomResolution);
-   TLorentzVector pRMom = smearMom(pMom, fKaonMomResolution);
-
-   // misPID of proton as a Kaon
-   pRMom.SetVectM(pRMom.Vect(), M_KAON_PLUS);
+   TLorentzVector const pRMom = smearMom(pMom, fPionMomResolution);
 
    int const cent = floor(nCent * gRandom->Rndm());
    // smear position
+   TVector3 const kRPos = smearPosData(cent, kRMom, v00);
    TVector3 const piRPos = smearPosData(cent, piRMom, v00);
    TVector3 const pRPos = smearPosData(cent, pRMom, v00);
    // TVector3 const kRPos = smearPos(kMom, kRMom, v00);
-   // TVector3 const pRPos = smearPos(pMom, pRMom, v00);
+   // TVector3 const pRPos = smearPos(kMom, pRMom, v00);
 
    // smear primary vertex
    // float const sigmaVertex = sigmaVertexCent[cent];
@@ -172,26 +180,23 @@ void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& 
    TVector3 const vertex(0., 0., 0.);
 
    // reconstruct
-   TLorentzVector const rMom = piRMom + pRMom;
+   TLorentzVector const rMom = kRMom + piRMom + pRMom;
+   float const kDca = dca(kMom.Vect(), v00, vertex);
    float const piDca = dca(piMom.Vect(), v00, vertex);
    float const pDca = dca(pMom.Vect(), v00, vertex);
+   float const kRDca = dca(kRMom.Vect(), kRPos, vertex);
    float const piRDca = dca(piRMom.Vect(), piRPos, vertex);
    float const pRDca = dca(pRMom.Vect(), pRPos, vertex);
 
    TVector3 v0;
-   float const dca12 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v0);
+   float const dca12 = dca1To2(kRMom.Vect(), kRPos, piRMom.Vect(), piRPos, v0);
+   float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v0);
+   float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v0);
    float const decayLength = (v0 - vertex).Mag();
-   float const dcaD0ToPv = dca(rMom.Vect(), v0, vertex);
+   float const dcaToPv = dca(rMom.Vect(), v0, vertex);
    float const cosTheta = (v0 - vertex).Unit().Dot(rMom.Vect().Unit());
-   float const angle12 = piRMom.Vect().Angle(pRMom.Vect());
 
-   TLorentzVector pRMomRest = pRMom;
-   TVector3 beta;
-   beta.SetMagThetaPhi(rMom.Beta(), rMom.Theta(), rMom.Phi());
-   pRMomRest.Boost(-beta);
-   float const cosThetaStar = rMom.Vect().Unit().Dot(pRMomRest.Vect().Unit());
-
-   // save
+                       // save
    float arr[100];
    int iArr = 0;
    arr[iArr++] = cent;
@@ -200,7 +205,6 @@ void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& 
    arr[iArr++] = vertex.Z();
 
    arr[iArr++] = kf;
-   arr[iArr++] = weight;
    arr[iArr++] = b->M();
    arr[iArr++] = b->Perp();
    arr[iArr++] = b->PseudoRapidity();
@@ -215,14 +219,30 @@ void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& 
    arr[iArr++] = rMom.PseudoRapidity();
    arr[iArr++] = rMom.Rapidity();
    arr[iArr++] = rMom.Phi();
-   arr[iArr++] = reconstructD0(cent, rMom);
 
    arr[iArr++] = dca12;
+   arr[iArr++] = dca23;
+   arr[iArr++] = dca13;
    arr[iArr++] = decayLength;
-   arr[iArr++] = dcaD0ToPv;
+   arr[iArr++] = dcaToPv;
    arr[iArr++] = cosTheta;
-   arr[iArr++] = angle12;
-   arr[iArr++] = cosThetaStar;
+
+   arr[iArr++] = kMom.M();
+   arr[iArr++] = kMom.Perp();
+   arr[iArr++] = kMom.PseudoRapidity();
+   arr[iArr++] = kMom.Rapidity();
+   arr[iArr++] = kMom.Phi();
+   arr[iArr++] = kDca;
+
+   arr[iArr++] = kRMom.M();
+   arr[iArr++] = kRMom.Perp();
+   arr[iArr++] = kRMom.PseudoRapidity();
+   arr[iArr++] = kRMom.Rapidity();
+   arr[iArr++] = kRMom.Phi();
+   arr[iArr++] = kRPos.X();
+   arr[iArr++] = kRPos.Y();
+   arr[iArr++] = kRPos.Z();
+   arr[iArr++] = kRDca;
 
    arr[iArr++] = piMom.M();
    arr[iArr++] = piMom.Perp();
@@ -258,6 +278,7 @@ void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& 
    arr[iArr++] = pRPos.Z();
    arr[iArr++] = pRDca;
 
+   arr[iArr++] = matchHft(cent, kRMom);
    arr[iArr++] = matchHft(cent, piRMom);
    arr[iArr++] = matchHft(cent, pRMom);
 
@@ -267,14 +288,10 @@ void fill(int const kf, TLorentzVector* b, double weight, TLorentzVector const& 
 void getKinematics(TLorentzVector& b, double const mass)
 {
    float const pt = gRandom->Uniform(momentumRange.first, momentumRange.second);
-   float const y = gRandom->Uniform(-acceptanceRapidity, acceptanceRapidity);
+   float const eta = gRandom->Uniform(-acceptanceEta, acceptanceEta);
    float const phi = TMath::TwoPi() * gRandom->Rndm();
 
-   float const mT = sqrt(mass*mass+pt*pt);
-   float const pz = mT * sinh(y);
-   float const E = mT * cosh(y);
-
-   b.SetPxPyPzE(pt * cos(phi), pt * sin(phi) , pz, E);
+   b.SetXYZM(pt * cos(phi), pt * sin(phi), pt * sinh(eta), mass);
 }
 
 float dca(TVector3 const& p, TVector3 const& pos, TVector3 const& vertex)
@@ -341,17 +358,6 @@ TVector3 smearPosData(int const cent, TLorentzVector const& rMom, TVector3 const
    return TVector3(newPos.X(), newPos.Y(), pos.Z() + sigmaPosZ);
 }
 
-bool reconstructD0(int const centrality, TLorentzVector const& mom)
-{
-   TGraph* gr = NULL;
-
-   if (centrality < 4) gr = grEff[0];
-   else if (centrality < 7) gr = grEff[1];
-   else gr = grEff[2];
-
-   return gRandom->Rndm() < gr->Eval(mom.Perp());
-}
-
 bool matchHft(int const cent, TLorentzVector const& mom)
 {
    int const bin = hHftRatio[cent]->FindBin(mom.Perp());
@@ -366,23 +372,21 @@ void bookObjects()
 
    TH1::AddDirectory(false);
    nt = new TNtuple("nt", "", "cent:vx:vy:vz:"
-                    "pid:w:m:pt:eta:y:phi:v0x:v0y:v0z:" // MC D0
-                    "rM:rPt:rEta:rY:rPhi:reco:" // Rc D0
-                    "dca12:decayLength:dcaD0ToPv:cosTheta:angle12:cosThetaStar:" // Rc pair
+                    "pid:m:pt:eta:y:phi:v0x:v0y:v0z:"
+                    "rM:rPt:rEta:rY:rPhi:"
+                    "dca12:dca23:dca13:decayLength:dcaToPv:cosTheta:" // Rc pair
                     "kM:kPt:kEta:kY:kPhi:kDca:" // MC Kaon
                     "kRM:kRPt:kREta:kRY:kRPhi:kRVx:kRVy:kRVz:kRDca:" // Rc Kaon
-                    "pM:pPt:pEta:pY:pPhi:pDca:" // MC Pion1
-                    "pRM:pRPt:pREta:pRY:pRPhi:pRVx:pRVy:pRVz:pRDca:" // Rc Pion1
-                    "kHft:pHft");
+                    "piM:piPt:piEta:piY:piPhi:piDca:" // MC Pion
+                    "piRM:piRPt:piREta:piRY:piRPhi:piRVx:piRVy:piRVz:piRDca:" // Rc Pion
+                    "pM:pPt:pEta:pY:pPhi:pDca:" // MC Proton
+                    "pRM:pRPt:pREta:pRY:pRPhi:pRVx:pRVy:pRVz:pRDca:" // Rc Proton
+                    "kHft:piHft:pHft");
 
    TFile f("momentum_resolution.root");
    fPionMomResolution = (TF1*)f.Get("fPion")->Clone("fPionMomResolution");
    fKaonMomResolution = (TF1*)f.Get("fKaon")->Clone("fKaonMomResolution");
    f.Close();
-
-   TFile fPP("pp200_spectra.root");
-   fWeightFunction = (TF1*)fPP.Get("run12/f1Levy")->Clone("fWeightFunction");
-   fPP.Close();
 
    TFile fHftRatio("HFT_Ratio_VsPt_Centrality.root");
    TFile fDca("Dca_VsPt_Centrality.root");
@@ -406,10 +410,6 @@ void bookObjects()
 
    fHftRatio.Close();
    fDca.Close();
-
-   grEff[0] = new TGraph("eff_4080.csv", "%lg %lg", ",");
-   grEff[1] = new TGraph("eff_1040.csv", "%lg %lg", ",");
-   grEff[2] = new TGraph("eff_010.csv", "%lg %lg", ",");
 }
 //___________
 void write()
