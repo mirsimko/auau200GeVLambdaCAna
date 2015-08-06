@@ -136,8 +136,8 @@ void toyMcEffLambdaC(int npart = 100)
 
       getKinematics(*b_d, M_LAMBDA_C_PLUS);
 
-      decayAndFill(4122, b_d, ptl);
-      decayAndFill(-4122, b_d, ptl);
+      decayAndFill(4122, b_d, ptl, mDecayMode);
+      decayAndFill(-4122, b_d, ptl, mDecayMode);
    }
 
    write();
@@ -149,7 +149,7 @@ void setDecayChannels(int const mdme)
    TPythia6::Instance()->SetMDME(mdme, 1, 1);
 }
 
-void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters)
+void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int decayMode)
 {
    pydecay->Decay(kf, b);
    pydecay->ImportParticles(&daughters);
@@ -307,6 +307,8 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters)
    arr[iArr++] = matchHft(cent, piRMom);
    arr[iArr++] = matchHft(cent, pRMom);
 
+   arr[iArr++] = resMass(pMom, kMom, piMom, decayMode);
+   arr[iArr++] = resMass(pRMom, kRMom, piRMom, decayMode);
    nt->Fill(arr);
 }
 
@@ -406,7 +408,8 @@ void bookObjects()
                     "piRM:piRPt:piREta:piRY:piRPhi:piRVx:piRVy:piRVz:piRDca:" // Rc Pion
                     "pM:pPt:pEta:pY:pPhi:pDca:" // MC Proton
                     "pRM:pRPt:pREta:pRY:pRPhi:pRVx:pRVy:pRVz:pRDca:" // Rc Proton
-                    "kHft:piHft:pHft");
+                    "kHft:piHft:pHft:"
+		    "MResonance:MRResonance");
 
    TFile f("momentum_resolution.root");
    fPionMomResolution = (TF1*)f.Get("fPion")->Clone("fPionMomResolution");
