@@ -71,7 +71,7 @@ TH1D* hHftRatio[nCent];
 TH1D* h1DcaZ[nCent][nPtBins];
 TH1D* h1DcaXY[nCent][nPtBins];
 
-string outFileName = "lambdaCTEST.root";
+string outFileName = "lambdaCkPionKaonProton.root";
 std::pair<int, int> const decayChannels(4277, 4354); // first and last Lc decay annel number
 std::pair<float, float> const momentumRange(0.3, 12);
 
@@ -163,22 +163,22 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters)
    for (int iTrk = 0; iTrk < nTrk; ++iTrk)
    {
       TParticle* ptl0 = (TParticle*)daughters.At(iTrk);
-      cout << "Daughter PDG number: " << ptl0->GetPdgCode() << endl;
+      // cout << "Daughter PDG number: " << ptl0->GetPdgCode() << endl;
 
       switch (abs(ptl0->GetPdgCode()))
       {
          case 321:
             ptl0->Momentum(kMom);
             v00.SetXYZ(ptl0->Vx() * 1000., ptl0->Vy() * 1000., ptl0->Vz() * 1000.); // converted to μm
-	    cout << "Kaon" << endl;
+	    // cout << "Kaon" << endl;
             break;
          case 211:
             ptl0->Momentum(piMom);
-	    cout << "Pion" << endl;
+	    // cout << "Pion" << endl;
             break;
          case 2212:
             ptl0->Momentum(pMom);
-	    cout << "Proton" << endl;
+	    // cout << "Proton" << endl;
             break;
          default:
             break;
