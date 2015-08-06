@@ -72,7 +72,7 @@ TH1D* hHftRatio[nCent];
 TH1D* h1DcaZ[nCent][nPtBins];
 TH1D* h1DcaXY[nCent][nPtBins];
 
-string outFileName = "lambdaCkLambda1520Pion.root";
+string outFileName = "lambdaCkDeltaPPkaon.root";
 std::pair<int, int> const decayChannels(4277, 4354); // first and last Lc decay annel number
 std::pair<float, float> const momentumRange(0.3, 12);
 
@@ -86,7 +86,7 @@ enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kL
 //============== main  program ==================
 void toyMcEffLambdaC(int npart = 100)
 {
-   DecayMode mDecayMode = kLambda1520Pion;
+   DecayMode mDecayMode = kDeltaPPkaon;
    
    gRandom->SetSeed();
    bookObjects();
@@ -118,7 +118,7 @@ void toyMcEffLambdaC(int npart = 100)
      case kDeltaPPkaon:
        TPythia6::Instance()->SetMDME(1052,1,1);
 
-       setDecayChannels(4315);
+       setDecayChannels(4291);
        break;
      case kPionKaonProton:
        setDecayChannels(4343);
