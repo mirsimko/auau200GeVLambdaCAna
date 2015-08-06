@@ -446,3 +446,29 @@ void write()
    nt->Write();
    result->Close();
 }
+//___________
+float resMass(TLorentzVector &pMom, TLorentzVector &kMom, TLorentzVector &piMom, int decayMode)
+{
+  TLorentzVector resMom;
+  switch (decayMode)
+  {
+    case kPionKaonProton:
+      return 0;
+      break;
+    case kKstarProton:
+      resMom = kMom + piMom;
+      return resMom.M();
+      break;
+    case kLambda1520Pion:
+      resMom = pMom + kMom;
+      return resMom.M();
+      break;
+    case kDeltaPPkaon:
+      resMom = pMom + piMom;
+      return resMom.M();
+      break;
+    default:
+      return -1;
+      break;
+  };
+}
