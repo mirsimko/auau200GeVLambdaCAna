@@ -38,7 +38,7 @@
 using namespace std;
 
 void setDecayChannels(int const mdme);
-void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters);
+void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int decayMode);
 void getKinematics(TLorentzVector& b, double const mass);
 TLorentzVector smearMom(TLorentzVector const& b, TF1 const * const fMomResolution);
 TVector3 smearPos(TLorentzVector const& mom, TLorentzVector const& rMom, TVector3 const& pos);
@@ -49,6 +49,7 @@ bool matchHft(int const centrality, TLorentzVector const& mom);
 void bookObjects();
 void write();
 int getptIndex(double);
+float resMass(TLorentzVector const &pMom, TLorentzVector const &kMom, TLorentzVector const &piMom, int decayMode);
 
 TPythia6Decayer* pydecay;
 TNtuple* nt;
@@ -447,7 +448,7 @@ void write()
    result->Close();
 }
 //___________
-float resMass(TLorentzVector &pMom, TLorentzVector &kMom, TLorentzVector &piMom, int decayMode)
+float resMass(TLorentzVector const &pMom, TLorentzVector const &kMom, TLorentzVector const &piMom, int decayMode)
 {
   TLorentzVector resMom;
   switch (decayMode)
