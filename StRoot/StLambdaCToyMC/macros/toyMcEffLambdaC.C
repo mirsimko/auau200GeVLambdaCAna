@@ -72,7 +72,7 @@ TH1D* hHftRatio[nCent];
 TH1D* h1DcaZ[nCent][nPtBins];
 TH1D* h1DcaXY[nCent][nPtBins];
 
-string outFileName = "lambdaCkDeltaPPkaon.root";
+string outFileName;
 std::pair<int, int> const decayChannels(4277, 4354); // first and last Lc decay annel number
 std::pair<float, float> const momentumRange(0.3, 12);
 
@@ -84,9 +84,10 @@ float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
 //============== main  program ==================
-void toyMcEffLambdaC(int npart = 100)
+void toyMcEffLambdaC(int npart = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
 {
-   DecayMode mDecayMode = kDeltaPPkaon;
+   outFileName = outFile;
+   DecayMode mDecayMode = modeOfDecay;
    
    gRandom->SetSeed();
    bookObjects();
