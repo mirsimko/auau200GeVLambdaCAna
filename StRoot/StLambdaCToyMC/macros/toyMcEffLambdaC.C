@@ -84,10 +84,10 @@ float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
 //============== main  program ==================
-void toyMcEffLambdaC(int npart = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
+void toyMcEffLambdaC( int npart = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
 {
+   DecayMode mDecayMode = (DecayMode) modeOfDecay;   
    outFileName = outFile;
-   DecayMode mDecayMode = modeOfDecay;
    
    gRandom->SetSeed();
    bookObjects();
