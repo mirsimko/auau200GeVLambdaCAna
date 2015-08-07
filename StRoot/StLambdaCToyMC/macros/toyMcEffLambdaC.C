@@ -317,10 +317,10 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
 void getKinematics(TLorentzVector& b, double const mass)
 {
    float const pt = gRandom->Uniform(momentumRange.first, momentumRange.second);
-   float const eta = gRandom->Uniform(-acceptanceEta, acceptanceEta);
+   float const y = gRandom->Uniform(-acceptanceEta, acceptanceEta);
    float const phi = TMath::TwoPi() * gRandom->Rndm();
 
-   b.SetXYZM(pt * cos(phi), pt * sin(phi), pt * sinh(eta), mass);
+   b.SetXYZM(pt * cos(phi), pt * sin(phi), mass * sinh(y), mass);
 }
 
 float dca(TVector3 const& p, TVector3 const& pos, TVector3 const& vertex)
