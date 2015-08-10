@@ -320,9 +320,9 @@ void getKinematics(TLorentzVector& b, double const mass)
    float const y = gRandom->Uniform(-acceptanceEta, acceptanceEta);
    float const phi = TMath::TwoPi() * gRandom->Rndm();
 
-   float const mT = sqrt(pT*pT + mass*mass);
+   float const mT = sqrt(pt*pt + mass*mass);
    float const pz = mT*sinh(y);
-   float const energy = mT*sinh(y);
+   float const energy = mT*cosh(y);
 
    b.SetPxPyPzE(pt * cos(phi), pt * sin(phi), pz, energy);
 }
