@@ -46,6 +46,11 @@ bkgMaker::bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBase
   SetBaseCut(mBaseCut);
 }
 
+bkgMaker::bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char *mOutFileBaseName, int mDecayMode)
+{
+  bkgMaker(mSimFile,mBkgFile, mOutFile, mBaseCut, mDecayMode);
+  SetOutFileBasename(mOutFileBaseName);
+}
 // -----------------------------------------------------------
 void bkgMaker::initHists()
 {
@@ -382,4 +387,44 @@ void bkgMaker::Plot(bool saveIt)
   TCanvas C3 = new TCanvas("C3", "", 1200, 900);
   C3->cd();
   resM->Draw();
+
+  if(saveIt)
+  {
+    C1->SaveAs(Form("%s_1.pdf", outFileBaseName.Data()));
+    C2->SaveAs(Form("%s_2.pdf", outFileBaseName.Data()));
+    C3->SaveAs(Form("%s_3.pdf", outFileBaseName.Data()));
+
+    C1->SaveAs(Form("%s_1.png", outFileBaseName.Data()));
+    C2->SaveAs(Form("%s_2.png", outFileBaseName.Data()));
+    C3->SaveAs(Form("%s_3.png", outFileBaseName.Data()));
+  }
+}
+
+// --------------------------------------------------------
+void bkgMaker::Write()
+{
+  outFile->cd();
+
+  dLength->Write();
+  cosTheta->Write();
+  resM->Write();
+  for (int =0; i < 3; ++i)
+  {
+    DCA[i]->Write();
+    pt[i]->Write();
+    for (int j = 0; j < 20; ++j)
+    {
+      DCAhists[i][j]->Write();
+      ptHists[i][j]->Write();
+
+      DCAhists[i][j]->Write();
+      ptHists[i][j]->Write();
+    }
+  }
+  
+  for (int j =0; j < 40; ++j)
+  {
+    resHists[j]->Write();
+    resBkg[j]->Write();
+  }
 }

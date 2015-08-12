@@ -60,21 +60,25 @@ protected:
 
   float resMass;
 
+  TString outFileBaseName;
   // procedures
   void initHists();
-  void fillHistos();
 
 public:
   bkgMaker(int mDecayMode);
   bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, int mDecayMode);
+  bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName, int mDecayMode);
+  
   ~bkgMaker();
 
   void SetSimFile(TFile* mSimFile){simFile = mSimFile; simTuple = mSimFile->Get("nt");}
   void SetBkgFile(TFile* mBkgFile){bkgFile = mBkgFile; bkgTuple = mBkgFile->Get("secondary");}
   void SetOutFile(TFile* mOutFile){outFile = mOutFile;}
+  void SetOutFileBasename(const char* name){outFileBaseName = name;}
 
   void SetBaseCut(TCut mBaseCut){baseCut = mBaseCut;}
 
+  void fillHistos();
   void calculateRatios();
 
   void Write();
