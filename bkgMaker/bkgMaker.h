@@ -8,6 +8,7 @@
 #include "TFile.h"
 #include "TNtuple.h"
 #include "TString.h"
+#include "TGraphErrors.h"
 
 class bkgMaker
 {
@@ -15,6 +16,7 @@ public:
   enum DecayMode{kKstar, kLambda, kDelta, kThreeBody};
   
 protected:
+  // members
   TH1D *DCAhists[3][20];
   TH1D *dLengthHists[20];
   TH1D *cosThetaHists[20];
@@ -27,6 +29,18 @@ protected:
   TH1D *ptBkg[3][20];
   TH1D *resBkg[40];
 
+  TGraphErrors *DCA[3];
+  TGraphErrors *dLength;;
+  TGraphErrors *cosTheta;
+  TGraphErrors *pt[3];
+  TGraphErrors *resM;
+
+  double dcaCut[20];
+  double ptCut[20];
+  double dLengthCut[20];
+  double cosThetaCut[20];
+  double resMcut[40];
+
   TFile* simFile;
   TFile* bkgFile;
 
@@ -37,16 +51,19 @@ protected:
 
   DecayMode decayMode;
 
-  void initHists();
-
   TCut baseCut;
-  TCut bkgCut = "charges < 0"
+  TCut bkgCut = "charges < 0";
 
   const float KstarMass = 0.89610;
   const float LambdaMass = 1.51950;
   const float DeltaPPMass = 1.231;
 
   float resMass;
+
+  // procedures
+  void initHists();
+  void fillHistos();
+
 public:
   bkgMaker(int mDecayMode);
   bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, int mDecayMode);
@@ -58,9 +75,10 @@ public:
 
   void SetBaseCut(TCut mBaseCut){baseCut = mBaseCut;}
 
-  void fillHistos();
-
   void calculateRatios();
+
+  void Write();
+  void Plot(bool saveIt = 0);
 };
 
 #endif
