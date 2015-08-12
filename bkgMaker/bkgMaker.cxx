@@ -3,6 +3,7 @@
 #include <iostream>
 #include "TH1D.h"
 #include "TGraphErrors.h"
+#include "TString.h"
 using namespace std;
 
 class bkgMaker;
@@ -420,6 +421,14 @@ void bkgMaker::Write()
       DCAhists[i][j]->Write();
       ptHists[i][j]->Write();
     }
+  }
+  for (int j =0; j < 20; ++j)
+  {
+    dLengthHists[j]->Write();
+    dLengthBkg[j]->Write();
+
+    cosThetaHists[j]->Write();
+    cosThetaBkg[j]->Write();
   }
   
   for (int j =0; j < 40; ++j)
