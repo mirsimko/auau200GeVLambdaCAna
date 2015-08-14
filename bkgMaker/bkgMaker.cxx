@@ -202,6 +202,7 @@ void bkgMaker::initHists()
 void bkgMaker::fillHistos()
 {
   // filling DCA histograms
+  cout << "Filling DCA histograms" << endl;
   TString DCAparticleName[3] = {"12", "23", "13"};
   TString DCApartBkgName[3] = {"31", "23", "12"};
   for (int i = 0; i < 3; i++)
@@ -223,6 +224,7 @@ void bkgMaker::fillHistos()
   }
 
   // filling pT histograms
+  cout << "Filling pt histograms" << endl;
   TString PtParticleSimName[3] = {"k", "pi", "p"};
   int PtParticleBkgName[3] = {1, 3, 2};
   for(int i = 0; i < 3; i++)
@@ -243,6 +245,7 @@ void bkgMaker::fillHistos()
   }
 
   // filling decay length and cos(theta) histograms
+  cout << "Filling decay length and cos(theta) histograms" << endl;
   for(int j = 0; j < 20; j++)
   {
     TCut dLsimCut = Form("decayLength > %d", (int)dLengthCut[j]);
@@ -286,6 +289,7 @@ void bkgMaker::fillHistos()
 	throw;
 	break;
     }
+    cout << "filling resonance mass histograms" << endl;
     for (int j =0; j < 40; j++)
     {
       TCut resMcutSim = Form("MRResonance > %f && %f > MRResonance",  resMass - resMcut[j], resMass + resMcut[j]);
