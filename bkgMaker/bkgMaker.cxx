@@ -9,8 +9,9 @@ using namespace std;
 class bkgMaker;
 
 // -----------------------------------------------------------
-bkgMaker::bkgMaker(int mDecayMode, TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName)
+bkgMaker::bkgMaker(int mDecayMode, TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName, Long64_t nentries)
 {
+  nEntries = nentries;
   decayMode = (DecayMode)mDecayMode;
   bkgCut = "charges < 0";
   switch ( decayMode )
@@ -101,6 +102,7 @@ void bkgMaker::initHists()
 	throw;
 	break;
     } // switch (i)
+    cout << "filling DCA " << dcaParticles << " histograms" << endl;
 
     for (int j = 0; j < 20; j++)
     {
@@ -210,25 +212,27 @@ void bkgMaker::fillHistos()
     for (int j = 0; j < 20; j++)
     {
       TCut DCAsimCut = Form("dca%s < %d", DCAparticleName[i].Data(), (int)dcaCut[j]);
-      TCut DCAbkgCut = Form("dcaDaughters%s < %d", DCApartBkgName[i].Data(), (int)dcaCut[j]);
+      TCut DCAbkgCut = Form("dcaDaugthers%s < %d", DCApartBkgName[i].Data(), (int)dcaCut[j]);
 
       simTuple->Project(Form("DCAsim%s_%d", DCAparticleName[i].Data(), j),
 	  "rPt",
-	  baseCut && DCAsimCut);
+	  baseCut && DCAsimCut, "", nEntries);
 
 
       bkgTuple->Project(Form("DCAbkg%s_%d", DCAparticleName[i].Data(), j),
 	  "pt",
-	  bkgCut && DCAbkgCut);
+	  bkgCut && DCAbkgCut, "", nEntries);
     }
   }
 
   // filling pT histograms
+  cout << "*******************************************" << endl;
   cout << "Filling pt histograms" << endl;
   TString PtParticleSimName[3] = {"k", "pi", "p"};
   int PtParticleBkgName[3] = {1, 3, 2};
   for(int i = 0; i < 3; i++)
   {
+    cout << "Filling " << PtParticleSimName << " histograms" << endl;
     for(int j =0; j < 20; j++)
     {
       TCut PtSimCut = Form("%sRPti > %f", PtParticleSimName[i].Data(), ptCut[j]);
@@ -236,15 +240,16 @@ void bkgMaker::fillHistos()
 
       simTuple->Project(Form("ptSim%d_%d", i, j),
 	  "rPt",
-	  baseCut && PtSimCut);
+	  baseCut && PtSimCut, "", nEntries);
 
       bkgTuple->Project(Form("ptBkg%d_%d", i, j),
 	  "pt",
-	  bkgCut && PtBkgCut);
+	  bkgCut && PtBkgCut, "", nEntries);
     }
   }
 
   // filling decay length and cos(theta) histograms
+  cout << "*******************************************" << endl;
   cout << "Filling decay length and cos(theta) histograms" << endl;
   for(int j = 0; j < 20; j++)
   {
@@ -256,17 +261,17 @@ void bkgMaker::fillHistos()
 
     simTuple->Project(Form("dLengthSim%d", j),
 	"rPt",
-	baseCut && dLsimCut);
+	baseCut && dLsimCut, "", nEntries);
     bkgTuple->Project(Form("dLengthBkg%d", j),
 	"pt",
-	bkgCut && dLbkgCut);
+	bkgCut && dLbkgCut, "", nEntries);
 
     simTuple->Project(Form("cosThetaSim%d", j),
 	"rPt",
-	baseCut && cosTsimCut);
+	baseCut && cosTsimCut, "", nEntries);
     bkgTuple->Project(Form("cosThetaBkg%d", j),
 	"pt",
-	bkgCut && cosTbkgCut);
+	bkgCut && cosTbkgCut, "", nEntries);
   }
 
   // filling resonance mass histograms
@@ -289,6 +294,7 @@ void bkgMaker::fillHistos()
 	throw;
 	break;
     }
+    cout << "*******************************************" << endl;
     cout << "filling resonance mass histograms" << endl;
     for (int j =0; j < 40; j++)
     {
@@ -297,13 +303,14 @@ void bkgMaker::fillHistos()
 
       simTuple->Project(Form("resMsim%d",j),
 	  "rPt",
-	  baseCut && resMcutSim);
+	  baseCut && resMcutSim, "", nEntries);
       bkgTuple->Project(Form("resMbkg%d",j),
 	  "pt",
-	  bkgCut && resMcutBkg);
+	  bkgCut && resMcutBkg, "", nEntries);
     } // for (int j =0; j < 40; j++)
   } // if (decayMode != kThreeBody)
 
+  cout << "*******************************************" << endl;
 } // void bkgMaker::fillHistos()
 
 // --------------------------------------------------------

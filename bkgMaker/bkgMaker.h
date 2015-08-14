@@ -61,11 +61,13 @@ protected:
   float resMass;
 
   TString outFileBaseName;
+
+  Long64_t nEntries;
   // procedures
   void initHists();
 
 public:
-  bkgMaker(int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios");
+  bkgMaker(int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios", Long64_t nentries = 1000000000);
   
   ~bkgMaker();
 
