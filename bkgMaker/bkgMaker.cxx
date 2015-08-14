@@ -104,7 +104,6 @@ void bkgMaker::initHists()
 	throw;
 	break;
     } // switch (i)
-    cout << "filling DCA " << dcaParticles << " histograms" << endl;
 
     for (int j = 0; j < 20; j++)
     {
@@ -211,6 +210,7 @@ void bkgMaker::fillHistos()
   TString DCApartBkgName[3] = {"31", "23", "12"};
   for (int i = 0; i < 3; i++)
   {
+    cout << "filling DCA " << DCAparticleName[i] << " histograms" << endl;
     for (int j = 0; j < 20; j++)
     {
       TCut DCAsimCut = Form("dca%s < %d", DCAparticleName[i].Data(), (int)dcaCut[j]);
