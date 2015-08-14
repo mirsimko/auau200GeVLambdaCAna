@@ -67,7 +67,7 @@ void bkgRatios(int decayMode=0)
   TFile *outFile = new TFile(Form("%s.root", outFileName.Data()), "RECREATE");
   
   cout << "initiating bkgMaker" << endl;
-  bkgMaker mBkgMaker(decayMode,readF1, readF2, outFile, AllCuts, outFileName.Data());
+  bkgMaker mBkgMaker(decayMode,readF1, readF2, outFile, AllCuts, outFileName.Data(), 100);
 
   cout << "Calculating ratios" << endl;
   mBkgMaker.calculateRatios();

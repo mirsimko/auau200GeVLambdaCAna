@@ -50,17 +50,18 @@ bkgMaker::bkgMaker(int mDecayMode, TFile* mSimFile, TFile* mBkgFile, TFile* mOut
 // -----------------------------------------------------------
 bkgMaker::~bkgMaker()
 {
-  for (int i = 0; i < 3; ++i)
-  {
-    for (int j = 0; j < 20; ++j)
+  /*
+    for (int i = 0; i < 3; ++i)
     {
-      delete DCAhists[i][j];
-      delete DCAbkg[i][j];
+      for (int j = 0; j < 20; ++j)
+      {
+	delete DCAhists[i][j];
+	delete DCAbkg[i][j];
 
-      delete ptHists[i][i];
-      delete ptBkg[i][j];
+	delete ptHists[i][i];
+	delete ptBkg[i][j];
+      }
     }
-  }
   for (int j = 0; j < 20; ++j)
   {
     delete dLengthHists[j];
@@ -74,6 +75,7 @@ bkgMaker::~bkgMaker()
     delete resHists[j];
     delete resBkg[j];
   }
+  */
 }
 // -----------------------------------------------------------
 void bkgMaker::initHists()
@@ -232,10 +234,10 @@ void bkgMaker::fillHistos()
   int PtParticleBkgName[3] = {1, 3, 2};
   for(int i = 0; i < 3; i++)
   {
-    cout << "Filling " << PtParticleSimName << " histograms" << endl;
+    cout << "Filling " << PtParticleSimName[i] << " pT histograms" << endl;
     for(int j =0; j < 20; j++)
     {
-      TCut PtSimCut = Form("%sRPti > %f", PtParticleSimName[i].Data(), ptCut[j]);
+      TCut PtSimCut = Form("%sRPt > %f", PtParticleSimName[i].Data(), ptCut[j]);
       TCut PtBkgCut = Form("p%dpt > %f", PtParticleBkgName[i], ptCut[j]);
 
       simTuple->Project(Form("ptSim%d_%d", i, j),
