@@ -408,21 +408,21 @@ void bkgMaker::Plot(bool saveIt)
   for(int i = 0; i < 3; i++)
   {
     C1->cd(i+1);
-    DCA[i]->Draw();
+    DCA[i]->Draw("AEP");
   }
   C1->cd(4);
-  dLength->Draw();
+  dLength->Draw("AEP");
   TCanvas *C2 = new TCanvas("C2", "", 1200, 900);
   C2->cd(1);
-  cosTheta->Draw();
+  cosTheta->Draw("AEP");
   for (int i = 0; i < 3; i++)
   {
     C2->cd(i+2);
-    pt[i]->Draw();
+    pt[i]->Draw("AEP");
   }
   TCanvas *C3 = new TCanvas("C3", "", 1200, 900);
   C3->cd();
-  resM->Draw();
+  resM->Draw("AEP");
 
   if(saveIt)
   {
@@ -451,10 +451,10 @@ void bkgMaker::Write()
     for (int j = 0; j < 20; ++j)
     {
       DCAhists[i][j]->Write();
-      ptHists[i][j]->Write();
+      DCAbkg[i][j]->Write();
 
-      DCAhists[i][j]->Write();
       ptHists[i][j]->Write();
+      ptBkg[i][j]->Write();
     }
   }
   for (int j =0; j < 20; ++j)
