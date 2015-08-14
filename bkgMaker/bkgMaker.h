@@ -52,11 +52,11 @@ protected:
   DecayMode decayMode;
 
   TCut baseCut;
-  TCut bkgCut = "charges < 0";
+  TCut bkgCut;
 
-  const float KstarMass = 0.89610;
-  const float LambdaMass = 1.51950;
-  const float DeltaPPMass = 1.231;
+  static const float KstarMass = 0.89610;
+  static const float LambdaMass = 1.51950;
+  static const float DeltaPPMass = 1.231;
 
   float resMass;
 
@@ -65,14 +65,12 @@ protected:
   void initHists();
 
 public:
-  bkgMaker(int mDecayMode);
-  bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, int mDecayMode);
-  bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName, int mDecayMode);
+  bkgMaker(int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios");
   
   ~bkgMaker();
 
-  void SetSimFile(TFile* mSimFile){simFile = mSimFile; simTuple = mSimFile->Get("nt");}
-  void SetBkgFile(TFile* mBkgFile){bkgFile = mBkgFile; bkgTuple = mBkgFile->Get("secondary");}
+  void SetSimFile(TFile* mSimFile){simFile = mSimFile; simTuple = (TNtuple*)mSimFile->Get("nt");}
+  void SetBkgFile(TFile* mBkgFile){bkgFile = mBkgFile; bkgTuple = (TNtuple*)mBkgFile->Get("secondary");}
   void SetOutFile(TFile* mOutFile){outFile = mOutFile;}
   void SetOutFileBasename(const char* name){outFileBaseName = name;}
 

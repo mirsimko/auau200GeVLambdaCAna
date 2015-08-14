@@ -9,10 +9,10 @@ using namespace std;
 class bkgMaker;
 
 // -----------------------------------------------------------
-bkgMaker::bkgMaker(int mDecayMode)
+bkgMaker::bkgMaker(int mDecayMode, TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName)
 {
   decayMode = (DecayMode)mDecayMode;
-
+  bkgCut = "charges < 0";
   switch ( decayMode )
   {
     case kKstar:
@@ -33,24 +33,46 @@ bkgMaker::bkgMaker(int mDecayMode)
       break;
   }
 
+  if(mOutFileBaseName)
+    SetOutFileBasename(mOutFileBaseName);
+  if(mBkgFile && mBkgFile->IsOpen())
+    SetBkgFile(mBkgFile);
+  if(mSimFile && mSimFile->IsOpen())
+    SetSimFile(mSimFile);
+  if (mOutFile && mOutFile->IsOpen())
+    SetOutFile(mOutFile);
+  if (mBaseCut)
+    SetBaseCut(mBaseCut);
+
   initHists();
 }
-
 // -----------------------------------------------------------
-bkgMaker::bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, int mDecayMode)
+bkgMaker::~bkgMaker()
 {
-  bkgMaker(mDecayMode);
+  for (int i = 0; i < 3; ++i)
+  {
+    for (int j = 0; j < 20; ++j)
+    {
+      delete DCAhists[i][j];
+      delete DCAbkg[i][j];
 
-  SetBkgFile(mBkgFile);
-  SetSimFile(mSimFile);
-  SetOutFile(mOutFile);
-  SetBaseCut(mBaseCut);
-}
+      delete ptHists[i][i];
+      delete ptBkg[i][j];
+    }
+  }
+  for (int j = 0; j < 20; ++j)
+  {
+    delete dLengthHists[j];
+    delete dLengthBkg[j];
 
-bkgMaker::bkgMaker(TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char *mOutFileBaseName, int mDecayMode)
-{
-  bkgMaker(mSimFile,mBkgFile, mOutFile, mBaseCut, mDecayMode);
-  SetOutFileBasename(mOutFileBaseName);
+    delete cosThetaHists[j];
+    delete cosThetaBkg[j];
+  }
+  for (int j = 0; j < 40; ++j)
+  {
+    delete resHists[j];
+    delete resBkg[j];
+  }
 }
 // -----------------------------------------------------------
 void bkgMaker::initHists()
@@ -68,7 +90,7 @@ void bkgMaker::initHists()
 	break;
       case 1:
 	dcaNParticles = "23";
-	dcaParticles = "#pi p"
+	dcaParticles = "#pi p";
 	break;
       case 2:
 	dcaNParticles = "13";
@@ -207,7 +229,7 @@ void bkgMaker::fillHistos()
   {
     for(int j =0; j < 20; j++)
     {
-      TCut PtSimCut = Form("%sRPti > %f", PtParticleSimName[i], ptCut[j]);
+      TCut PtSimCut = Form("%sRPti > %f", PtParticleSimName[i].Data(), ptCut[j]);
       TCut PtBkgCut = Form("p%dpt > %f", PtParticleBkgName[i], ptCut[j]);
 
       simTuple->Project(Form("ptSim%d_%d", i, j),
@@ -295,8 +317,8 @@ void bkgMaker::calculateRatios()
     {
       double errSim;
       double errBkg;
-      double intgSim = DCAhists[i][j]->IntegralAndError(1,100,& errSim);
-      double intgBkg = DCAbkgCut[i][j]->IntegralAndError(1,100,& errBkg);
+      double intgSim = DCAhists[i][j]->IntegralAndError(1,100, errSim);
+      double intgBkg = DCAbkg[i][j]->IntegralAndError(1,100, errBkg);
 
       ratio[i][j] = intgSim/intgBkg;
       err[i][j] = ratio[i][j]*TMath::Sqrt(errSim*errSim/(intgSim*intgSim) + errBkg*errBkg/(intgBkg*intgBkg));
@@ -314,14 +336,14 @@ void bkgMaker::calculateRatios()
     {
       double errSim;
       double errBkg;
-      double intgSim = ptHists[i][j]->IntegralAndError(1,100, &errSim);
-      double intgBkg = ptBkg[i][j]->IntegralAndError(1,100, &errBkg);
+      double intgSim = ptHists[i][j]->IntegralAndError(1,100, errSim);
+      double intgBkg = ptBkg[i][j]->IntegralAndError(1,100, errBkg);
 
       ratioPt[i][j] = intgSim/intgBkg;
       errPt[i][j] = ratioPt[i][j]*TMath::Sqrt(errSim*errSim/(intgSim*intgSim) + errBkg*errBkg/(intgBkg*intgBkg));
     }
     pt[i] = new TGraphErrors(20, ptCut, ratioPt[i], 0, errPt[i]);
-    pt[i]->SetNameTitle(Form("%sPt"), Form("%s p_{T}"));
+    pt[i]->SetNameTitle(Form("%sPt",particleDefinitions[i].Data()), Form("%s p_{T}",particleDefinitions[i].Data()));
   }
 
   double ratioDL[20];
@@ -332,14 +354,14 @@ void bkgMaker::calculateRatios()
   {
     double errSim;
     double errBkg;
-    double intgSim = dLengthHists[j]->IntegralAndError(1,100, &errSim);
-    double intgBkg = dLengthBkg[j]->IntegralAndError(1, 100, &errBkg);
+    double intgSim = dLengthHists[j]->IntegralAndError(1,100, errSim);
+    double intgBkg = dLengthBkg[j]->IntegralAndError(1, 100, errBkg);
 
     ratioDL[j] = intgSim/intgBkg;
     errDL[j] = ratioDL[j]*TMath::Sqrt(errSim*errSim/(intgSim*intgSim) + errBkg*errBkg/(intgBkg*intgBkg));
 
-    intgSim = cosThetaHists[j]->IntegralAndError(1,100, &errSim);
-    intgBkg = cosThetaBkg[j]->IntegralAndError(1,100, &errBkg);
+    intgSim = cosThetaHists[j]->IntegralAndError(1,100, errSim);
+    intgBkg = cosThetaBkg[j]->IntegralAndError(1,100, errBkg);
 
     ratioCosT[j] = intgSim/intgBkg;
     errCosT[j] = ratioCosT[j]*TMath::Sqrt(errSim*errSim/(intgSim*intgSim) + errBkg*errBkg/(intgBkg*intgBkg));
@@ -347,7 +369,7 @@ void bkgMaker::calculateRatios()
   dLength = new TGraphErrors(20, dLengthCut, ratioDL, 0, errDL);
   cosTheta = new TGraphErrors(20, cosThetaCut, ratioCosT, 0, errCosT);
   dLength->SetNameTitle("dLength", "decay length cut");
-  cosTheta->SetNameTitle("cosTheta", "cos(#theta*)")
+  cosTheta->SetNameTitle("cosTheta", "cos(#theta*)");
 
   double ratioRM[40];
   double errRM[40];
@@ -362,14 +384,14 @@ void bkgMaker::calculateRatios()
     errRM[j] = ratioRM[j]*TMath::Sqrt(errSim*errSim/(intgSim*intgSim) + errBkg*errBkg/(intgBkg*intgBkg));
   }
   resM = new TGraphErrors(40, resMcut, ratioRM, 0, errRM);
-  resM->SetNameTitle("resM", "cut on resonance mass")
+  resM->SetNameTitle("resM", "cut on resonance mass");
 }
 
 // --------------------------------------------------------
 void bkgMaker::Plot(bool saveIt)
 {
   TCanvas *C1 = new TCanvas("C1", "", 1200, 900);
-  C1->Divide(2,2)
+  C1->Divide(2,2);
   for(int i = 0; i < 3; i++)
   {
     C1->cd(i+1);
@@ -385,7 +407,7 @@ void bkgMaker::Plot(bool saveIt)
     C2->cd(i+2);
     pt[i]->Draw();
   }
-  TCanvas C3 = new TCanvas("C3", "", 1200, 900);
+  TCanvas *C3 = new TCanvas("C3", "", 1200, 900);
   C3->cd();
   resM->Draw();
 
@@ -409,7 +431,7 @@ void bkgMaker::Write()
   dLength->Write();
   cosTheta->Write();
   resM->Write();
-  for (int =0; i < 3; ++i)
+  for (int i = 0; i < 3; ++i)
   {
     DCA[i]->Write();
     pt[i]->Write();
