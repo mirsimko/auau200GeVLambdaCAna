@@ -84,10 +84,13 @@ float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4
 TH1D *nBinCent;
 float const nBin[nCent] = {1012, 805, 577, 365, 221, 127, 66.8, 32.4, 15.};
 
+float const Dyield = 0.704442; /*D0 yiield per event*/ 
+float const LambdaDratio = 0.2;/*ratio between Lambda_c and D0*/ 
+
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
 //============== main  program ==================
-void toyMcEffLambdaC( int npart = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
+void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
 {
    DecayMode mDecayMode = (DecayMode) modeOfDecay;   
    outFileName = outFile;
@@ -105,6 +108,7 @@ void toyMcEffLambdaC( int npart = 100, const char* outFile = "lambdaC.root", int
    // TPythia6::Instance()->Pylist(12); // this is for writing the Decay table to std_out
 
    // selecting decay channels
+   double branchingRatio;
    switch(mDecayMode)
    {
      case kKstarProton:
@@ -113,24 +117,33 @@ void toyMcEffLambdaC( int npart = 100, const char* outFile = "lambdaC.root", int
        TPythia6::Instance()->SetMDME(619,1,0);
 
        setDecayChannels(4294);
+
+       branchingRatio = 0.016;
        break;
      case kLambda1520Pion:
        TPythia6::Instance()->SetMDME(4276,1,1);
 
        setDecayChannels(4344);
+
+       branchingRatio = 0.018;
        break;
      case kDeltaPPkaon:
        TPythia6::Instance()->SetMDME(1052,1,1);
 
        setDecayChannels(4291);
+
+       branchingRatio = 0.0086;
        break;
      case kPionKaonProton:
        setDecayChannels(4343);
+
+       branchingRatio = 0.028;
        break;
      default:
        break;       
    }
 
+   double npart = Dyield * LambdaDratio * branchingRatio * nEvts;
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
