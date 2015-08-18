@@ -83,7 +83,7 @@ float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4
 
 // centrality and p_T distributions
 TH1D *nBinCent;
-float const nBin[nCent] = {1012, 15., 805, 577, 365, 221, 127, 66.8, 32.4};
+float const nBin[nCent] = {1012, 805, 577, 365, 221, 127, 66.8, 32.4, 15.};
 TF1* fLevy;
 
 float const Dyield = 0.704442; /*D0 yiield per event*/ 
