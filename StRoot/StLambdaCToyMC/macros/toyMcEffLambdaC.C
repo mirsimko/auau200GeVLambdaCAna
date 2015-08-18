@@ -316,6 +316,11 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
 
 void getKinematics(TLorentzVector& b, double const mass)
 {
+   TF1* fLevy = new TF1("fLevy", "[0]*TMath::Exp(-[1]/(x-[3]))*TMath::Power(x-[3],1-[2])",0, 6);
+   // in latex: $A  \left( \frac{\mu}{x-\phi} \right)^{1-\alpha} \exp \left(- \frac{\mu}{x-\phi}\right)$
+   // parameters: A = 8.17808e+06, \mu = 1.92432e+01, \alpha = 1.39339e+01, \phi = -9.04949e-01
+   fLevy->SetPArameters(8.17808e+06, 1.92432e+01, 1.39339e+01, -9.04949e-01);
+
    float const pt = gRandom->Uniform(momentumRange.first, momentumRange.second);
    float const y = gRandom->Uniform(-acceptanceEta, acceptanceEta);
    float const phi = TMath::TwoPi() * gRandom->Rndm();
