@@ -81,6 +81,9 @@ float const sigmaPos0 = 15.2;
 float const pxlLayer1Thickness = 0.00486;
 float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4.};
 
+TH1D *nBinCent;
+float const nBin = {1012, 805, 577, 365, 221, 127, 66.8, 32.4, 15.};
+
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
 //============== main  program ==================
@@ -193,7 +196,7 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    TLorentzVector const piRMom = smearMom(piMom, fPionMomResolution);
    TLorentzVector const pRMom = smearMom(pMom, fPionMomResolution);
 
-   int const cent = floor(nCent * gRandom->Rndm());
+   int const cent = floor(nBinCent->GetRandom());
    // smear position
    TVector3 const kRPos = smearPosData(cent, kRMom, v00);
    TVector3 const piRPos = smearPosData(cent, piRMom, v00);
@@ -316,12 +319,16 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
 
 void getKinematics(TLorentzVector& b, double const mass)
 {
-   TF1* fLevy = new TF1("fLevy", "[0]*TMath::Exp(-[1]/(x-[3]))*TMath::Power(x-[3],1-[2])",0, 6);
+   TF1* fLevy = new TF1("fLevy", "[0]*TMath::Exp(-[1]/(x-[3]))*TMath::Power(x-[3],1-[2])*x",0, 15);
    // in latex: $A  \left( \frac{\mu}{x-\phi} \right)^{1-\alpha} \exp \left(- \frac{\mu}{x-\phi}\right)$
    // parameters: A = 8.17808e+06, \mu = 1.92432e+01, \alpha = 1.39339e+01, \phi = -9.04949e-01
+   //
+   // this was fitted from published D0 data
+   // The additional p_T is from Jacobian
+   //
    fLevy->SetPArameters(8.17808e+06, 1.92432e+01, 1.39339e+01, -9.04949e-01);
 
-   float const pt = gRandom->Uniform(momentumRange.first, momentumRange.second);
+   float const pt = fLevy->GetRandom();
    float const y = gRandom->Uniform(-acceptanceEta, acceptanceEta);
    float const phi = TMath::TwoPi() * gRandom->Rndm();
 
@@ -449,6 +456,13 @@ void bookObjects()
 
    fHftRatio.Close();
    fDca.Close();
+
+   // setting the centrality dependence histogram
+   nBinCent = new TH1D("nBinCent", "Number of bins vs centrality", nCent, 0, nCent);
+   for (int i = 0; i < nCent; ++i)   
+   {
+      nBinCent->SetBinContent(i+1, nBin[i]);
+   }
 }
 //___________
 void write()
