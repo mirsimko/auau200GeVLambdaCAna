@@ -81,8 +81,10 @@ float const sigmaPos0 = 15.2;
 float const pxlLayer1Thickness = 0.00486;
 float const sigmaVertexCent[nCent] = {31., 18.1, 12.8, 9.3, 7.2, 5.9, 5., 4.6, 4.};
 
+// centrality and p_T distributions
 TH1D *nBinCent;
-float const nBin[nCent] = {1012, 805, 577, 365, 221, 127, 66.8, 32.4, 15.};
+float const nBin[nCent] = {1012, 15., 805, 577, 365, 221, 127, 66.8, 32.4};
+TF1* fLevy;
 
 float const Dyield = 0.704442; /*D0 yiield per event*/ 
 float const LambdaDratio = 0.2;/*ratio between Lambda_c and D0*/ 
@@ -92,6 +94,9 @@ enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kL
 //============== main  program ==================
 void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
 {
+   // int stop;
+   // cin >> stop;
+
    DecayMode mDecayMode = (DecayMode) modeOfDecay;   
    outFileName = outFile;
    
@@ -143,12 +148,14 @@ void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int
        break;       
    }
 
-   double npart = Dyield * LambdaDratio * branchingRatio * nEvts;
+   double npart = Dyield * LambdaDratio * branchingRatio * nEvts - 1;
+   cout << "Number of produced Lambda_C: " << (int) floor(npart) << endl;
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
    for (int ipart = 0; ipart < npart; ipart++)
    {
+      // cout << "creating Lambda_c number: " << ipart << endl;
       if (!(ipart % 100000))
          cout << "____________ ipart = " << ipart << " ________________" << endl;
 
@@ -210,6 +217,12 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    TLorentzVector const pRMom = smearMom(pMom, fPionMomResolution);
 
    int const cent = floor(nBinCent->GetRandom());
+   // cout << "centrality: " << cent << endl;
+   // if (cent == 9)
+   //   cout << "centrality bin 9" << endl;
+   // if (cent == 0)
+   //   cout << "centrality bin 0" << endl;
+
    // smear position
    TVector3 const kRPos = smearPosData(cent, kRMom, v00);
    TVector3 const piRPos = smearPosData(cent, piRMom, v00);
@@ -332,16 +345,8 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
 
 void getKinematics(TLorentzVector& b, double const mass)
 {
-   TF1* fLevy = new TF1("fLevy", "[0]*TMath::Exp(-[1]/(x-[3]))*TMath::Power(x-[3],1-[2])*x",0, 15);
-   // in latex: $A  \left( \frac{\mu}{x-\phi} \right)^{1-\alpha} \exp \left(- \frac{\mu}{x-\phi}\right)$
-   // parameters: A = 8.17808e+06, \mu = 1.92432e+01, \alpha = 1.39339e+01, \phi = -9.04949e-01
-   //
-   // this was fitted from published D0 data
-   // The additional p_T is from Jacobian
-   //
-   fLevy->SetParameters(8.17808e+06, 1.92432e+01, 1.39339e+01, -9.04949e-01);
-
    float const pt = fLevy->GetRandom();
+   // cout << "pt: " << pt << endl;
    float const y = gRandom->Uniform(-acceptanceEta, acceptanceEta);
    float const phi = TMath::TwoPi() * gRandom->Rndm();
 
@@ -476,6 +481,17 @@ void bookObjects()
    {
       nBinCent->SetBinContent(i+1, nBin[i]);
    }
+
+   // p_T spectrum
+   fLevy = new TF1("fLevy", "[0]*TMath::Exp(-[1]/(x-[3]))*TMath::Power(x-[3],1-[2])*x", momentumRange.first, momentumRange.second);
+   // in latex: $A  \left( \frac{\mu}{x-\phi} \right)^{1-\alpha} \exp \left(- \frac{\mu}{x-\phi}\right)$
+   // parameters: A = 8.17808e+06, \mu = 1.92432e+01, \alpha = 1.39339e+01, \phi = -9.04949e-01
+   //
+   // this was fitted from published D0 data
+   // The additional p_T is from Jacobian
+   //
+   fLevy->SetParameters(8.17808e+06, 1.92432e+01, 1.39339e+01, -9.04949e-01);
+
 }
 //___________
 void write()
