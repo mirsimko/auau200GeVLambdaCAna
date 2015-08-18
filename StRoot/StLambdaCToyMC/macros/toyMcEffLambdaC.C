@@ -326,7 +326,7 @@ void getKinematics(TLorentzVector& b, double const mass)
    // this was fitted from published D0 data
    // The additional p_T is from Jacobian
    //
-   fLevy->SetPArameters(8.17808e+06, 1.92432e+01, 1.39339e+01, -9.04949e-01);
+   fLevy->SetParameters(8.17808e+06, 1.92432e+01, 1.39339e+01, -9.04949e-01);
 
    float const pt = fLevy->GetRandom();
    float const y = gRandom->Uniform(-acceptanceEta, acceptanceEta);
