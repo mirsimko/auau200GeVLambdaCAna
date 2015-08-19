@@ -40,7 +40,7 @@
 #include "StPicoHFLambdaCMaker/StPicoHFLambdaCMaker.h"
 #include "StPicoHFMyAnaMaker/StPicoHFMyAnaMaker.h"
 
-#include "loadSharedHFLibraries.C"
+#include "macros/loadSharedHFLibraries.C"
 
 #else
 class StChain;
@@ -48,7 +48,7 @@ class StChain;
 
 StChain *chain;
 
-void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", const unsigned int makerMode = 0 /*kAnalyze*/, 
+void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", const unsigned int makerMode = 1 /*kWrite*/, 
        	                   const Char_t *badRunListFileName = "picoList_bad_MB.list", const Char_t *treeName = "picoHFtree",
 			   const Char_t *productionBasePath = "/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic",
 			   const unsigned int decayChannel = 0 /* kPionKaonProton */) { 
@@ -64,7 +64,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   //  bool useMC = true;
 
 
-  Int_t nEvents = 10000000;
+  Int_t nEvents = 100;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
@@ -240,7 +240,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutPionPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
-    hfCuts->setCutPionPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutPionPtotRangeTOF(0.3, 999.);
       
     hfCuts->setCutProtonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaProton(3);

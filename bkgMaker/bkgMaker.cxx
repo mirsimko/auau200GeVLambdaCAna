@@ -408,20 +408,26 @@ void bkgMaker::Plot(bool saveIt)
   for(int i = 0; i < 3; i++)
   {
     C1->cd(i+1);
+    DCA[i]->SetMarkerStyle(24);
     DCA[i]->Draw("AEP");
   }
   C1->cd(4);
+  dLength->SetMarkerStyle(24);
   dLength->Draw("AEP");
   TCanvas *C2 = new TCanvas("C2", "", 1200, 900);
+  C2->Divide(2,2);
   C2->cd(1);
+  cosTheta->SetMarkerStyle(24);
   cosTheta->Draw("AEP");
   for (int i = 0; i < 3; i++)
   {
     C2->cd(i+2);
+    pt[i]->SetMarkerStyle(24);
     pt[i]->Draw("AEP");
   }
   TCanvas *C3 = new TCanvas("C3", "", 1200, 900);
   C3->cd();
+  resM->SetMarkerStyle(24)
   resM->Draw("AEP");
 
   if(saveIt)

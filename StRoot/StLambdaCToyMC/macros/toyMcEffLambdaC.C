@@ -142,7 +142,7 @@ void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int
      case kPionKaonProton:
        setDecayChannels(4343);
 
-       branchingRatio = 0.028;
+       branchingRatio = 0.05;
        break;
      default:
        break;       
