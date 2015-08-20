@@ -65,6 +65,7 @@ void bkgRatios(int analysisMode=0, int decayMode=0)
       break;
   }
   TFile *readF2 = new TFile("../kPionKaonProton.root");
+  outFileName += analysisMode;
   TFile *outFile = new TFile(Form("%s.root", outFileName.Data()), "RECREATE");
   
   cout << "initiating bkgMaker" << endl;
