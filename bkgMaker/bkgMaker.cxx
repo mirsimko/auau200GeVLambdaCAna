@@ -564,8 +564,8 @@ void bkgMaker::Plot(bool saveIt)
     }
     TCanvas *C3 = new TCanvas("C3", "", 1200, 900);
     C3->cd();
-    resM->SetMarkerStyle(24)
-      resM->Draw("AEP");
+    resM->SetMarkerStyle(24);
+    resM->Draw("AEP");
 
     if(saveIt)
     {

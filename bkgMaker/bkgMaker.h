@@ -12,11 +12,6 @@
 
 class bkgMaker
 {
-public:
-  enum DecayMode{kKstar, kLambda, kDelta, kThreeBody};
-  enum Analysis{kAll, kDCA, kPt, kDLengthCosTheta, kResM}
-  
-protected:
   // members
   TH1D *DCAhists[3][20];
   TH1D *dLengthHists[20];
@@ -84,7 +79,10 @@ protected:
   void calcDLcosT();
   void calcRM();
 public:
-  bkgMaker(int analysisMode = 0, int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios", Long64_t nentries = 10000000000);
+  enum DecayMode{kKstar, kLambda, kDelta, kThreeBody};
+  enum Analysis{kAll, kDCA, kPt, kDLengthCosTheta, kResM}
+
+  bkgMaker(int analysisMode = 0, int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios", Long64_t nentries = 1000000000);
   
   ~bkgMaker();
 
