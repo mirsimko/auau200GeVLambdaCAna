@@ -40,23 +40,23 @@ void bkgRatios(int analysisMode=0, int decayMode=0)
   switch(dm)
   {
     case kKstar:
-      readF1 = new TFile("lambdaCkKstarProton.root");
-      outFileName = "lambdaCRatioskKstarProton";
+      readF1 = new TFile( Form("lambdaCkKstarProton%d.root", analysisMode));
+      outFileName = Form("lambdaCRatioskKstarProton%d", analysisMode);
       decayName = "K* p";
       break;
     case kLambda:
-      readF1 = new TFile("lambdaCkLambda1520Pion.root");
-      outFileName = "lambdaCRatioskLambda1520Pion";
+      readF1 = new TFile(Form("lambdaCkLambda1520Pion%d.root", analysisMode) );
+      outFileName = Form("lambdaCRatioskLambda1520Pion%d", analysisMode) ;
       decayName = "#Lambda(1520) #pi";
       break;
     case kDelta:
-      readF1 = new TFile("lambdaCkDeltaPPkaon.root");
-      outFileName = "lambdaCRatioskDeltaPPkaon";
+      readF1 = new TFile(Form("lambdaCkDeltaPPkaon%d.root", analysisMode) );
+      outFileName = Form("lambdaCRatioskDeltaPPkaon%d", analysisMode) ;
       decayName = "#Delta^{++} K";
       break;
     case kThreeBody:
-      readF1 = new TFile("lambdaCkPionKaonProton.root");
-      outFileName = "lambdaCRatioskPionKaonProton";
+      readF1 = new TFile(Form("lambdaCkPionKaonProton%d.root", analysisMode) );
+      outFileName = Form("lambdaCRatioskPionKaonProton%d", analysisMode) ;
       decayName = "#pi K p";
       break;
     default:
