@@ -14,6 +14,7 @@ class bkgMaker
 {
 public:
   enum DecayMode{kKstar, kLambda, kDelta, kThreeBody};
+  enum Analysis{kAll, kDCA, kPt, kDLengthCosTheta, kResM}
   
 protected:
   // members
@@ -50,6 +51,8 @@ protected:
   TFile* outFile;
 
   DecayMode decayMode;
+  Analysis anaMode;
+
 
   TCut baseCut;
   TCut bkgCut;
@@ -63,11 +66,25 @@ protected:
   TString outFileBaseName;
 
   Long64_t nEntries;
-  // procedures
+  // protected procedures
   void initHists();
 
+  void initDCAhists();
+  void initPtHists();
+  void initDlengthCosThists();
+  void initRMhists();
+
+  void fillDCA();
+  void fillPt();
+  void fillDLcosT();
+  void fillRM();
+
+  void calcDCA();
+  void calcPt();
+  void calcDLcosT();
+  void calcRM();
 public:
-  bkgMaker(int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios", Long64_t nentries = 10000000000);
+  bkgMaker(int analysisMode = 0, int mDecayMode = 3, TFile* mSimFile = 0, TFile* mBkgFile = 0, TFile* mOutFile = 0, TCut mBaseCut = "", const char* mOutFileBaseName = "LambdaCratios", Long64_t nentries = 10000000000);
   
   ~bkgMaker();
 

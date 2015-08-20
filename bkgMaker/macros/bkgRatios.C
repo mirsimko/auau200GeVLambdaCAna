@@ -32,7 +32,8 @@ void bkgRatios(int decayMode=0)
   TCut cosThetaCut = "cosTheta > 0.98";
   TCut HftCut = "pHft > 0.5 && kHft > 0.5 && piHft > 0.5";
   TCut MassCut = "rM > 2. && rM < 2.5";
-  TCut AllCuts = PtCut && dcaCut && dLengthCut && cosThetaCut && HftCut && MassCut;
+  TCut EtaCut = "TMath::Abs(pREta) < 1. && TMath::Abs(piREta) < 1. && TMath::Abs(kREta) < 1.";
+  TCut AllCuts = PtCut && dcaCut && dLengthCut && cosThetaCut && HftCut && MassCut && EtaCut;
 
   // getting the Ntuple and setting variables for all decay modes
   TFile *readF1;

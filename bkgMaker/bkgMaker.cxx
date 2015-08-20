@@ -9,10 +9,11 @@ using namespace std;
 class bkgMaker;
 
 // -----------------------------------------------------------
-bkgMaker::bkgMaker(int mDecayMode, TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName, Long64_t nentries)
+bkgMaker::bkgMaker(int analysisMode, int mDecayMode, TFile* mSimFile, TFile* mBkgFile, TFile* mOutFile, TCut mBaseCut, const char* mOutFileBaseName, Long64_t nentries)
 {
   nEntries = nentries;
   decayMode = (DecayMode)mDecayMode;
+  anaMode = (Analysis) analysisMode;
   bkgCut = "charges < 0";
   switch ( decayMode )
   {
@@ -78,7 +79,39 @@ bkgMaker::~bkgMaker()
   */
 }
 // -----------------------------------------------------------
+// -----------------------------------------------------------
+// -----------------------------------------------------------
 void bkgMaker::initHists()
+{
+  switch (anaMode)
+  {
+    case kAll:
+      initDCAhists();
+      initPtHists();
+      initDlengthCosThists();
+      initRMhists();
+      break;
+    case kDCA:
+      initDCAhists();
+      break;
+    case kPt:
+      initPtHists();
+      break;
+    case kDLengthCosTheta:
+      initDlengthCosThists();
+      break;
+    case kResM:
+      initRMhists();
+      break;
+    default:
+      cerr << "bkgMaker::initHists(): unknown analysis mode" << endl;
+      throw;
+      break;
+  }
+} // void bkgMaker::initHists()
+
+// -----------------------------------------------------------
+void bkgMaker::initDCAhists()
 {
   // create DCA histograms
   for (int i = 0; i < 3; i++)
@@ -104,7 +137,7 @@ void bkgMaker::initHists()
 	throw;
 	break;
     } // switch (i)
-
+  
     for (int j = 0; j < 20; j++)
     {
       dcaCut[j] = j*10 + 10;
@@ -119,7 +152,11 @@ void bkgMaker::initHists()
       DCAbkg[i][j]->Sumw2();
     } //for (int j = 0; j < 20; j++) 
   } //for (int i = 0; i < 3; i++) 
+}
 
+// -----------------------------------------------------------
+void bkgMaker::initPtHists()
+{
   // create pt histograms
   for (int i = 0; i < 3; i++)
   {
@@ -157,7 +194,11 @@ void bkgMaker::initHists()
       ptBkg[i][j]->Sumw2();
     } // for(int j = 0; j < 20; j++)
   } // for (int i = 0; i < 3; i++)
+}
 
+// -----------------------------------------------------------
+void bkgMaker::initDlengthCosThists()
+{
   // create decay length and cos(Theta) histograms
   for (int j = 0; j < 20; j++)
   {
@@ -184,7 +225,11 @@ void bkgMaker::initHists()
 	100, 0, 13);
     cosThetaBkg[j]->Sumw2();
   } // for (int j = 0; j < 20; j++)
+}
 
+// -----------------------------------------------------------
+void bkgMaker::initRMhists()
+{
   // create resonance mass histograms 
   for (int j = 0; j < 40; j++)
   {
@@ -199,10 +244,43 @@ void bkgMaker::initHists()
 	100, 0, 13);
     resBkg[j]->Sumw2();
   } // for (int j = 0; j < 40; j++)
-} // void bkgMaker::initHists()
+}
 
 // -----------------------------------------------------------
+// -----------------------------------------------------------
+// -----------------------------------------------------------
 void bkgMaker::fillHistos()
+{
+  cout << "*******************************************" << endl;
+  switch (anaMode)
+  {
+    case kAll:
+      fillDCA();
+      fillPt();
+      fillDLcosT();
+      fillRM();
+      break;
+    case kDCA:
+      fillDCA();
+      break;
+    case kPt:
+      fillPt();
+      break;
+    case kDLengthCosTheta:
+      fillDLcosT();
+      break;
+    case kResM:
+      fillRM();
+      break;
+    default:
+      cerr << "bkgMaker::fillHistos(): unknown analysis mode" << endl;
+      throw;
+      break;
+  }
+  cout << "*******************************************" << endl;
+} // void bkgMaker::fillHistos()
+
+void bkgMaker::fillDCA()
 {
   // filling DCA histograms
   cout << "Filling DCA histograms" << endl;
@@ -226,7 +304,11 @@ void bkgMaker::fillHistos()
 	  bkgCut && DCAbkgCut, "", nEntries);
     }
   }
+}
+// -----------------------------------------------------------
 
+void bkgMaker::fillPt()
+{
   // filling pT histograms
   cout << "*******************************************" << endl;
   cout << "Filling pt histograms" << endl;
@@ -249,7 +331,11 @@ void bkgMaker::fillHistos()
 	  bkgCut && PtBkgCut, "", nEntries);
     }
   }
+}
+// -----------------------------------------------------------
 
+void bkgMaker::fillDLcosT()
+{
   // filling decay length and cos(theta) histograms
   cout << "*******************************************" << endl;
   cout << "Filling decay length and cos(theta) histograms" << endl;
@@ -275,7 +361,11 @@ void bkgMaker::fillHistos()
 	"pt",
 	bkgCut && cosTbkgCut, "", nEntries);
   }
+}
+// -----------------------------------------------------------
 
+void bkgMaker::fillRM()
+{
   // filling resonance mass histograms
   if (decayMode != kThreeBody)
   {
@@ -312,14 +402,45 @@ void bkgMaker::fillHistos()
     } // for (int j =0; j < 40; j++)
   } // if (decayMode != kThreeBody)
 
-  cout << "*******************************************" << endl;
-} // void bkgMaker::fillHistos()
+}
 
+// -----------------------------------------------------------
+// -----------------------------------------------------------
 // --------------------------------------------------------
 void bkgMaker::calculateRatios()
 {
   fillHistos();
 
+  switch (anaMode)
+  {
+    case kAll:
+      calcDCA();
+      calcPt();
+      calcDLcosT();
+      calcRM();
+      break;
+    case kDCA:
+      calcDCA();
+      break;
+    case kPt:
+      calcPt();
+      break;
+    case kDLengthCosTheta:
+      calcDLcosT();
+      break;
+    case kResM:
+      calcRM();
+      break;
+    default:
+      cerr << "bkgMaker::calculateRatios(): unknown analysis mode" << endl; 
+      throw;
+      break;
+  }
+}
+// --------------------------------------------------------
+
+void bkgMaker::calcDCA()
+{
   double ratio[3][20];
   double err[3][20];
   TString particleSpecies[3] = {"K #pi", "#pi p", "K p"};
@@ -339,7 +460,11 @@ void bkgMaker::calculateRatios()
     DCA[i] = new TGraphErrors(20, dcaCut, ratio[i], 0, err[i]);
     DCA[i]->SetNameTitle(Form("DCA%s", particleNames[i].Data()), Form("DCA %s", particleSpecies[i].Data()));
   }
+}
 
+// --------------------------------------------------------
+void bkgMaker::calcPt()
+{
   double ratioPt[3][20];
   double errPt[3][20];
   TString particleDefinitions[3] = {"K", "pi", "p"};
@@ -358,7 +483,11 @@ void bkgMaker::calculateRatios()
     pt[i] = new TGraphErrors(20, ptCut, ratioPt[i], 0, errPt[i]);
     pt[i]->SetNameTitle(Form("%sPt",particleDefinitions[i].Data()), Form("%s p_{T}",particleDefinitions[i].Data()));
   }
+}
 
+// --------------------------------------------------------
+void bkgMaker::calcDLcosT()
+{
   double ratioDL[20];
   double errDL[20];
   double ratioCosT[20];
@@ -383,7 +512,11 @@ void bkgMaker::calculateRatios()
   cosTheta = new TGraphErrors(20, cosThetaCut, ratioCosT, 0, errCosT);
   dLength->SetNameTitle("dLength", "decay length cut");
   cosTheta->SetNameTitle("cosTheta", "cos(#theta*)");
+}
+// --------------------------------------------------------
 
+void bkgMaker::calcRM()
+{
   double ratioRM[40];
   double errRM[40];
   for (int j = 0; j < 40; ++j)
@@ -401,80 +534,148 @@ void bkgMaker::calculateRatios()
 }
 
 // --------------------------------------------------------
+// --------------------------------------------------------
+// --------------------------------------------------------
 void bkgMaker::Plot(bool saveIt)
 {
-  TCanvas *C1 = new TCanvas("C1", "", 1200, 900);
-  C1->Divide(2,2);
-  for(int i = 0; i < 3; i++)
+  if(anaMode == kAll)
   {
-    C1->cd(i+1);
-    DCA[i]->SetMarkerStyle(24);
-    DCA[i]->Draw("AEP");
-  }
-  C1->cd(4);
-  dLength->SetMarkerStyle(24);
-  dLength->Draw("AEP");
-  TCanvas *C2 = new TCanvas("C2", "", 1200, 900);
-  C2->Divide(2,2);
-  C2->cd(1);
-  cosTheta->SetMarkerStyle(24);
-  cosTheta->Draw("AEP");
-  for (int i = 0; i < 3; i++)
-  {
-    C2->cd(i+2);
-    pt[i]->SetMarkerStyle(24);
-    pt[i]->Draw("AEP");
-  }
-  TCanvas *C3 = new TCanvas("C3", "", 1200, 900);
-  C3->cd();
-  resM->SetMarkerStyle(24)
-  resM->Draw("AEP");
+    TCanvas *C1 = new TCanvas("C1", "", 1200, 900);
+    C1->Divide(2,2);
+    for(int i = 0; i < 3; i++)
+    {
+      C1->cd(i+1);
+      DCA[i]->SetMarkerStyle(24);
+      DCA[i]->Draw("AEP");
+    }
+    C1->cd(4);
+    dLength->SetMarkerStyle(24);
+    dLength->Draw("AEP");
+    TCanvas *C2 = new TCanvas("C2", "", 1200, 900);
+    C2->Divide(2,2);
+    C2->cd(1);
+    cosTheta->SetMarkerStyle(24);
+    cosTheta->Draw("AEP");
+    for (int i = 0; i < 3; i++)
+    {
+      C2->cd(i+2);
+      pt[i]->SetMarkerStyle(24);
+      pt[i]->Draw("AEP");
+    }
+    TCanvas *C3 = new TCanvas("C3", "", 1200, 900);
+    C3->cd();
+    resM->SetMarkerStyle(24)
+      resM->Draw("AEP");
 
-  if(saveIt)
-  {
-    C1->SaveAs(Form("%s_1.pdf", outFileBaseName.Data()));
-    C2->SaveAs(Form("%s_2.pdf", outFileBaseName.Data()));
-    C3->SaveAs(Form("%s_3.pdf", outFileBaseName.Data()));
+    if(saveIt)
+    {
+      C1->SaveAs(Form("%s_1.pdf", outFileBaseName.Data()));
+      C2->SaveAs(Form("%s_2.pdf", outFileBaseName.Data()));
+      C3->SaveAs(Form("%s_3.pdf", outFileBaseName.Data()));
 
-    C1->SaveAs(Form("%s_1.png", outFileBaseName.Data()));
-    C2->SaveAs(Form("%s_2.png", outFileBaseName.Data()));
-    C3->SaveAs(Form("%s_3.png", outFileBaseName.Data()));
+      C1->SaveAs(Form("%s_1.png", outFileBaseName.Data()));
+      C2->SaveAs(Form("%s_2.png", outFileBaseName.Data()));
+      C3->SaveAs(Form("%s_3.png", outFileBaseName.Data()));
+    }
   }
 }
 
+// --------------------------------------------------------
+// --------------------------------------------------------
 // --------------------------------------------------------
 void bkgMaker::Write()
 {
   outFile->cd();
 
-  dLength->Write();
-  cosTheta->Write();
-  resM->Write();
-  for (int i = 0; i < 3; ++i)
+  switch (anaMode)
   {
-    DCA[i]->Write();
-    pt[i]->Write();
-    for (int j = 0; j < 20; ++j)
-    {
-      DCAhists[i][j]->Write();
-      DCAbkg[i][j]->Write();
+    case kAll:
 
-      ptHists[i][j]->Write();
-      ptBkg[i][j]->Write();
-    }
-  }
-  for (int j =0; j < 20; ++j)
-  {
-    dLengthHists[j]->Write();
-    dLengthBkg[j]->Write();
+      for (int i = 0; i < 3; ++i)
+      {
+	DCA[i]->Write();
+	for (int j = 0; j < 20; ++j)
+	{
+	  DCAhists[i][j]->Write();
+	  DCAbkg[i][j]->Write();
+	}
+      }
+      for (int i = 0; i < 3; ++i)
+      {
+	pt[i]->Write();
+	for (int j = 0; j < 20; ++j)
+	{
+	  ptHists[i][j]->Write();
+	  ptBkg[i][j]->Write();
+	}
+      }
+      dLength->Write();
+      cosTheta->Write();
+      for (int j = 0; j < 20; ++j)
+      {
+	dLengthHists[j]->Write();
+	dLengthBkg[j]->Write();
 
-    cosThetaHists[j]->Write();
-    cosThetaBkg[j]->Write();
+	cosThetaHists[j]->Write();
+	cosThetaBkg[j]->Write();
+      }
+      resM->Write();
+      for (int j = 0; j < 40; ++j)
+      {
+	resHists[j]->Write();
+	resBkg[j]->Write();
+      }
+      break;
+      // __________________________________
+    case kDCA:
+      for (int i = 0; i < 3; ++i)
+      {
+	DCA[i]->Write();
+	for (int j = 0; j < 20; ++j)
+	{
+	  DCAhists[i][j]->Write();
+	  DCAbkg[i][j]->Write();
+	}
+      }
+      break;
+      // __________________________________
+    case kPt:
+      for (int i = 0; i < 3; ++i)
+      {
+	pt[i]->Write();
+	for (int j = 0; j < 20; ++j)
+	{
+	  ptHists[i][j]->Write();
+	  ptBkg[i][j]->Write();
+	}
+      }
+      break;
+      // __________________________________
+    case kDLengthCosTheta:
+      dLength->Write();
+      cosTheta->Write();
+      for (int j = 0; j < 20; ++j)
+      {
+	dLengthHists[j]->Write();
+	dLengthBkg[j]->Write();
+
+	cosThetaHists[j]->Write();
+	cosThetaBkg[j]->Write();
+      }
+      break;
+      // __________________________________
+    case kResM:
+      resM->Write();
+      for (int j = 0; j < 40; ++j)
+      {
+	resHists[j]->Write();
+	resBkg[j]->Write();
+      }
+      break;
+      // __________________________________
+    default:
+      cerr << "bkgMaker::Write(): unknown analysis mode" << endl;
+      throw;
+      break;
   }
-  
-  for (int j =0; j < 40; ++j)
-  {
-    resHists[j]->Write();
-    resBkg[j]->Write();
-  }
-}
+} // void bkgMaker::Write()
