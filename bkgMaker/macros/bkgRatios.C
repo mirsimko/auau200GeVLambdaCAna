@@ -16,7 +16,7 @@ using namespace std;
 class bkgMaker;
 
 // ------------------------------------------------
-void bkgRatios(int decayMode=0)
+void bkgRatios(int analysisMode=0, int decayMode=0)
 {
   // declare variables
   enum DecayMode{kKstar, kLambda, kDelta, kThreeBody};
@@ -68,13 +68,15 @@ void bkgRatios(int decayMode=0)
   TFile *outFile = new TFile(Form("%s.root", outFileName.Data()), "RECREATE");
   
   cout << "initiating bkgMaker" << endl;
-  bkgMaker mBkgMaker(decayMode,readF1, readF2, outFile, AllCuts, outFileName.Data());
+  bkgMaker mBkgMaker(analysisMode, decayMode,readF1, readF2, outFile, AllCuts, outFileName.Data());
 
   cout << "Calculating ratios" << endl;
   mBkgMaker.calculateRatios();
   cout << "Done" << endl;
   cout << "Plotting and saving" << endl;
-  mBkgMaker.Plot(true);
+  if(analysisMode == 0)
+    mBkgMaker.Plot(true);
+
   mBkgMaker.Write();
   outFile->Close();
   readF1->Close();
