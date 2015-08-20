@@ -14,7 +14,7 @@ class bkgMaker
 {
 public:
   enum DecayMode{kKstar, kLambda, kDelta, kThreeBody};
-  enum Analysis{kAll, kDCA, kPt, kDLengthCosTheta, kResM}
+  enum Analysis{kAll, kDCA, kPt, kDLengthCosTheta, kResM};
 
 protected:
   // members
