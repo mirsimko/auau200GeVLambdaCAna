@@ -40,23 +40,23 @@ void bkgRatios(int analysisMode=0, int decayMode=0)
   switch(dm)
   {
     case kKstar:
-      readF1 = new TFile( Form("lambdaCkKstarProton%d.root", analysisMode));
-      outFileName = Form("lambdaCRatioskKstarProton%d", analysisMode);
+      readF1 = new TFile("lambdaCkKstarProton.root");
+      outFileName = "lambdaCRatioskKstarProton";
       decayName = "K* p";
       break;
     case kLambda:
-      readF1 = new TFile(Form("lambdaCkLambda1520Pion%d.root", analysisMode) );
-      outFileName = Form("lambdaCRatioskLambda1520Pion%d", analysisMode) ;
+      readF1 = new TFile("lambdaCkLambda1520Pion.root");
+      outFileName = "lambdaCRatioskLambda1520Pion";
       decayName = "#Lambda(1520) #pi";
       break;
     case kDelta:
-      readF1 = new TFile(Form("lambdaCkDeltaPPkaon%d.root", analysisMode) );
-      outFileName = Form("lambdaCRatioskDeltaPPkaon%d", analysisMode) ;
+      readF1 = new TFile("lambdaCkDeltaPPkaon.root");
+      outFileName = "lambdaCRatioskDeltaPPkaon";
       decayName = "#Delta^{++} K";
       break;
     case kThreeBody:
-      readF1 = new TFile(Form("lambdaCkPionKaonProton%d.root", analysisMode) );
-      outFileName = Form("lambdaCRatioskPionKaonProton%d", analysisMode) ;
+      readF1 = new TFile("lambdaCkPionKaonProton.root");
+      outFileName = "lambdaCRatioskPionKaonProton";
       decayName = "#pi K p";
       break;
     default:
@@ -65,6 +65,7 @@ void bkgRatios(int analysisMode=0, int decayMode=0)
       break;
   }
   TFile *readF2 = new TFile("../kPionKaonProton.root");
+  outFileName += analysisMode;
   TFile *outFile = new TFile(Form("%s.root", outFileName.Data()), "RECREATE");
   
   cout << "initiating bkgMaker" << endl;
