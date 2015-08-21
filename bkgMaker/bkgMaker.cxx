@@ -31,7 +31,6 @@ bkgMaker::bkgMaker(int analysisMode, int mDecayMode, TFile* mSimFile, TFile* mBk
       break;
     default:
       cerr << "bkgMaker::bkgMaker: unknown decay mode." << endl;
-      throw;
       break;
   }
 
@@ -105,7 +104,6 @@ void bkgMaker::initHists()
       break;
     default:
       cerr << "bkgMaker::initHists(): unknown analysis mode" << endl;
-      throw;
       break;
   }
 } // void bkgMaker::initHists()
@@ -134,7 +132,6 @@ void bkgMaker::initDCAhists()
 	break;
       default:
 	cerr << "wierd" << endl;
-	throw;
 	break;
     } // switch (i)
   
@@ -175,7 +172,6 @@ void bkgMaker::initPtHists()
 	break;
       default:
 	cerr << "WTF?" << endl;
-	throw;
 	break;
     } // switch(i)
 
@@ -274,7 +270,6 @@ void bkgMaker::fillHistos()
       break;
     default:
       cerr << "bkgMaker::fillHistos(): unknown analysis mode" << endl;
-      throw;
       break;
   }
   cout << "*******************************************" << endl;
@@ -383,7 +378,6 @@ void bkgMaker::fillRM()
 	break;
       default:
 	cerr << "Unknown decay mode" << endl;
-	throw;
 	break;
     }
     cout << "*******************************************" << endl;
@@ -433,7 +427,6 @@ void bkgMaker::calculateRatios()
       break;
     default:
       cerr << "bkgMaker::calculateRatios(): unknown analysis mode" << endl; 
-      throw;
       break;
   }
 }
@@ -675,7 +668,6 @@ void bkgMaker::Write()
       // __________________________________
     default:
       cerr << "bkgMaker::Write(): unknown analysis mode" << endl;
-      throw;
       break;
   }
 } // void bkgMaker::Write()
