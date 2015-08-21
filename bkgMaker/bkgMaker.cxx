@@ -292,7 +292,7 @@ void bkgMaker::fillDCA()
     for (int j = 0; j < 20; j++)
     {
       TCut DCAsimCut = Form("dca%s < %d", DCAparticleName[i].Data(), (int)dcaCut[j]);
-      TCut DCAbkgCut = Form("dcaDaugthers%s < %d", DCApartBkgName[i].Data(), (int)dcaCut[j]);
+      TCut DCAbkgCut = Form("dcaDaugthers%s < %f", DCApartBkgName[i].Data(), 0.0001*dcaCut[j]);
 
       simTuple->Project(Form("DCAsim%s_%d", DCAparticleName[i].Data(), j),
 	  "rPt",
@@ -342,7 +342,7 @@ void bkgMaker::fillDLcosT()
   for(int j = 0; j < 20; j++)
   {
     TCut dLsimCut = Form("decayLength > %d", (int)dLengthCut[j]);
-    TCut dLbkgCut = Form("dLength > %f", 0.001*dLengthCut[j]);
+    TCut dLbkgCut = Form("dLength > %f", 0.0001*dLengthCut[j]);
 
     TCut cosTsimCut = Form("cosTheta > %f", cosThetaCut[j]);
     TCut cosTbkgCut = Form("cosThetaStar > %f", cosThetaCut[j]);
