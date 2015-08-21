@@ -44,7 +44,7 @@ int StPicoHFLambdaCMaker::InitHF() {
       mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
     }
     else
-      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:p3pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:p3Dca:cosThetaStar:dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:mLambda1520:mDelta:mKstar");
+      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:p3pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:p3Dca:cosThetaStar:dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:mLambda1520:mDelta:mKstar:pNSigma:KNSigma:piNSigma:pTOFbeta:KTOFbeta:piTOFbeta");
   }
   
   return kStOK;
@@ -443,11 +443,14 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
-			    TMath::Cos( lambdaC->pointingAngle() ), lambdaC->decayLength(), 
+			    (float)TMath::Cos( (Double_t)lambdaC->pointingAngle() ), lambdaC->decayLength(), 
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
 			    lambdaC->cosThetaStar(),
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
-			    LambdaPair.m(), DeltaPair.m(), KstarPair.m()};
+			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
+			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
+			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion)
+			    };
 
       mNtupleSecondary->Fill(aSecondary);
       
