@@ -252,7 +252,7 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const dcaToPv = dca(rMom.Vect(), v0, vertex);
    float const cosTheta = (v0 - vertex).Unit().Dot(rMom.Vect().Unit());
 
-                       // save
+   // save
    float arr[100];
    int iArr = 0;
    arr[iArr++] = cent;
@@ -435,8 +435,8 @@ void bookObjects()
 
    TH1::AddDirectory(false);
    nt = new TNtuple("nt", "", "cent:vx:vy:vz:"
-                    "pid:m:pt:eta:y:phi:v0x:v0y:v0z:"
-                    "rM:rPt:rEta:rY:rPhi:"
+                    "pid:MCm:MCpt:MCeta:MCy:MCphi:v0x:v0y:v0z:"
+                    "m:pt:eta:y:phi:"
                     "dca12:dca23:dca13:decayLength:dcaToPv:cosTheta:" // Rc pair
                     "kM:kPt:kEta:kY:kPhi:kDca:" // MC Kaon
                     "kRM:kRPt:kREta:kRY:kRPhi:kRVx:kRVy:kRVz:kRDca:" // Rc Kaon
