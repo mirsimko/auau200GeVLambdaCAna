@@ -244,12 +244,14 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const piRDca = dca(piRMom.Vect(), piRPos, vertex);
    float const pRDca = dca(pRMom.Vect(), pRPos, vertex);
 
+   const float umToCm = 0.0001;
+
    TVector3 v0;
-   float const dca12 = dca1To2(kRMom.Vect(), kRPos, piRMom.Vect(), piRPos, v0);
-   float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v0);
-   float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v0);
-   float const decayLength = (v0 - vertex).Mag();
-   float const dcaToPv = dca(rMom.Vect(), v0, vertex);
+   float const dca12 = dca1To2(kRMom.Vect(), kRPos, piRMom.Vect(), piRPos, v0)*umToCm;
+   float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v0)*umToCm;
+   float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v0)*umToCm;
+   float const decayLength = (v0 - vertex).Mag()*umToCm;
+   float const dcaToPv = dca(rMom.Vect(), v0, vertex)*umToCm;
    float const cosTheta = (v0 - vertex).Unit().Dot(rMom.Vect().Unit());
 
    // save
@@ -437,7 +439,7 @@ void bookObjects()
    nt = new TNtuple("nt", "", "cent:vx:vy:vz:"
                     "pid:MCm:MCpt:MCeta:MCy:MCphi:v0x:v0y:v0z:" // MC Lambda_c
                     "m:pt:eta:y:phi:" // Rc Lambda_c
-                    "dcaDaugthers31:dcaDaugthers23:dcaDaugthers31:dLength:dcaToPv:cosPntAngle:" // Rc pair (dcaDaughters is misspelled in this verion of the secondary Ntuple)
+                    "dcaDaugthers31:dcaDaugthers23:dcaDaugthers12:dLength:dcaToPv:cosPntAngle:" // Rc pair (dcaDaughters is misspelled in this verion of the secondary Ntuple)
                     "kM:kPt:kEta:kY:kPhi:kDca:" // MC Kaon
                     "kRM:p1pt:kREta:kRY:kRPhi:kRVx:kRVy:kRVz:p1Dca:" // Rc Kaon
                     "piM:piPt:piEta:piY:piPhi:piDca:" // MC Pion
