@@ -340,7 +340,7 @@ void bkgMaker::fillDLcosT()
     TCut dLbkgCut = Form("dLength > %f", 0.0001*dLengthCut[j]);
 
     TCut cosTsimCut = Form("cosTheta > %f", cosThetaCut[j]);
-    TCut cosTbkgCut = Form("cosThetaStar > %f", cosThetaCut[j]);
+    TCut cosTbkgCut = Form("TMath::Cos(cosPntAngle) > %f", cosThetaCut[j]);
 
     simTuple->Project(Form("dLengthSim%d", j),
 	"rPt",

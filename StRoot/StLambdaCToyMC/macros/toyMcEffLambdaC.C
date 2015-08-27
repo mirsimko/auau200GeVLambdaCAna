@@ -86,8 +86,8 @@ TH1D *nBinCent;
 float const nBin[nCent] = {1012, 805, 577, 365, 221, 127, 66.8, 32.4, 15.};
 TF1* fLevy;
 
-float const Dyield = 0.704442; /*D0 yiield per event*/ 
-float const LambdaDratio = 0.2;/*ratio between Lambda_c and D0*/ 
+float const Dyield = 1.39751; /*D0,D0bar yield per event*/ 
+float const LambdaDratio = 0.275;/*ratio between Lambda_c and D0. Taken from: arXiv:hep-ex/0508019 - Table 4 - f(c->Lambda_c)/f(c->D0)*/ 
 
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
@@ -145,11 +145,11 @@ void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int
        branchingRatio = 0.05;
        break;
      default:
-       break;       
+       break;
    }
 
-   double npart = Dyield * LambdaDratio * branchingRatio * nEvts - 1;
-   cout << "Number of produced Lambda_C: " << (int) floor(npart) << endl;
+   int npart = (int) floor(Dyield * LambdaDratio * branchingRatio * nEvts * 0.5 );/* has to be divided by two because we are creating Lc+,Lc- pair */
+   cout << "Number of produced Lambda_C: " <<  npart << endl;
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
@@ -435,17 +435,17 @@ void bookObjects()
 
    TH1::AddDirectory(false);
    nt = new TNtuple("nt", "", "cent:vx:vy:vz:"
-                    "pid:MCm:MCpt:MCeta:MCy:MCphi:v0x:v0y:v0z:"
-                    "m:pt:eta:y:phi:"
-                    "dca12:dca23:dca13:decayLength:dcaToPv:cosTheta:" // Rc pair
+                    "pid:MCm:MCpt:MCeta:MCy:MCphi:v0x:v0y:v0z:" // MC Lambda_c
+                    "m:pt:eta:y:phi:" // Rc Lambda_c
+                    "dcaDaugthers31:dcaDaugthers23:dcaDaugthers31:dLength:dcaToPv:cosPntAngle:" // Rc pair (dcaDaughters is misspelled in this verion of the secondary Ntuple)
                     "kM:kPt:kEta:kY:kPhi:kDca:" // MC Kaon
-                    "kRM:kRPt:kREta:kRY:kRPhi:kRVx:kRVy:kRVz:kRDca:" // Rc Kaon
+                    "kRM:p1pt:kREta:kRY:kRPhi:kRVx:kRVy:kRVz:p1Dca:" // Rc Kaon
                     "piM:piPt:piEta:piY:piPhi:piDca:" // MC Pion
-                    "piRM:piRPt:piREta:piRY:piRPhi:piRVx:piRVy:piRVz:piRDca:" // Rc Pion
+                    "piRM:p3pt:piREta:piRY:piRPhi:piRVx:piRVy:piRVz:p3Dca:" // Rc Pion
                     "pM:pPt:pEta:pY:pPhi:pDca:" // MC Proton
-                    "pRM:pRPt:pREta:pRY:pRPhi:pRVx:pRVy:pRVz:pRDca:" // Rc Proton
+                    "pRM:p2pt:pREta:pRY:pRPhi:pRVx:pRVy:pRVz:p2Dca:" // Rc Proton
                     "kHft:piHft:pHft:"
-		    "MResonance:MRResonance");
+		    "MResonance:MRResonance"); // corresponding resonance
 
    TFile f("momentum_resolution.root");
    fPionMomResolution = (TF1*)f.Get("fPion")->Clone("fPionMomResolution");
