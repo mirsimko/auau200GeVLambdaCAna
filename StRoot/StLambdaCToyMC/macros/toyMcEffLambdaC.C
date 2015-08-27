@@ -86,8 +86,8 @@ TH1D *nBinCent;
 float const nBin[nCent] = {1012, 805, 577, 365, 221, 127, 66.8, 32.4, 15.};
 TF1* fLevy;
 
-float const Dyield = 0.704442; /*D0 yiield per event*/ 
-float const LambdaDratio = 0.2;/*ratio between Lambda_c and D0*/ 
+float const Dyield = 1.39751; /*D0 yiield per event*/ 
+float const LambdaDratio = 0.275;/*ratio between Lambda_c and D0, taken from arXiv:hep-ex/0508019 - Table 4*/ 
 
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
@@ -148,7 +148,7 @@ void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int
        break;       
    }
 
-   double npart = Dyield * LambdaDratio * branchingRatio * nEvts - 1;
+   int npart = (int) floor( Dyield * LambdaDratio * branchingRatio * nEvts * 0.5); // has to be divided by 2 because we are creating LC+,LC- pairs
    cout << "Number of produced Lambda_C: " << (int) floor(npart) << endl;
 
    TLorentzVector* b_d = new TLorentzVector;
