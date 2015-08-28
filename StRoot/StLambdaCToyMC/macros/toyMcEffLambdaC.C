@@ -53,6 +53,7 @@ float resMass(TLorentzVector const &pMom, TLorentzVector const &kMom, TLorentzVe
 
 TPythia6Decayer* pydecay;
 TNtuple* nt;
+TNtuple* ntTMVA;
 TFile* result;
 
 TF1* fKaonMomResolution = NULL;
@@ -341,6 +342,32 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    arr[iArr++] = resMass(pMom, kMom, piMom, decayMode);
    arr[iArr++] = resMass(pRMom, kRMom, piRMom, decayMode);
    nt->Fill(arr);
+
+   float TMVA[100];
+   int iTMVA = 0;
+
+   TMVA[iTMVA++] = rMom.M();
+   TMVA[iTMVA++] = rMom.Perp();
+   TMVA[iTMVA++] = 1;
+   TMVA[iTMVA++] = rMom.Phi();
+   TMVA[iTMVA++] = rMom.PseudoRapidity();
+
+   TMVA[iTMVA++] = dca12;
+   TMVA[iTMVA++] = dca23;
+   TMVA[iTMVA++] = dca13;
+
+   TMVA[iTMVA++] = cosTheta;
+   TMVA[iTMVA++] = decayLength;
+
+   TMVA[iTMVA++] = kRMom.Perp();
+   TMVA[iTMVA++] = pRMom.Perp();
+   TMVA[iTMVA++] = piRMom.Perp();
+
+   TMVA[iTMVA++] = kRDca;
+   TMVA[iTMVA++] = pRDca;
+   TMVA[iTMVA++] = piRDca;
+
+   ntTMVA->Fill(TMVA);
 }
 
 void getKinematics(TLorentzVector& b, double const mass)
@@ -447,6 +474,12 @@ void bookObjects()
                     "kHft:piHft:pHft:"
 		    "MResonance:MRResonance");
 
+   ntTMVA = new TNtuple("ntTMVA", "", "m:pt:charges:phi:eta:" // basic properties of Lambda_c
+				      "dcaDaugthers31:dcaDaugthers23:dcaDaugthers12:" // dca daughters (pi-K, pi-p, p-K)
+				      "cosPntAngle:dLength:" // cosTheta and decay Length
+				      "p1pt:p2pt:p3pt:"
+				      "p1Dca:p2Dca:p3Dca"); // daughters (K, p, pi)
+
    TFile f("momentum_resolution.root");
    fPionMomResolution = (TF1*)f.Get("fPion")->Clone("fPionMomResolution");
    fKaonMomResolution = (TF1*)f.Get("fKaon")->Clone("fKaonMomResolution");
@@ -498,6 +531,7 @@ void write()
 {
    result->cd();
    nt->Write();
+   ntTMVA->Write();
    result->Close();
 }
 //___________
