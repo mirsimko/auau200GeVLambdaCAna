@@ -93,7 +93,7 @@ float const LambdaDratio = 0.275;/*ratio between Lambda_c and D0, taken from arX
 enum DecayMode {kKstarProton, kLambda1520Pion, kDeltaPPkaon, kPionKaonProton, kLambdaPion, kKshortProton};
 
 //============== main  program ==================
-void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
+void toyMcEffLambdaC( unsigned long nEvts = 100, const char* outFile = "lambdaC.root", int modeOfDecay = 3 /*3=kPionKaonProton*/)
 {
    // int stop;
    // cin >> stop;
@@ -149,12 +149,12 @@ void toyMcEffLambdaC( int nEvts = 100, const char* outFile = "lambdaC.root", int
        break;       
    }
 
-   int npart = (int) floor( Dyield * LambdaDratio * branchingRatio * nEvts * 0.5); // has to be divided by 2 because we are creating LC+,LC- pairs
-   cout << "Number of produced Lambda_C: " << (int) floor(npart) << endl;
+   unsigned long const npart = (unsigned long) floor( Dyield * LambdaDratio * branchingRatio * (double)nEvts * 0.5); // has to be divided by 2 because we are creating LC+,LC- pairs
+   cout << "Number of produced Lambda_C: " << npart << endl;
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
-   for (int ipart = 0; ipart < npart; ipart++)
+   for (unsigned long ipart = 0; ipart < npart; ipart++)
    {
       // cout << "creating Lambda_c number: " << ipart << endl;
       if (!(ipart % 100000))

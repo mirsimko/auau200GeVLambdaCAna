@@ -44,7 +44,19 @@ int StPicoHFLambdaCMaker::InitHF() {
       mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
     }
     else
-      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:p3pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:p3Dca:cosThetaStar:dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:mLambda1520:mDelta:mKstar:pNSigma:KNSigma:piNSigma:pTOFbeta:KTOFbeta:piTOFbeta");
+      mNtupleSecondary = new TNtuple("secondary", "secondary", 
+				     "p1pt:p2pt:p3pt:"
+				     "charges:"
+	  			     "m:pt:eta:phi:"
+	  			     "cosPntAngle:dLength:"
+	  			     "p1Dca:p2Dca:p3Dca:"
+	  			     "cosThetaStar:"
+	  			     "dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:"
+	  			     "mLambda1520:mDelta:mKstar:"
+	  			     "pNSigma:KNSigma:piNSigma:"
+	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
+	  			     "maxVertexDist"
+	  			     );
   }
   
   return kStOK;
@@ -438,7 +450,21 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 	  lambdaC->particle3Idx() ,
 	  mPrimVtx, mBField);
       
+      // distatces between closest points of pairs
+      StThreeVectorF const vertexDistVec1 = LambdaPair.decayVertex() - DeltaPair.decayVertex(); // pK - pip
+      StThreeVectorF const vertexDistVec2 = DeltaPair.decayVertex() - KstarPair.decayVertex();  // pip - piK
+      StThreeVectorF const vertexDistVec3 = KstarPair.decayVertex() - LambdaPair.decayVertex(); // piK - pK
+
+      float const vertexDist1 = vertexDistVec1.mag(); // pK - pip
+      float const vertexDist2 = vertexDistVec2.mag(); // pip - piK
+      float const vertexDist3 = vertexDistVec3.mag(); // piK - pK
+
+      // calculating max distance between two v0s
+      float maxVdist =  vertexDist1 > vertexDist2 ? vertexDist1 : vertexDist2;
+      maxVdist = maxVdist > vertexDist3 ? maxVdist : vertexDist3;
+
       float isCorrectSign = (kaon->charge() != pion->charge() && pion->charge() == proton->charge()) ? 1. : -1.;
+
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
@@ -449,7 +475,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
 			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
-			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion)
+			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion),
+			    maxVdist
 			    };
 
       mNtupleSecondary->Fill(aSecondary);
