@@ -269,6 +269,10 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const dcaToPv = dca(rMom.Vect(), v0, vertex);
    float const cosTheta = (v0 - vertex).Unit().Dot(rMom.Vect().Unit());
 
+   bool const isPhft = matchHft(cent, pRMom);
+   bool const isKhft = matchHft(cent, kRMom);
+   bool const isPiHft = matchHft(cent, piRMom);
+
                        // save
    float arr[100];
    int iArr = 0;
@@ -351,13 +355,36 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    arr[iArr++] = pRPos.Z();
    arr[iArr++] = pRDca;
 
-   arr[iArr++] = matchHft(cent, kRMom);
-   arr[iArr++] = matchHft(cent, piRMom);
-   arr[iArr++] = matchHft(cent, pRMom);
+   arr[iArr++] = isKhft;
+   arr[iArr++] = isPiHft;
+   arr[iArr++] = isPhft;
 
    arr[iArr++] = resMass(pMom, kMom, piMom, decayMode);
    arr[iArr++] = resMass(pRMom, kRMom, piRMom, decayMode);
+
+   arr[iArr++] = vDistMax;
+   arr[iArr++] = vDist1;
+   arr[iArr++] = vDist2;
+   arr[iArr++] = vDist3;
    nt->Fill(arr);
+
+   // __________________________________________
+   // using cuts
+   // __________________________________________
+   bool const PtCut = pRMom.Perp() > 0.3 && kRMom.Perp() > 0.3 && piRMom > 0.3;
+   bool const dcaCut = dca12 < 200 && dca23 < 200 && dca13 < 200;
+   bool const dLengthCut = decayLength > 30;
+   bool const cosThetaCut = cosTheta > 0.98;
+   bool const HftCut = isPhft && isKhft && isPiHft;
+   bool const EtaCut = TMath::Abs(kRMomm.PseudoRapidity()) < 1. && TMath::Abs(pRMomm.PseudoRapidity()) < 1. && TMath::Abs(piRMom.PseudoRapidity()) < 1.;
+   
+   if ( !( PtCut && dcaCut && dLengthCut && cosThetaCut && HftCut && EtaCut ) )
+     return;
+
+   // __________________________________________
+   // end of cuts
+   // filling TMVA histograms
+   const float umToCm = 0.0001;
 
    float TMVA[100];
    int iTMVA = 0;
@@ -368,23 +395,26 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    TMVA[iTMVA++] = rMom.Phi();
    TMVA[iTMVA++] = rMom.PseudoRapidity();
 
-   TMVA[iTMVA++] = dca12;
-   TMVA[iTMVA++] = dca23;
-   TMVA[iTMVA++] = dca13;
+   TMVA[iTMVA++] = dca12*umToCm;
+   TMVA[iTMVA++] = dca23*umToCm;
+   TMVA[iTMVA++] = dca13*umToCm;
 
    TMVA[iTMVA++] = cosTheta;
-   TMVA[iTMVA++] = decayLength;
+   TMVA[iTMVA++] = decayLength*umToCm;
 
    TMVA[iTMVA++] = kRMom.Perp();
    TMVA[iTMVA++] = pRMom.Perp();
    TMVA[iTMVA++] = piRMom.Perp();
 
-   TMVA[iTMVA++] = kRDca;
-   TMVA[iTMVA++] = pRDca;
-   TMVA[iTMVA++] = piRDca;
+   TMVA[iTMVA++] = kRDca*umToCm;
+   TMVA[iTMVA++] = pRDca*umToCm;
+   TMVA[iTMVA++] = piRDca*umToCm;
+
+   TMVA[iTMVA++] = vDistMax*umToCm;
 
    ntTMVA->Fill(TMVA);
 }
+
 
 void getKinematics(TLorentzVector& b, double const mass)
 {
