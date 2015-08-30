@@ -245,10 +245,26 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const piRDca = dca(piRMom.Vect(), piRPos, vertex);
    float const pRDca = dca(pRMom.Vect(), pRPos, vertex);
 
+   // smeared decay vertex
    TVector3 v0;
-   float const dca12 = dca1To2(kRMom.Vect(), kRPos, piRMom.Vect(), piRPos, v0);
-   float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v0);
-   float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v0);
+   // vertices between pairs
+   TVector3 v012;
+   TVector3 v023;
+   TVector3 v013;
+
+   float const dca12 = dca1To2(kRMom.Vect(), kRPos, piRMom.Vect(), piRPos, v012);
+   float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v023);
+   float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v013);
+
+   v0 = (v012 + v023 + v013) / 3.;
+
+   // distances of the pairs vertices
+   float const vDist1 = (v012 - v023).Mag();
+   float const vDist2 = (v023 - v013).Mag();
+   float const vDist3 = (v012 - v013).Mag();
+   float vDistMax = vDist1 > vDist2 ? vDist1 : vDist2;
+   vDistMax = vDistMax > vDist3 ? vDistMax : vDist3;
+
    float const decayLength = (v0 - vertex).Mag();
    float const dcaToPv = dca(rMom.Vect(), v0, vertex);
    float const cosTheta = (v0 - vertex).Unit().Dot(rMom.Vect().Unit());
@@ -472,13 +488,15 @@ void bookObjects()
                     "pM:pPt:pEta:pY:pPhi:pDca:" // MC Proton
                     "pRM:pRPt:pREta:pRY:pRPhi:pRVx:pRVy:pRVz:pRDca:" // Rc Proton
                     "kHft:piHft:pHft:"
-		    "MResonance:MRResonance");
+		    "MResonance:MRResonance:"
+		    "maxVertexDist:vDist1:vDist2:vDist3"); // distances of vertices of track pairs
 
    ntTMVA = new TNtuple("ntTMVA", "", "m:pt:charges:phi:eta:" // basic properties of Lambda_c
 				      "dcaDaugthers31:dcaDaugthers23:dcaDaugthers12:" // dca daughters (pi-K, pi-p, p-K)
 				      "cosPntAngle:dLength:" // cosTheta and decay Length
 				      "p1pt:p2pt:p3pt:"
-				      "p1Dca:p2Dca:p3Dca"); // daughters (K, p, pi)
+				      "p1Dca:p2Dca:p3Dca:" // daughters (K, p, pi)
+				      "maxVertexDist");
 
    TFile f("momentum_resolution.root");
    fPionMomResolution = (TF1*)f.Get("fPion")->Clone("fPionMomResolution");
