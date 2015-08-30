@@ -256,7 +256,7 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v023);
    float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v013);
 
-   v0 = (v012 + v023 + v013) / 3.;
+   v0 = (v012 + v023 + v013).Mag() / 3.;
 
    // distances of the pairs vertices
    float const vDist1 = (v012 - v023).Mag();
@@ -371,12 +371,12 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    // __________________________________________
    // using cuts
    // __________________________________________
-   bool const PtCut = pRMom.Perp() > 0.3 && kRMom.Perp() > 0.3 && piRMom > 0.3;
+   bool const PtCut = pRMom.Perp() > 0.3 && kRMom.Perp() > 0.3 && piRMom.Perp() > 0.3;
    bool const dcaCut = dca12 < 200 && dca23 < 200 && dca13 < 200;
    bool const dLengthCut = decayLength > 30;
    bool const cosThetaCut = cosTheta > 0.98;
    bool const HftCut = isPhft && isKhft && isPiHft;
-   bool const EtaCut = TMath::Abs(kRMomm.PseudoRapidity()) < 1. && TMath::Abs(pRMomm.PseudoRapidity()) < 1. && TMath::Abs(piRMom.PseudoRapidity()) < 1.;
+   bool const EtaCut = TMath::Abs(kRMom.PseudoRapidity()) < 1. && TMath::Abs(pRMom.PseudoRapidity()) < 1. && TMath::Abs(piRMom.PseudoRapidity()) < 1.;
    
    if ( !( PtCut && dcaCut && dLengthCut && cosThetaCut && HftCut && EtaCut ) )
      return;
