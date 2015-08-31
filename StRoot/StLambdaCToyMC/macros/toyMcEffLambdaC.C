@@ -256,7 +256,7 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v023);
    float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v013);
 
-   v0 = (v012 + v023 + v013).Mag() / 3.;
+   v0 = (1./3.) * (v012 + v023 + v013) ;
 
    // distances of the pairs vertices
    float const vDist1 = (v012 - v023).Mag();
