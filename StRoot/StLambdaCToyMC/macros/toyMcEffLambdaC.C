@@ -150,7 +150,7 @@ void toyMcEffLambdaC( unsigned long nEvts = 100, const char* outFile = "lambdaC.
    }
 
    unsigned long const npart = (unsigned long) floor( Dyield * LambdaDratio * branchingRatio * (double)nEvts * 0.5); // has to be divided by 2 because we are creating LC+,LC- pairs
-   cout << "Number of produced Lambda_C: " << npart << endl;
+   cout << "Number of produced Lambda_C: " << npart*2 << endl;
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
@@ -158,7 +158,7 @@ void toyMcEffLambdaC( unsigned long nEvts = 100, const char* outFile = "lambdaC.
    {
       // cout << "creating Lambda_c number: " << ipart << endl;
       if (!(ipart % 100000))
-         cout << "____________ ipart = " << ipart << " ________________" << endl;
+         cout << "____________ 2*ipart = " << 2*ipart << " ________________" << endl;
 
       getKinematics(*b_d, M_LAMBDA_C_PLUS);
 
