@@ -51,6 +51,8 @@ void write();
 int getptIndex(double);
 float resMass(TLorentzVector const &pMom, TLorentzVector const &kMom, TLorentzVector const &piMom, int decayMode);
 
+const bool saveNt = false;
+
 TPythia6Decayer* pydecay;
 TNtuple* nt;
 TNtuple* ntTMVA;
@@ -231,6 +233,7 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    // TVector3 const kRPos = smearPos(kMom, kRMom, v00);
    // TVector3 const pRPos = smearPos(kMom, pRMom, v00);
 
+
    // smear primary vertex
    // float const sigmaVertex = sigmaVertexCent[cent];
    // TVector3 const vertex(gRandom->Gaus(0, sigmaVertex), gRandom->Gaus(0, sigmaVertex), gRandom->Gaus(0, sigmaVertex));
@@ -274,99 +277,102 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    bool const isPiHft = matchHft(cent, piRMom);
 
                        // save
-   float arr[100];
-   int iArr = 0;
-   arr[iArr++] = cent;
-   arr[iArr++] = vertex.X();
-   arr[iArr++] = vertex.Y();
-   arr[iArr++] = vertex.Z();
+   if (saveNt)
+   {
+     float arr[100];
+     int iArr = 0;
+     arr[iArr++] = cent;
+     arr[iArr++] = vertex.X();
+     arr[iArr++] = vertex.Y();
+     arr[iArr++] = vertex.Z();
 
-   arr[iArr++] = kf;
-   arr[iArr++] = b->M();
-   arr[iArr++] = b->Perp();
-   arr[iArr++] = b->PseudoRapidity();
-   arr[iArr++] = b->Rapidity();
-   arr[iArr++] = b->Phi();
-   arr[iArr++] = v00.X();
-   arr[iArr++] = v00.Y();
-   arr[iArr++] = v00.Z();
+     arr[iArr++] = kf;
+     arr[iArr++] = b->M();
+     arr[iArr++] = b->Perp();
+     arr[iArr++] = b->PseudoRapidity();
+     arr[iArr++] = b->Rapidity();
+     arr[iArr++] = b->Phi();
+     arr[iArr++] = v00.X();
+     arr[iArr++] = v00.Y();
+     arr[iArr++] = v00.Z();
 
-   arr[iArr++] = rMom.M();
-   arr[iArr++] = rMom.Perp();
-   arr[iArr++] = rMom.PseudoRapidity();
-   arr[iArr++] = rMom.Rapidity();
-   arr[iArr++] = rMom.Phi();
+     arr[iArr++] = rMom.M();
+     arr[iArr++] = rMom.Perp();
+     arr[iArr++] = rMom.PseudoRapidity();
+     arr[iArr++] = rMom.Rapidity();
+     arr[iArr++] = rMom.Phi();
 
-   arr[iArr++] = dca12;
-   arr[iArr++] = dca23;
-   arr[iArr++] = dca13;
-   arr[iArr++] = decayLength;
-   arr[iArr++] = dcaToPv;
-   arr[iArr++] = cosTheta;
+     arr[iArr++] = dca12;
+     arr[iArr++] = dca23;
+     arr[iArr++] = dca13;
+     arr[iArr++] = decayLength;
+     arr[iArr++] = dcaToPv;
+     arr[iArr++] = cosTheta;
 
-   arr[iArr++] = kMom.M();
-   arr[iArr++] = kMom.Perp();
-   arr[iArr++] = kMom.PseudoRapidity();
-   arr[iArr++] = kMom.Rapidity();
-   arr[iArr++] = kMom.Phi();
-   arr[iArr++] = kDca;
+     arr[iArr++] = kMom.M();
+     arr[iArr++] = kMom.Perp();
+     arr[iArr++] = kMom.PseudoRapidity();
+     arr[iArr++] = kMom.Rapidity();
+     arr[iArr++] = kMom.Phi();
+     arr[iArr++] = kDca;
 
-   arr[iArr++] = kRMom.M();
-   arr[iArr++] = kRMom.Perp();
-   arr[iArr++] = kRMom.PseudoRapidity();
-   arr[iArr++] = kRMom.Rapidity();
-   arr[iArr++] = kRMom.Phi();
-   arr[iArr++] = kRPos.X();
-   arr[iArr++] = kRPos.Y();
-   arr[iArr++] = kRPos.Z();
-   arr[iArr++] = kRDca;
+     arr[iArr++] = kRMom.M();
+     arr[iArr++] = kRMom.Perp();
+     arr[iArr++] = kRMom.PseudoRapidity();
+     arr[iArr++] = kRMom.Rapidity();
+     arr[iArr++] = kRMom.Phi();
+     arr[iArr++] = kRPos.X();
+     arr[iArr++] = kRPos.Y();
+     arr[iArr++] = kRPos.Z();
+     arr[iArr++] = kRDca;
 
-   arr[iArr++] = piMom.M();
-   arr[iArr++] = piMom.Perp();
-   arr[iArr++] = piMom.PseudoRapidity();
-   arr[iArr++] = piMom.Rapidity();
-   arr[iArr++] = piMom.Phi();
-   arr[iArr++] = piDca;
+     arr[iArr++] = piMom.M();
+     arr[iArr++] = piMom.Perp();
+     arr[iArr++] = piMom.PseudoRapidity();
+     arr[iArr++] = piMom.Rapidity();
+     arr[iArr++] = piMom.Phi();
+     arr[iArr++] = piDca;
 
-   arr[iArr++] = piRMom.M();
-   arr[iArr++] = piRMom.Perp();
-   arr[iArr++] = piRMom.PseudoRapidity();
-   arr[iArr++] = piRMom.Rapidity();
-   arr[iArr++] = piRMom.Phi();
-   arr[iArr++] = piRPos.X();
-   arr[iArr++] = piRPos.Y();
-   arr[iArr++] = piRPos.Z();
-   arr[iArr++] = piRDca;
+     arr[iArr++] = piRMom.M();
+     arr[iArr++] = piRMom.Perp();
+     arr[iArr++] = piRMom.PseudoRapidity();
+     arr[iArr++] = piRMom.Rapidity();
+     arr[iArr++] = piRMom.Phi();
+     arr[iArr++] = piRPos.X();
+     arr[iArr++] = piRPos.Y();
+     arr[iArr++] = piRPos.Z();
+     arr[iArr++] = piRDca;
 
-   arr[iArr++] = pMom.M();
-   arr[iArr++] = pMom.Perp();
-   arr[iArr++] = pMom.PseudoRapidity();
-   arr[iArr++] = pMom.Rapidity();
-   arr[iArr++] = pMom.Phi();
-   arr[iArr++] = pDca;
+     arr[iArr++] = pMom.M();
+     arr[iArr++] = pMom.Perp();
+     arr[iArr++] = pMom.PseudoRapidity();
+     arr[iArr++] = pMom.Rapidity();
+     arr[iArr++] = pMom.Phi();
+     arr[iArr++] = pDca;
 
-   arr[iArr++] = pRMom.M();
-   arr[iArr++] = pRMom.Perp();
-   arr[iArr++] = pRMom.PseudoRapidity();
-   arr[iArr++] = pRMom.Rapidity();
-   arr[iArr++] = pRMom.Phi();
-   arr[iArr++] = pRPos.X();
-   arr[iArr++] = pRPos.Y();
-   arr[iArr++] = pRPos.Z();
-   arr[iArr++] = pRDca;
+     arr[iArr++] = pRMom.M();
+     arr[iArr++] = pRMom.Perp();
+     arr[iArr++] = pRMom.PseudoRapidity();
+     arr[iArr++] = pRMom.Rapidity();
+     arr[iArr++] = pRMom.Phi();
+     arr[iArr++] = pRPos.X();
+     arr[iArr++] = pRPos.Y();
+     arr[iArr++] = pRPos.Z();
+     arr[iArr++] = pRDca;
 
-   arr[iArr++] = isKhft;
-   arr[iArr++] = isPiHft;
-   arr[iArr++] = isPhft;
+     arr[iArr++] = isKhft;
+     arr[iArr++] = isPiHft;
+     arr[iArr++] = isPhft;
 
-   arr[iArr++] = resMass(pMom, kMom, piMom, decayMode);
-   arr[iArr++] = resMass(pRMom, kRMom, piRMom, decayMode);
+     arr[iArr++] = resMass(pMom, kMom, piMom, decayMode);
+     arr[iArr++] = resMass(pRMom, kRMom, piRMom, decayMode);
 
-   arr[iArr++] = vDistMax;
-   arr[iArr++] = vDist1;
-   arr[iArr++] = vDist2;
-   arr[iArr++] = vDist3;
-   nt->Fill(arr);
+     arr[iArr++] = vDistMax;
+     arr[iArr++] = vDist1;
+     arr[iArr++] = vDist2;
+     arr[iArr++] = vDist3;
+     nt->Fill(arr);
+   } // if (saveNt)
 
    // __________________________________________
    // using cuts
@@ -507,7 +513,9 @@ void bookObjects()
    result->cd();
 
    TH1::AddDirectory(false);
-   nt = new TNtuple("nt", "", "cent:vx:vy:vz:"
+   if(saveNt)
+   {
+     nt = new TNtuple("nt", "", "cent:vx:vy:vz:"
                     "pid:m:pt:eta:y:phi:v0x:v0y:v0z:"
                     "rM:rPt:rEta:rY:rPhi:"
                     "dca12:dca23:dca13:decayLength:dcaToPv:cosTheta:" // Rc pair
@@ -520,6 +528,7 @@ void bookObjects()
                     "kHft:piHft:pHft:"
 		    "MResonance:MRResonance:"
 		    "maxVertexDist:vDist1:vDist2:vDist3"); // distances of vertices of track pairs
+   }
 
    ntTMVA = new TNtuple("ntTMVA", "", "m:pt:charges:phi:eta:" // basic properties of Lambda_c
 				      "dcaDaugthers31:dcaDaugthers23:dcaDaugthers12:" // dca daughters (pi-K, pi-p, p-K)
@@ -578,7 +587,8 @@ void bookObjects()
 void write()
 {
    result->cd();
-   nt->Write();
+   if (saveNt)
+     nt->Write();
    ntTMVA->Write();
    result->Close();
 }
