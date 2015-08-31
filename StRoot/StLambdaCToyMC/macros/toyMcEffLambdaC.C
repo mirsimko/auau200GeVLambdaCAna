@@ -158,7 +158,7 @@ void toyMcEffLambdaC( unsigned long nEvts = 100, const char* outFile = "lambdaC.
    {
       // cout << "creating Lambda_c number: " << ipart << endl;
       if (!(ipart % 100000))
-         cout << "____________ ipart = " << ipart << " ________________" << endl;
+         cout << "____________ 2*ipart = " << 2*ipart << " ________________" << endl;
 
       getKinematics(*b_d, M_LAMBDA_C_PLUS);
 
@@ -256,7 +256,7 @@ void decayAndFill(int const kf, TLorentzVector* b, TClonesArray& daughters, int 
    float const dca23 = dca1To2(piRMom.Vect(), piRPos, pRMom.Vect(), pRPos, v023);
    float const dca13 = dca1To2(kRMom.Vect(), kRPos, pRMom.Vect(), pRPos, v013);
 
-   v0 = (v012 + v023 + v013).Mag() / 3.;
+   v0 = (1./3.) * (v012 + v023 + v013) ;
 
    // distances of the pairs vertices
    float const vDist1 = (v012 - v023).Mag();
