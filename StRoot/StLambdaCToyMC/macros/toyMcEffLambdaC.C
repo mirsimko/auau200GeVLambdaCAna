@@ -150,7 +150,7 @@ void toyMcEffLambdaC( unsigned long nEvts = 100, const char* outFile = "lambdaC.
    }
 
    unsigned long const npart = (unsigned long) floor( Dyield * LambdaDratio * branchingRatio * (double)nEvts * 0.5); // has to be divided by 2 because we are creating LC+,LC- pairs
-   cout << "Number of produced Lambda_C: " << npart << endl;
+   cout << "Number of produced Lambda_C: " << npart*2 << endl;
 
    TLorentzVector* b_d = new TLorentzVector;
    TClonesArray ptl("TParticle", 10);
