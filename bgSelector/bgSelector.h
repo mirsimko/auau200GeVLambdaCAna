@@ -237,7 +237,7 @@ Int_t bgSelector::Cut(Long64_t entry)
    GetEntry(entry);
 
    // get only wrong charge background
-   if (charges < 0.)
+   if (charges > 0.)
      return -1;
    // dEdx cuts
    if (TMath::Abs(pNSigma) > pNSigmaCut && TMath::Abs(piNSigma) > piNSigmaCut && TMath::Abs(KNSigma) > KNSigmaCut)
