@@ -240,7 +240,7 @@ Int_t bgSelector::Cut(Long64_t entry)
    if (charges > 0.)
      return -1;
    // dEdx cuts
-   if (TMath::Abs(pNSigma) > pNSigmaCut && TMath::Abs(piNSigma) > piNSigmaCut && TMath::Abs(KNSigma) > KNSigmaCut)
+   if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
      return -1;
 
    return 1;
