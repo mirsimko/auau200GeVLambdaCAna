@@ -24,9 +24,9 @@ public :
    Int_t           fCurrent; //!current Tree number in a TChain
    // Declaration of cuts
    // dEdx cuts
-   const Float_t pNSigmaCut = 2.;
-   const Float_t piNSigmaCut = 2.;
-   const Float_t KNSigmaCut = 2.;
+   static const Float_t pNSigmaCut = 2.;
+   static const Float_t piNSigmaCut = 2.;
+   static const Float_t KNSigmaCut = 2.;
 
    // output Ntuple
    TNtuple *outNT;
