@@ -13,6 +13,13 @@
 #include <TNtuple.h>
 #include <TFile.h>
 
+// Declaration of cuts
+// dEdx cuts
+static const Float_t pNSigmaCut = 2.;
+static const Float_t piNSigmaCut = 2.;
+static const Float_t KNSigmaCut = 2.;
+
+
 // Header file for the classes stored in the TTree if any.
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
@@ -22,11 +29,6 @@ public :
    
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
-   // Declaration of cuts
-   // dEdx cuts
-   static const Float_t pNSigmaCut = 2.;
-   static const Float_t piNSigmaCut = 2.;
-   static const Float_t KNSigmaCut = 2.;
 
    // output Ntuple
    TNtuple *outNT;
@@ -235,10 +237,10 @@ Int_t bgSelector::Cut(Long64_t entry)
    GetEntry(entry);
 
    // get only wrong charge background
-   if (changes < 0.)
+   if (charges < 0.)
      return -1;
    // dEdx cuts
-   if (pNSigma < pNSigmaCut && piNSigma < piNSigmaCut && KNSigma < KNSigmaCut)
+   if (TMath::Abs(pNSigma) > pNSigmaCut && TMath::Abs(piNSigma) > piNSigmaCut && TMath::Abs(KNSigma) > KNSigmaCut)
      return -1;
 
    return 1;

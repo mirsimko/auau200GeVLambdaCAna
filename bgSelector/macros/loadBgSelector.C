@@ -1,6 +1,3 @@
-extern TSystem* gSystem;
-
-void loadBgSelector()
 {
-  gSystem->Load("auau200GeVRun14Ana/bgSelector/macros/bgSelector.cxx++");
+  gROOT->ProcessLine(".L auau200GeVRun14Ana/bgSelector/bgSelector.cxx+");
 }

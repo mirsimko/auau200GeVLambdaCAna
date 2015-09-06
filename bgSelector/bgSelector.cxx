@@ -4,6 +4,11 @@
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TNtuple.h>
+#include <iostream>
+
+using namespace std;
+
+class bgSelector;
 
 void bgSelector::Loop()
 {
@@ -33,11 +38,18 @@ void bgSelector::Loop()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
+   cout << "Entries to process: " << nentries << endl;
+   cout << "*********************************************" <<endl;
 
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
+
+      if (ientry % 100000 == 0)
+	cout << "Processing ientry " << ientry << endl;
+
+
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // cuts
       if (Cut(jentry) < 0) continue;
@@ -70,4 +82,7 @@ void bgSelector::Loop()
       
       outNT->Fill(Arr);
    }
+   cout << "*********************************************" <<endl;
+   cout << "Finished"<< endl;
+   cout << "*********************************************" <<endl;
 }
