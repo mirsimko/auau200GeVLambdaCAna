@@ -113,9 +113,9 @@ bgSelector::bgSelector(const char *outFileName, TTree *tree) : fChain(0)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("picoHFLambdaCMaker.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/picoHFLambdaCMaker.root");
       if (!f || !f->IsOpen()) {
-         f = new TFile("picoHFLambdaCMaker.root");
+         f = new TFile("/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/picoHFLambdaCMaker.root");
       }
       f->GetObject("secondary",tree);
 

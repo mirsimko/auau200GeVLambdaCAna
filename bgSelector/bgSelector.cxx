@@ -46,7 +46,7 @@ void bgSelector::Loop()
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
 
-      if (ientry % 100000 == 0)
+      if (ientry % 1000000 == 0)
 	cout << "Processing ientry " << ientry << endl;
 
 
