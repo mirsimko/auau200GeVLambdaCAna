@@ -12,7 +12,7 @@
 using namespace std;
 
 // --------------------------------------------------
-void simCutsMaker::Loop()
+void simCutsMaker::Loop(Long64_t first, Long64_t last)
 {
 //   In a ROOT session, you can do:
 //      Root > .L simCutsMaker.C
@@ -40,8 +40,9 @@ void simCutsMaker::Loop()
    if (fChain == 0) return;
 
    Long64_t nentries = fChain->GetEntriesFast();
+   nentries = nentries < last ? nentries : last;
 
-   for (Long64_t jentry=0; jentry<nentries;jentry++) 
+   for (Long64_t jentry=first-1; jentry<nentries;jentry++) 
    {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;

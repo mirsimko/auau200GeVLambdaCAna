@@ -13,10 +13,11 @@
 #include <TFile.h>
 #include "TH1D.h"
 #include <iostream>
+#include <climits>
 
 using namespace std;
 
-const char* outfileName = "simCuts.root";
+const char* outfileName = "BgCutsPlots.root";
 // Header file for the classes stored in the TTree if any.
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -80,7 +81,7 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
+   virtual void     Loop(Long64_t first = 1, Long64_t last = LLONG_MAX);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
    void bookHistograms();
