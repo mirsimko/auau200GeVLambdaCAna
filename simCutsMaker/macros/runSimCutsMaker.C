@@ -3,8 +3,10 @@
 
 using namespace std;
 
-void runSimCutsmaker()
+void runSimCutsMaker()
 {
+  // int in;
+  // cin >> in;
   cout << "Initializing simCutsMaker ..." << endl;
   simCutsMaker mSimCutsMaker;
   cout << "Running on events ..." << endl;

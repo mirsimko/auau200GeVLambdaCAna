@@ -6,6 +6,10 @@
 #include <cmath>
 #include "TH1D.h"
 #include "TFile.h"
+#include "TString.h"
+#include <iostream>
+
+using namespace std;
 
 // --------------------------------------------------
 void simCutsMaker::Loop()
@@ -35,32 +39,33 @@ void simCutsMaker::Loop()
 //by  b_branchname->GetEntry(ientry); //read only this branch
    if (fChain == 0) return;
 
+   Long64_t nentries = fChain->GetEntriesFast();
 
    for (Long64_t jentry=0; jentry<nentries;jentry++) 
    {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
 
-      if (jentry % 1000000 == 0)
+      if (jentry % 100000 == 0)
 	cout << "Running on entry # " << jentry << " ______________"<< endl;
 
       fChain->GetEntry(jentry);
 
       calculateIndices();
 
-      for (int i = 0; i < indices[0]; ++i)
+      for (int ii = 0; ii < indices[0]; ++ii)
       {
-	for (int j = 0; j < indices[1]; ++j)
+	for (int jj = 0; jj < indices[1]; ++jj)
 	{
-	  for (int k = 0; k < indices[2]; ++k)
+	  for (int kk = 0; kk < indices[2]; ++kk)
 	  {
-	    for (int l = 0; l < indices[3]; ++l)
+	    for (int ll = 0; ll < indices[3]; ++ll)
 	    {
-	      for (int m = 0; m < indices[4]; ++m)
+	      for (int mm = 0; mm < indices[4]; ++mm)
 	      {
-		for (int n = 0; n < indices[5]; ++n)
+		for (int nn = 0; nn < indices[5]; ++nn)
 		{
-		  H[i][j][k][l][m][n]->Fill(pt);
+		  H[indexInArray(ii,jj,kk,ll,mm,nn)]->Fill(pt);
 		}
 	      }
 	    }
@@ -75,26 +80,35 @@ void simCutsMaker::Loop()
 
 void simCutsMaker::bookHistograms()
 {
-  for (int i = 0; i < 5; ++i) // dLength
+  //H = new TH1D******[5];
+  for (int ii = 0; ii < 5; ++ii) // dLength
   {
-    for (int j = 0; j < 5; ++j) // dcaDaughters
+    //H[ii] = new TH1D*****[5];
+    for (int jj = 0; jj < 5; ++jj) // dcaDaughters
     {
-      for (int k = 0; k < 5; ++k) // maxVDist
+      //H[ii][jj] = new TH1D****[5];
+      for (int kk = 0; kk < 5; ++kk) // maxVDist
       {
-	for (int l = 0; l < 5; ++l) // pPt
+	//H[ii][jj][kk] = new TH1D***[5];
+	for (int ll = 0; ll < 5; ++ll) // pPt
 	{
-	  for (int m = 0; m < 5; ++m) // piPt
+	  //H[ii][jj][kk][ll] = new TH1D**[5];
+	  for (int mm = 0; mm < 5; ++mm) // piPt
 	  {
-	    for (int n  = 0; n < 5; ++n) // kPt
+	    //H[ii][jj][kk][ll][mm] = new TH1D*[5];
+	    for (int nn  = 0; nn < 5; ++nn) // kPt
 	    {
-	      int index [6] = {i, j, k, l, m, n};
+	      int index [6] = {ii, jj, kk, ll, mm, nn};
 	      setCutsFromIndex(index);
-	      H[i][j][k][l][m][n] = new TH1D(Form("H%d%d%d%d%d%d", i, j, k, l, m, n),
-					     From("p_{T} spectrum {dLength>%1.3fcm,dcaDaughters<%1.3fcm,maxVdist<%1.3f,pPt<%1.1fGeV,piPt<%1.1fGeV,kPt<%1.1fGeV}", 
-		  			          cuts[0],cuts[1],cuts[2],cuts[3],cuts[4],cuts[5]),
-		  			     20,0.,13.);
-	      H[i][j][k][l][m][n] -> Sumw2();
-	      H[i][j][k][l][m][n] -> GetXaxis() -> SetTitle("p_{T} [GeV]");
+	      TH1D *hist;
+	      hist = new TH1D(Form("H%d%d%d%d%d%d", ii, jj, kk, ll, mm, nn),
+				   Form("p_{T} spectrum {dLength>%1.3fcm,dcaDaughters<%1.3fcm,maxVdist<%1.3f,pPt<%1.1fGeV,piPt<%1.1fGeV,kPt<%1.1fGeV}", 
+		  		        cuts[0],cuts[1],cuts[2],cuts[3],cuts[4],cuts[5]),
+		  		   20,0.,13.);
+	      hist -> Sumw2();
+	      hist -> GetXaxis() -> SetTitle("p_{T} [GeV]");
+	      // cout << "indexInArray(" << ii << "," << jj << "," << kk << "," <<  ll<< "," <<  mm << "," << nn << ") = " << indexInArray(ii,jj,kk,ll,mm,nn) << endl;
+	      H[indexInArray(ii,jj,kk,ll,mm,nn)] = hist;
 	    } // kPt
 	  } // piPt
 	} // pPt
@@ -151,19 +165,19 @@ void simCutsMaker::calculateIndices()
 void simCutsMaker::write()
 {
   outf->cd();
-  for(int i = 0; i < 5; ++i)
+  for(int ii = 0; ii < 5; ++ii)
   {
-    for(int j = 0; j < 5; ++j)
+    for(int jj = 0; jj < 5; ++jj)
     {
-      for(int k = 0; k < 5; ++k)
+      for(int kk = 0; kk < 5; ++kk)
       {
-	for(int l = 0; l < 5; ++l)
+	for(int ll = 0; ll < 5; ++ll)
 	{
-	  for (int m = 0; m < 5; ++m)
+	  for (int mm = 0; mm < 5; ++mm)
 	  {
-	    for (int n = 0; n < 5; ++n)
+	    for (int nn = 0; nn < 5; ++nn)
 	    {
-	      H[i][j][k][l][m][n]->Write();
+	      H[indexInArray(ii,jj,kk,ll,mm,nn)]->Write();
 	    }
 	  }
 	}
@@ -172,3 +186,10 @@ void simCutsMaker::write()
   }
 } // write()
 // --------------------------------------------------
+
+// workarround fo 6 dimensional array in root
+// calculates index in 1D array
+inline int simCutsMaker::indexInArray(int ii, int jj, int kk, int ll, int mm, int nn)
+{
+  return nn+5*mm+25*ll+125*kk+625*jj+3125*ii;
+}

@@ -12,6 +12,9 @@
 #include <TChain.h>
 #include <TFile.h>
 #include "TH1D.h"
+#include <iostream>
+
+using namespace std;
 
 const char* outfileName = "simCuts.root";
 // Header file for the classes stored in the TTree if any.
@@ -62,10 +65,12 @@ public :
    TBranch        *b_maxVertexDist;   //!
 
    // histograms
-   TH1D *H[5][5][5][5][5][5];
+   TH1D *H[15625]; // workaround of six dimensional array of TH1D* (5^6 = 15625) 
+		   // Root does not support 6 dimensional arrays
+   inline int indexInArray(int ii, int jj, int kk, int ll, int mm, int nn);
    // cuts and index to cuts
-   float[6] cuts;
-   int[6] indices;
+   float cuts[6];
+   int indices[6];
    // output file
    TFile *outf;
 
