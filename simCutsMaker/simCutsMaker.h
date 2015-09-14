@@ -14,10 +14,10 @@
 #include "TH1D.h"
 #include <iostream>
 #include <climits>
+#include <stdio.h>
 
 using namespace std;
 
-const char* outfileName = "BgCutsPlots.root";
 // Header file for the classes stored in the TTree if any.
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -65,6 +65,7 @@ public :
    TBranch        *b_p3Dca;   //!
    TBranch        *b_maxVertexDist;   //!
 
+   char outfileName[200];
    // histograms
    TH1D *H[15625]; // workaround of six dimensional array of TH1D* (5^6 = 15625) 
 		   // Root does not support 6 dimensional arrays
@@ -75,7 +76,7 @@ public :
    // output file
    TFile *outf;
 
-   simCutsMaker(TTree *tree=0);
+   simCutsMaker(TTree *tree=0, char const * outFName = "bgCutsPlots.root");
    virtual ~simCutsMaker();
    virtual Int_t    Cut(Long64_t entry);
    virtual Int_t    GetEntry(Long64_t entry);
@@ -94,7 +95,7 @@ public :
 
 // --------------------------------------------------
 #ifdef simCutsMaker_cxx
-simCutsMaker::simCutsMaker(TTree *tree) : fChain(0) 
+simCutsMaker::simCutsMaker(TTree *tree, char const *outFName) : fChain(0) 
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -106,6 +107,7 @@ simCutsMaker::simCutsMaker(TTree *tree) : fChain(0)
       f->GetObject("ntTMVA",tree);
 
    }
+   sprintf(outfileName, "%s", outFName);
    Init(tree);
 
 }

@@ -1,3 +1,3 @@
 {
-  gROOT->ProcessLine(".L simCutsMaker/simCutsMaker.cxx++g");
+  gROOT->ProcessLine(".L simCutsMaker/simCutsMaker.cxx++");
 }
