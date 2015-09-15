@@ -104,7 +104,7 @@ void simCutsMaker::bookHistograms()
 	    {
 	      for (int oo = 0; oo < 5; ++oo) // cos(theta)
 	      {
-		int index [6] = {ii, jj, kk, ll, mm, nn, oo};
+		int index [7] = {ii, jj, kk, ll, mm, nn, oo};
 		setCutsFromIndex(index);
 		TH1D *hist;
 		hist = new TH1D(Form("H%d%d%d%d%d%d%d", ii, jj, kk, ll, mm, nn, oo),
@@ -200,7 +200,7 @@ void simCutsMaker::write()
 } // write()
 // --------------------------------------------------
 
-// workarround fo 6 dimensional array in root
+// workarround fo 7 dimensional array in root
 // calculates index in 1D array
 inline int simCutsMaker::indexInArray(int ii, int jj, int kk, int ll, int mm, int nn, int oo)
 {
