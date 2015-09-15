@@ -67,12 +67,12 @@ public :
 
    char outfileName[200];
    // histograms
-   TH1D *H[15625]; // workaround of six dimensional array of TH1D* (5^6 = 15625) 
+   TH1D *H[78125]; // workaround of seven dimensional array of TH1D* (5^6 = 15625) 
 		   // Root does not support 6 dimensional arrays
-   inline int indexInArray(int ii, int jj, int kk, int ll, int mm, int nn);
+   inline int indexInArray(int ii, int jj, int kk, int ll, int mm, int nn, int oo);
    // cuts and index to cuts
-   float cuts[6];
-   int indices[6];
+   float cuts[7];
+   int indices[7];
    // output file
    TFile *outf;
 

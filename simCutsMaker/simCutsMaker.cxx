@@ -66,7 +66,10 @@ void simCutsMaker::Loop(Long64_t first, Long64_t last)
 	      {
 		for (int nn = 0; nn < indices[5]; ++nn)
 		{
-		  H[indexInArray(ii,jj,kk,ll,mm,nn)]->Fill(pt);
+		  for (int oo = 0; oo < indices[6]; ++oo)
+		  {
+		    H[indexInArray(ii,jj,kk,ll,mm,nn,oo)]->Fill(pt);
+		  }
 		}
 	      }
 	    }
@@ -99,17 +102,20 @@ void simCutsMaker::bookHistograms()
 	    //H[ii][jj][kk][ll][mm] = new TH1D*[5];
 	    for (int nn  = 0; nn < 5; ++nn) // kPt
 	    {
-	      int index [6] = {ii, jj, kk, ll, mm, nn};
-	      setCutsFromIndex(index);
-	      TH1D *hist;
-	      hist = new TH1D(Form("H%d%d%d%d%d%d", ii, jj, kk, ll, mm, nn),
-				   Form("p_{T} spectrum {dLength>%1.3fcm,dcaDaughters<%1.3fcm,maxVdist<%1.3f,pPt<%1.1fGeV,piPt<%1.1fGeV,kPt<%1.1fGeV}", 
-		  		        cuts[0],cuts[1],cuts[2],cuts[3],cuts[4],cuts[5]),
-		  		   20,0.,13.);
-	      hist -> Sumw2();
-	      hist -> GetXaxis() -> SetTitle("p_{T} [GeV]");
-	      // cout << "indexInArray(" << ii << "," << jj << "," << kk << "," <<  ll<< "," <<  mm << "," << nn << ") = " << indexInArray(ii,jj,kk,ll,mm,nn) << endl;
-	      H[indexInArray(ii,jj,kk,ll,mm,nn)] = hist;
+	      for (int oo = 0; oo < 5; ++oo) // cos(theta)
+	      {
+		int index [6] = {ii, jj, kk, ll, mm, nn, oo};
+		setCutsFromIndex(index);
+		TH1D *hist;
+		hist = new TH1D(Form("H%d%d%d%d%d%d%d", ii, jj, kk, ll, mm, nn, oo),
+				     Form("p_{T} spectrum {dLength>%1.3fcm,dcaDaughters<%1.3fcm,maxVdist<%1.3f,pPt<%1.1fGeV,piPt<%1.1fGeV,kPt<%1.1fGeV,cos(#theta)>%1.4f}", 
+					  cuts[0],cuts[1],cuts[2],cuts[3],cuts[4],cuts[5], cuts[6]),
+				     20,0.,13.);
+		hist -> Sumw2();
+		hist -> GetXaxis() -> SetTitle("p_{T} [GeV]");
+		// cout << "indexInArray(" << ii << "," << jj << "," << kk << "," <<  ll<< "," <<  mm << "," << nn << ") = " << indexInArray(ii,jj,kk,ll,mm,nn) << endl;
+		H[indexInArray(ii,jj,kk,ll,mm,nn,oo)] = hist;
+	      } // cos(theta)
 	    } // kPt
 	  } // piPt
 	} // pPt
@@ -127,6 +133,7 @@ void simCutsMaker::setCutsFromIndex(int const *index)
   float MpPt = 0.3 + 0.2*index[3];
   float MpiPt = 0.3 + 0.2*index[4];
   float MkPt = 0.3 + 0.2*index[5];
+  float McosTheta = 0.9875 + 0.0025*index[6];
 
   unsigned int iArr = 0;
   cuts[iArr++]=MdLength;
@@ -135,6 +142,7 @@ void simCutsMaker::setCutsFromIndex(int const *index)
   cuts[iArr++]=MpPt;
   cuts[iArr++]=MpiPt;
   cuts[iArr++]=MkPt;
+  cuts[iArr++]=McosTheta;
 }
 // --------------------------------------------------
 
@@ -154,8 +162,9 @@ void simCutsMaker::calculateIndices()
   indices[iArr++] = int(floor( (p2pt - 0.3)/0.2 )); // proton
   indices[iArr++] = int(floor( (p3pt - 0.3)/0.2 )); // pion
   indices[iArr++] = int(floor( (p1pt - 0.3)/0.2 )); // kaon
+  indices[iArr++] = int(floor( (cosPntAngle - 0.9875)/0.0025 ));
 
-  for(int i = 0; i < 6; ++i)
+  for(int i = 0; i < 7; ++i)
   {
     if (indices[i] > 5)
       indices[i] = 5;
@@ -178,7 +187,10 @@ void simCutsMaker::write()
 	  {
 	    for (int nn = 0; nn < 5; ++nn)
 	    {
-	      H[indexInArray(ii,jj,kk,ll,mm,nn)]->Write();
+	      for (int oo = 0; oo < 5; ++oo)
+	      {
+		H[indexInArray(ii,jj,kk,ll,mm,nn,oo)]->Write();
+	      }
 	    }
 	  }
 	}
@@ -190,7 +202,7 @@ void simCutsMaker::write()
 
 // workarround fo 6 dimensional array in root
 // calculates index in 1D array
-inline int simCutsMaker::indexInArray(int ii, int jj, int kk, int ll, int mm, int nn)
+inline int simCutsMaker::indexInArray(int ii, int jj, int kk, int ll, int mm, int nn, int oo)
 {
-  return nn+5*mm+25*ll+125*kk+625*jj+3125*ii;
+  return oo+5*nn+25*mm+125*ll+625*kk+3125*jj+15625*ii;
 }
