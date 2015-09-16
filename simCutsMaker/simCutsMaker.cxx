@@ -133,7 +133,7 @@ void simCutsMaker::setCutsFromIndex(int const *index)
   float MpPt = 0.3 + 0.2*index[3];
   float MpiPt = 0.3 + 0.2*index[4];
   float MkPt = 0.3 + 0.2*index[5];
-  float McosTheta = 0.9875 + 0.0025*index[6];
+  float McosTheta = 0.9825 + 0.0025*index[6];
 
   unsigned int iArr = 0;
   cuts[iArr++]=MdLength;
@@ -162,7 +162,7 @@ void simCutsMaker::calculateIndices()
   indices[iArr++] = int(floor( (p2pt - 0.3)/0.2 )); // proton
   indices[iArr++] = int(floor( (p3pt - 0.3)/0.2 )); // pion
   indices[iArr++] = int(floor( (p1pt - 0.3)/0.2 )); // kaon
-  indices[iArr++] = int(floor( (cosPntAngle - 0.9875)/0.0025 ));
+  indices[iArr++] = int(floor( (cosPntAngle - 0.9825)/0.0025 ));
 
   for(int i = 0; i < 7; ++i)
   {
