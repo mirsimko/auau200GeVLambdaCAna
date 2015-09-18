@@ -67,8 +67,8 @@ public :
 
    char outfileName[200];
    // histograms
-   TH1D *H[78125]; // workaround of seven dimensional array of TH1D* (5^6 = 15625) 
-		   // Root does not support 6 dimensional arrays
+   TH1D *H[78125]; // workaround of seven dimensional array of TH1D* (5^7 = 78125) 
+		   // Root does not support 7 dimensional arrays
    inline int indexInArray(int ii, int jj, int kk, int ll, int mm, int nn, int oo);
    // cuts and index to cuts
    float cuts[7];
@@ -85,10 +85,12 @@ public :
    virtual void     Loop(Long64_t first = 1, Long64_t last = LLONG_MAX);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
-   void bookHistograms();
-   void calculateIndices();
-   void setCutsFromIndex(int const* indexArray);
-   void write();
+   
+   void bookHistograms(); // init histograms
+   void calculateIndices(); // calculate the first rejected histogram in array
+   void setCutsFromIndex(int const* indexArray); // get set of cuts for each histogram
+   
+   void write(); // writes histograms into outf
 };
 
 #endif

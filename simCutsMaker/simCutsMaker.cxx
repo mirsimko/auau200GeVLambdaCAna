@@ -146,11 +146,12 @@ void simCutsMaker::setCutsFromIndex(int const *index)
 }
 // --------------------------------------------------
 
+// calculate the first rejected inndex in array
 void simCutsMaker::calculateIndices()
 {
   unsigned int iArr = 0;
   // dLength cut
-  indices[iArr++] = int(floor( (dLength - 0.003)/0.004 ));
+  indices[iArr++] = int(ceil( (dLength - 0.003)/0.004 ));
   // daughters DCA cut
   // calculate maximum of daughters DCA
   float maxDcaDaughters = dcaDaugthers12 > dcaDaugthers23 ? dcaDaugthers12 : dcaDaugthers23;
@@ -159,10 +160,11 @@ void simCutsMaker::calculateIndices()
   // maxVDist cut
   indices[iArr++] = int(ceil( (-maxVertexDist + 0.05)/0.01 ));
   // daughters pT
-  indices[iArr++] = int(floor( (p2pt - 0.3)/0.2 )); // proton
-  indices[iArr++] = int(floor( (p3pt - 0.3)/0.2 )); // pion
-  indices[iArr++] = int(floor( (p1pt - 0.3)/0.2 )); // kaon
-  indices[iArr++] = int(floor( (cosPntAngle - 0.9825)/0.0025 ));
+  indices[iArr++] = int(ceil( (p2pt - 0.3)/0.2 )); // proton
+  indices[iArr++] = int(ceil( (p3pt - 0.3)/0.2 )); // pion
+  indices[iArr++] = int(ceil( (p1pt - 0.3)/0.2 )); // kaon
+  // cos(theta)
+  indices[iArr++] = int(ceil( (cosPntAngle - 0.9825)/0.0025 ));
 
   for(int i = 0; i < 7; ++i)
   {
