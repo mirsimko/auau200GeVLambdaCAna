@@ -13,11 +13,13 @@ void runSimCutsMaker(Long64_t first = 1, Long64_t last = LLONG_MAX)
   // int in;
   // cin >> in;
   cout << "Getting tree" << endl;
-  TFile *inf = new TFile("lambdaCTMVAkPionKaonProtonCuts.root");  
-  TNtuple *nt = (TNtuple*) inf->Get("ntTMVA");
+  TFile *inf = new TFile("bgSelectedLc.root");  
+  TNtuple *nt = (TNtuple*) inf->Get("secondarySelected");
+  // TFile *inf = new TFile("lambdaCTMVAkPionKaonProtonCuts.root");  
+  // TNtuple *nt = (TNtuple*) inf->Get("ntTMVA");
   cout << "Initializing simCutsMaker ..." << endl;
-  // simCutsMaker mSimCutsMaker((TTree*) nt, Form("bgCutsPlots_%8lld_%8lld.root",first, last) );
-  simCutsMaker mSimCutsMaker((TTree*) nt, "simCutsCosThetaOpen.root" );
+  simCutsMaker mSimCutsMaker((TTree*) nt, Form("bgCutsPlots_%8lld_%8lld.root",first, last) );
+  // simCutsMaker mSimCutsMaker((TTree*) nt, "simCutsCosThetaOpen.root" );
   cout << "Running on events ..." << endl;
   mSimCutsMaker.Loop(first, last);
   cout << "Finished" << endl;
