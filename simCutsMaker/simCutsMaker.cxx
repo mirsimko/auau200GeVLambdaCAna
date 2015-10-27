@@ -51,6 +51,10 @@ void simCutsMaker::Loop(Long64_t first, Long64_t last)
 	cout << "Running on entry # " << jentry << " ______________"<< endl;
 
       fChain->GetEntry(jentry);
+      //
+      // mass cut
+      if (m < 2.266 || m > 2.306)
+	continue;
 
       calculateIndices();
 
@@ -128,13 +132,26 @@ void simCutsMaker::bookHistograms()
 
 void simCutsMaker::setCutsFromIndex(int const *index)
 {
-  float MdLength = 0.003 + 0.004* index[0];
-  float MdcaDaughters = 0.02 - 0.004*index[1];
-  float MmaxVdist = 0.05 - 0.01*index[2];
-  float MpPt = 0.3 + 0.2*index[3];
-  float MpiPt = 0.3 + 0.2*index[4];
-  float MkPt = 0.3 + 0.2*index[5];
-  float McosTheta = 0.9825 + 0.0025*index[6];
+  // ***********************************************
+  // The original set of cuts:
+  // ***********************************************
+  // float MdLength = 0.003 + 0.004* index[0];
+  // float MdcaDaughters = 0.02 - 0.004*index[1];
+  // float MmaxVdist = 0.05 - 0.01*index[2];
+  // float MpPt = 0.3 + 0.2*index[3];
+  // float MpiPt = 0.3 + 0.2*index[4];
+  // float MkPt = 0.3 + 0.2*index[5];
+  // float McosTheta = 0.9825 + 0.0025*index[6];
+  // ***********************************************
+
+  // second iteration:
+  float MdLength = 0.012 + 0.004* index[0];
+  float MdcaDaughters = 0.018 - 0.002*index[1];
+  float MmaxVdist = 0.04 - 0.005*index[2];
+  float MpPt = 0.3 + 0.1*index[3];
+  float MpiPt = 0.3 + 0.1*index[4];
+  float MkPt = 0.3 + 0.1*index[5];
+  float McosTheta = 0.98 + 0.0025*index[6];
 
   unsigned int iArr = 0;
   cuts[iArr++]=MdLength;
@@ -152,20 +169,20 @@ void simCutsMaker::calculateIndices()
 {
   unsigned int iArr = 0;
   // dLength cut
-  indices[iArr++] = int(ceil( (dLength - 0.003)/0.004 ));
+  indices[iArr++] = int(ceil( (dLength - 0.012)/0.004 ));
   // daughters DCA cut
   // calculate maximum of daughters DCA
   float maxDcaDaughters = dcaDaugthers12 > dcaDaugthers23 ? dcaDaugthers12 : dcaDaugthers23;
   maxDcaDaughters = maxDcaDaughters > dcaDaugthers31 ? maxDcaDaughters : dcaDaugthers31;
-  indices[iArr++] = int(ceil( (-maxDcaDaughters + 0.02 )/0.004 ));
+  indices[iArr++] = int(ceil( (-maxDcaDaughters + 0.018 )/0.002 ));
   // maxVDist cut
-  indices[iArr++] = int(ceil( (-maxVertexDist + 0.05)/0.01 ));
+  indices[iArr++] = int(ceil( (-maxVertexDist + 0.04)/0.005 ));
   // daughters pT
-  indices[iArr++] = int(ceil( (p2pt - 0.3)/0.2 )); // proton
-  indices[iArr++] = int(ceil( (p3pt - 0.3)/0.2 )); // pion
-  indices[iArr++] = int(ceil( (p1pt - 0.3)/0.2 )); // kaon
+  indices[iArr++] = int(ceil( (p2pt - 0.3)/0.1 )); // proton
+  indices[iArr++] = int(ceil( (p3pt - 0.3)/0.1 )); // pion
+  indices[iArr++] = int(ceil( (p1pt - 0.3)/0.1 )); // kaon
   // cos(theta)
-  indices[iArr++] = int(ceil( (cosPntAngle - 0.9825)/0.0025 ));
+  indices[iArr++] = int(ceil( (cosPntAngle - 0.98)/0.0025 ));
 
   for(int i = 0; i < 7; ++i)
   {
