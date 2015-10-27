@@ -76,7 +76,7 @@ void simCutsMaker::Loop(Long64_t first, Long64_t last)
 	  }
 	}
       }
-   }
+   } // for (Long64_t jentry=first-1; jentry<nentries;jentry++) 
 
    write();
 }
@@ -113,6 +113,7 @@ void simCutsMaker::bookHistograms()
 				     20,0.,13.);
 		hist -> Sumw2();
 		hist -> GetXaxis() -> SetTitle("p_{T} [GeV]");
+		hist -> GetYaxis() -> SetTitle("N");
 		// cout << "indexInArray(" << ii << "," << jj << "," << kk << "," <<  ll<< "," <<  mm << "," << nn << ") = " << indexInArray(ii,jj,kk,ll,mm,nn) << endl;
 		H[indexInArray(ii,jj,kk,ll,mm,nn,oo)] = hist;
 	      } // cos(theta)

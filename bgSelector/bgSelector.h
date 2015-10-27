@@ -12,12 +12,14 @@
 #include <TChain.h>
 #include <TNtuple.h>
 #include <TFile.h>
+#include <utility>
 
 // Declaration of cuts
 // dEdx cuts
 static const Float_t pNSigmaCut = 2.;
 static const Float_t piNSigmaCut = 2.;
 static const Float_t KNSigmaCut = 2.;
+static const pair<float,float> mCut (2.266, 2.306);
 
 
 // Header file for the classes stored in the TTree if any.
@@ -241,6 +243,8 @@ Int_t bgSelector::Cut(Long64_t entry)
      return -1;
    // dEdx cuts
    if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
+     return -1;
+   if (m < mCut.first || m > mCut.second)
      return -1;
 
    return 1;
