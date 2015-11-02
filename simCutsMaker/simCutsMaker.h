@@ -68,7 +68,7 @@ public :
    char outfileName[200];
    // histograms
    TH1D *H[78125]; // workaround of seven dimensional array of TH1D* (5^7 = 78125) 
-		   // Root does not support 7 dimensional arrays
+		   // Root does not support 7 dimensional arrays ... 1 dimensional array used instead
    inline int indexInArray(int ii, int jj, int kk, int ll, int mm, int nn, int oo);
    // cuts and index to cuts
    float cuts[7];
