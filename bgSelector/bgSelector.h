@@ -244,6 +244,7 @@ Int_t bgSelector::Cut(Long64_t entry)
    // dEdx cuts
    if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
      return -1;
+   // mass cut
    if (m < mCut.first || m > mCut.second)
      return -1;
 

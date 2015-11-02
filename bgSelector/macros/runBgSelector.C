@@ -7,7 +7,7 @@ void runBgSelector()
   TFile *inF = new TFile("/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/picoHFLambdaCMaker.root");
   TNtuple *nt = (TNtuple*) inF->Get("secondary");
   cout << "initializing bgSelector ..." << endl;
-  bgSelector T("bgSelectedLc.root", nt);
+  bgSelector T("bgSelectedLcMassCut.root", nt);
   cout << "Looping over events ..." << endl;
   T.Loop();
   cout << "Writing into file ..." << endl;
