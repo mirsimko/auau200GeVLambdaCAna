@@ -46,6 +46,7 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #set input=${baseFolder}/lists/test.list
 #set input=${baseFolder}/listAll.list
 set input=${baseFolder}/picoLists/picoList_all.list
+#set input=${baseFolder}/Diff.list
 #set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
 #set input=${baseFolder}/lists/${tree}/${tree}_all.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
@@ -219,7 +220,7 @@ echo ']>'                                     >> $hackTemplate
 
 tail -n +2 ${xmlFile} >> $hackTemplate
 
-star-submit -u ie $hackTemplate
+star-submit -u ie -debug debug $hackTemplate
 
 #star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro}
 

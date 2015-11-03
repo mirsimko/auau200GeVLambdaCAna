@@ -13,6 +13,9 @@
 #include <TNtuple.h>
 #include <TFile.h>
 #include <utility>
+#include <iostream>
+
+using namespace std;
 
 // Declaration of cuts
 // dEdx cuts
@@ -129,6 +132,7 @@ bgSelector::~bgSelector()
 {
    if (!fChain) return;
    delete fChain->GetCurrentFile();
+   outFile->Close();
 }
 
 Int_t bgSelector::GetEntry(Long64_t entry)
@@ -246,7 +250,10 @@ Int_t bgSelector::Cut(Long64_t entry)
      return -1;
    // mass cut
    if (m < mCut.first || m > mCut.second)
+   {
+     // cout << "m = " << m << " is not selected" << endl;
      return -1;
+   }
 
    return 1;
 }
