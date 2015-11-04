@@ -220,7 +220,7 @@ echo ']>'                                     >> $hackTemplate
 
 tail -n +2 ${xmlFile} >> $hackTemplate
 
-star-submit -u ie -debug debug $hackTemplate
+star-submit -u ie $hackTemplate
 
 #star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro}
 
