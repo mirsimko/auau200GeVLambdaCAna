@@ -100,7 +100,7 @@ public :
 
    bgSelector(const char *outFileName = "bgSelectedLc.root", TTree *tree=0);
    virtual ~bgSelector();
-   virtual Int_t    Cut(Long64_t entry);
+   virtual Int_t    Cut();
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(const char* outFileName, TTree *tree);
@@ -235,33 +235,4 @@ void bgSelector::Show(Long64_t entry)
    if (!fChain) return;
    fChain->Show(entry);
 }
-Int_t bgSelector::Cut(Long64_t entry)
-{
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-   GetEntry(entry);
-
-   // get only wrong charge background
-   if (charges > 0.)
-     return -1;
-   // dEdx cuts
-   if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
-     return -1;
-   // mass cut
-   if (m < mCut.first || m > mCut.second)
-   {
-     // cout << "m = " << m << " is not selected" << endl;
-     return -1;
-   }
-
-   return 1;
-}
-
-void bgSelector::Write()
-{
-  outFile->cd();
-  outNT->Write();
-}
-
 #endif // #ifdef bgSelector_cxx

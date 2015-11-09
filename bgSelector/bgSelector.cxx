@@ -10,6 +10,7 @@ using namespace std;
 
 class bgSelector;
 
+//__________________________________________________________________
 void bgSelector::Loop()
 {
 //   In a ROOT session, you can do:
@@ -52,7 +53,7 @@ void bgSelector::Loop()
 
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       // cuts
-      if (Cut(jentry) < 0) continue;
+      if (Cut() < 0) continue;
 
       /* Variables in the Ntuple:
 	 "p1pt:p2pt:p3pt:"
@@ -86,3 +87,47 @@ void bgSelector::Loop()
    cout << "Finished"<< endl;
    cout << "*********************************************" <<endl;
 }
+
+//__________________________________________________________________
+Int_t bgSelector::Cut(/*Long64_t entry*/)
+{
+// This function may be called from Loop.
+// returns  1 if entry is accepted.
+// returns -1 otherwise.
+   // GetEntry(entry);
+
+   // get only wrong charge background
+   // if (charges > 0.)
+   //   return -1;
+   // dEdx cuts
+   // if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
+   //  return -1;
+   // decay length cut
+   if (dLength < 0.02)
+   {
+     // cout << "Rejected: decay length = " << dLength << endl;
+     return -1;
+   }
+   // cout << "Not rejected: decay Length = " << dLength << endl;
+   // mass cut
+   if (m < mCut.first || m > mCut.second)
+   {
+     // cout << "m = " << m << " is not selected" << endl;
+     return -1;
+   }
+   // pt cut
+   if (p1pt < 0.4 || p2pt < 0.4 || p3pt < 0.4)
+     return -1;
+
+   // cout << "Event selected" << endl;
+   return 1;
+}
+
+//__________________________________________________________________
+void bgSelector::Write()
+{
+  outFile->cd();
+  outNT->Write();
+}
+
+//__________________________________________________________________
