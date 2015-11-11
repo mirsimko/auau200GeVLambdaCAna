@@ -144,14 +144,44 @@ void simCutsMaker::setCutsFromIndex(int const *index)
   // float McosTheta = 0.9825 + 0.0025*index[6];
   // ***********************************************
 
+  // ***********************************************
   // second iteration:
-  float MdLength = 0.012 + 0.004* index[0];
-  float MdcaDaughters = 0.018 - 0.002*index[1];
-  float MmaxVdist = 0.04 - 0.005*index[2];
-  float MpPt = 0.3 + 0.1*index[3];
-  float MpiPt = 0.3 + 0.1*index[4];
-  float MkPt = 0.3 + 0.1*index[5];
-  float McosTheta = 0.98 + 0.0025*index[6];
+  // ***********************************************
+  // float MdLength = 0.012 + 0.004* index[0];
+  // float MdcaDaughters = 0.018 - 0.002*index[1];
+  // float MmaxVdist = 0.04 - 0.005*index[2];
+  // float MpPt = 0.3 + 0.1*index[3];
+  // float MpiPt = 0.3 + 0.1*index[4];
+  // float MkPt = 0.3 + 0.1*index[5];
+  // float McosTheta = 0.98 + 0.0025*index[6];
+  // ***********************************************
+
+  // ***********************************************
+  // third iteration:
+  // ***********************************************
+  // float MdLength = 0.02 + 0.002* index[0];
+  // float MdcaDaughters = 0.010 - 0.002*index[1];
+  // float MmaxVdist = 0.028 - 0.002*index[2];
+  // float MpPt = 0.6 + 0.1*index[3];
+  // float MpiPt = 0.5 + 0.05*index[4];
+  // float MkPt = 0.5 + 0.05*index[5];
+  // float McosTheta = 0.9875 + 0.0025*index[6];
+  // ***********************************************
+  // ii	jj  kk	ll  mm	nn  oo	dLength	dcaD  Vdist pPt	piPt  kPt cos(t)  significance	nSim  nBKG  ratio
+  // 4	1 2 4 4	4 4 0.028 0.008	0.024 1	0.7 0.7	0.9975	0.24631	7.5553	933.333	0.00809496
+  // ***********************************************
+
+  // ***********************************************
+  // fourth iteration:
+  // ***********************************************
+  float MdLength = 0.028 + 0.002* index[0];
+  float MdcaDaughters = 0.010 - 0.001*index[1];
+  float MmaxVdist = 0.025 - 0.001*index[2];
+  float MpPt = 1. + 0.1*index[3];
+  float MpiPt = 0.7 + 0.05*index[4];
+  float MkPt = 0.7 + 0.05*index[5];
+  float McosTheta = 0.995 + 0.001*index[6];
+  // ***********************************************
 
   unsigned int iArr = 0;
   cuts[iArr++]=MdLength;
@@ -169,20 +199,20 @@ void simCutsMaker::calculateIndices()
 {
   unsigned int iArr = 0;
   // dLength cut
-  indices[iArr++] = int(ceil( (dLength - 0.012)/0.004 ));
+  indices[iArr++] = int(ceil( (dLength - 0.028)/0.002 ));
   // daughters DCA cut
   // calculate maximum of daughters DCA
   float maxDcaDaughters = dcaDaugthers12 > dcaDaugthers23 ? dcaDaugthers12 : dcaDaugthers23;
   maxDcaDaughters = maxDcaDaughters > dcaDaugthers31 ? maxDcaDaughters : dcaDaugthers31;
-  indices[iArr++] = int(ceil( (-maxDcaDaughters + 0.018 )/0.002 ));
+  indices[iArr++] = int(ceil( (-maxDcaDaughters + 0.01 )/0.001 ));
   // maxVDist cut
-  indices[iArr++] = int(ceil( (-maxVertexDist + 0.04)/0.005 ));
+  indices[iArr++] = int(ceil( (-maxVertexDist + 0.025)/0.001 ));
   // daughters pT
-  indices[iArr++] = int(ceil( (p2pt - 0.3)/0.1 )); // proton
-  indices[iArr++] = int(ceil( (p3pt - 0.3)/0.1 )); // pion
-  indices[iArr++] = int(ceil( (p1pt - 0.3)/0.1 )); // kaon
+  indices[iArr++] = int(ceil( (p2pt - 1.)/0.1 )); // proton
+  indices[iArr++] = int(ceil( (p3pt - 0.7)/0.05 )); // pion
+  indices[iArr++] = int(ceil( (p1pt - 0.7)/0.05 )); // kaon
   // cos(theta)
-  indices[iArr++] = int(ceil( (cosPntAngle - 0.98)/0.0025 ));
+  indices[iArr++] = int(ceil( (cosPntAngle - 0.995)/0.001 ));
 
   for(int i = 0; i < 7; ++i)
   {

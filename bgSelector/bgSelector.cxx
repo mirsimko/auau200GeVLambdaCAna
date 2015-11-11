@@ -1,6 +1,7 @@
 #define bgSelector_cxx
 #include "bgSelector.h"
 #include <TH2.h>
+#include <limits>
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <TNtuple.h>
@@ -103,11 +104,11 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    // if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
    //  return -1;
    // decay length cut
-   if (dLength < 0.02)
-   {
-     // cout << "Rejected: decay length = " << dLength << endl;
-     return -1;
-   }
+   // if (dLength < 0.02)
+   // {
+   //   // cout << "Rejected: decay length = " << dLength << endl;
+   //   return -1;
+   // }
    // cout << "Not rejected: decay Length = " << dLength << endl;
    // mass cut
    if (m < mCut.first || m > mCut.second)
@@ -119,6 +120,10 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    if (p1pt < 0.4 || p2pt < 0.4 || p3pt < 0.4)
      return -1;
 
+   // Require TOF
+   const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
+   if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed || piTOFbeta == TOFnotUsed)
+     return -1;
    // cout << "Event selected" << endl;
    return 1;
 }

@@ -1,8 +1,6 @@
 //////////////////////////////////////////////////////////
-// This class has been automatically generated on
-// Sat Sep  5 15:33:10 2015 by ROOT version 5.34/09
-// from TTree secondary/secondary
-// found on file: picoHFLambdaCMaker.root
+// Author: Miroslav Simko
+// msimko@bnl.gov
 //////////////////////////////////////////////////////////
 
 #ifndef bgSelector_h
@@ -31,6 +29,7 @@ static const pair<float,float> mCut (2.266, 2.306);
 
 class bgSelector {
 public :
+   enum Species{kKaon, kProton, kPion};
    
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
    Int_t           fCurrent; //!current Tree number in a TChain
