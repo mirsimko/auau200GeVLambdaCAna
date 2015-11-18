@@ -12,7 +12,7 @@ void runBgSelector(char *fileName = "bgSelectedLcMassCut.root", char *NtupleName
   TFile *inF = new TFile(fileName);
   TNtuple *nt = (TNtuple*) inF->Get(NtupleName);
   cout << "initializing bgSelector ..." << endl;
-  bgSelector T("bgSelectedLcMassCutTOFrequired.root", nt);
+  bgSelector T("bgSelectedOptimal.root", nt);
   cout << "Looping over events ..." << endl;
   T.Loop();
   cout << "Writing into file ..." << endl;
