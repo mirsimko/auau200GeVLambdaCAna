@@ -97,8 +97,8 @@ int StPicoHFLambdaCMaker::MakeHF() {
 int StPicoHFLambdaCMaker::createCandidates() {
   // create candidate pairs/ triplet and fill them in arrays (in StPicoHFEvent)
 
-  // cout << " N pions    : " << mIdxPicoPions.size()  << endl;
-  // cout << " N kaons    : " << mIdxPicoKaons.size()  << endl;
+  // cout << " N pions    : " << mIdxPicoPions.size()	 << endl;
+  // cout << " N kaons    : " << mIdxPicoKaons.size()  	 << endl;
   // cout << " N protons  : " << mIdxPicoProtons.size()  << endl;
   
   // -- Decay channel proton - K0Short (pi+ - pi-)
