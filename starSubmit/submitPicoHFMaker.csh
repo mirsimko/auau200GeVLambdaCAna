@@ -25,7 +25,7 @@
 #    0 - kPionKaonProton
 #    1 - kProtonK0short
 #    2 - kLambdaPion
-set decayChannel=0
+set decayChannel=1
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
@@ -44,9 +44,11 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 #set input=${baseFolder}/lists/test.list
-#set input=${baseFolder}/listAll.list
-set input=${baseFolder}/picoLists/picoList_all.list
-#set input=${baseFolder}/Diff.list
+set input=${baseFolder}/test.list
+# set input=${baseFolder}/listAllNov17.list
+#set input=${baseFolder}/divideList/listAll3.list
+#set input=${baseFolder}/picoLists/picoList_all.list
+#set input=${baseFolder}/DiffNov17LambdaPi.list
 #set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
 #set input=${baseFolder}/lists/${tree}/${tree}_all.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
@@ -72,7 +74,7 @@ set treeName=${tree}
 # -- production Id (kAnalyse / kRead)
 set productionId=`date +%F_%H-%M`
 
-# -- production base path (tpo find picoDsts to corresponding trees
+# -- production base path (to find picoDsts to corresponding trees
 set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic
 
 # -- submission xml file 
@@ -206,17 +208,17 @@ if ( -e submitPicoHFMaker_temp.xml  ) then
     rm submitPicoHFMaker_temp.xml 
 endif 
 
-echo '<?xml version="1.0" encoding="utf-8" ?>' > $hackTemplate
-echo '<\!DOCTYPE note ['                      >> $hackTemplate
-echo '<\!ENTITY treeName "'${treeName}'">'    >> $hackTemplate
-echo '<\!ENTITY decayChannel "'${decayChannel}'">' >> $hackTemplate
-echo '<\!ENTITY mMode "'${makerMode}'">'      >> $hackTemplate
-echo '<\!ENTITY rootMacro "'${rootMacro}'">'  >> $hackTemplate
-echo '<\!ENTITY prodId "'${productionId}'">'  >> $hackTemplate
-echo '<\!ENTITY basePath "'${baseFolder}'">'  >> $hackTemplate
-echo '<\!ENTITY listOfFiles "'${input}'">'    >> $hackTemplate
+echo '<?xml version="1.0" encoding="utf-8" ?>'			   > $hackTemplate
+echo '<\!DOCTYPE note ['                      			  >> $hackTemplate
+echo '<\!ENTITY treeName "'${treeName}'">'    			  >> $hackTemplate
+echo '<\!ENTITY decayChannel "'${decayChannel}'">'		  >> $hackTemplate
+echo '<\!ENTITY mMode "'${makerMode}'">'			  >> $hackTemplate
+echo '<\!ENTITY rootMacro "'${rootMacro}'">'  			  >> $hackTemplate
+echo '<\!ENTITY prodId "'${productionId}'">'  			  >> $hackTemplate
+echo '<\!ENTITY basePath "'${baseFolder}'">'  			  >> $hackTemplate
+echo '<\!ENTITY listOfFiles "'${input}'">'    			  >> $hackTemplate
 echo '<\!ENTITY productionBasePath "'${productionbasePath}'">'    >> $hackTemplate
-echo ']>'                                     >> $hackTemplate
+echo ']>'							  >> $hackTemplate
 
 tail -n +2 ${xmlFile} >> $hackTemplate
 

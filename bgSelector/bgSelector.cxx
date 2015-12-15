@@ -111,20 +111,40 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    // }
    // cout << "Not rejected: decay Length = " << dLength << endl;
    // mass cut
-   if (m < mCut.first || m > mCut.second)
-   {
-     // cout << "m = " << m << " is not selected" << endl;
-     return -1;
-   }
+   //
+   // *********************************************************************
+   // Optimal cuts
+   // ii  jj  kk  ll  mm  nn  oo  dLength dcaD	Vdist pPt piPt	kPt cos(t)  significance  nSim	nBKG  ratio
+   // 2	1 1 2 2	1 2 0.036 0.00525 0.0215  1.8 0.8 1.05	0.9988	0.460922  0.9116  3 0.303867
+   // *********************************************************************
+   //
    // pt cut
-   if (p1pt < 0.4 || p2pt < 0.4 || p3pt < 0.4)
+   if (p1pt < 1.05 || p2pt < 1.8 || p3pt < 1.05) //  kaon, proton, pion
      return -1;
 
-   // Require TOF
-   const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
-   if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed || piTOFbeta == TOFnotUsed)
+   //dLength
+   if (dLength < 0.036)
      return -1;
-   // cout << "Event selected" << endl;
+
+   // DCA daughters
+   if (dcaDaugthers12 < 0.00525 || dcaDaugthers23 < 0.00525 || dcaDaugthers31 < 0.00525)
+     return -1;
+
+   // pairs vertices distance
+   if (maxVertexDist < 0.0215)
+     return -1;
+
+   // cos(theta)
+   if (cosPntAngle < 0.9988)
+     return -1;
+
+   // Require TOF for kaons and protons
+   const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
+   if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed)
+     return -1;
+
+   // event was not rejected
+   cout << "Event selected" << endl;
    return 1;
 }
 

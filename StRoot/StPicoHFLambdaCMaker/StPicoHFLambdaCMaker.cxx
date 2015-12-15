@@ -491,7 +491,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 bool StPicoHFLambdaCMaker::isPion(StPicoTrack const * const trk) const {
   // -- is good pion 
   //    -> used for initial filling of vectors only
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk) && mHFCuts->isHybridTOFPion(trk));
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk) && mHFCuts->isHybridTOFPion(trk) );
 }
 
 // _________________________________________________________
