@@ -164,6 +164,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
     hfCuts->setCutPionPtotRangeHybridTOF(0., 999.);
+    hfCuts->setPiDcaCut(0.005);
 
     hfCuts->setCutProtonPtRange(0., 999.);
     hfCuts->setCutTPCNSigmaProton(3);
@@ -174,7 +175,6 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutTPCNSigmaKaon(0.);            // turn off kaons
     hfCuts->setCutTOFDeltaOneOverBetaKaon(0.);  // turn off kaons
     hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
-    hfCuts->setPiDcaCut(0.005);
 
     // -- pi
 
@@ -209,7 +209,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
     hfCuts->setCutPionPtotRangeHybridTOF(0.3, 999.);
-      
+
     hfCuts->setCutProtonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
@@ -222,7 +222,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
     // -- Lambda
     float dcaDaughtersMax = 0.02;    // maximum  (100 um)
-    float decayLengthMin  = 0.1;      // minimum  (cT )
+    float decayLengthMin  = 0.;      // minimum  (cT )
     float decayLengthMax  = 300; 
     float cosThetaMin     = 0.98;   // minimum
     float minMass         = 1.08;

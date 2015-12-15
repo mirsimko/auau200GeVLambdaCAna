@@ -144,7 +144,7 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
      return -1;
 
    // event was not rejected
-   // cout << "Event selected" << endl;
+   cout << "Event selected" << endl;
    return 1;
 }
 

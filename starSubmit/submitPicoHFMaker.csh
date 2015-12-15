@@ -25,7 +25,7 @@
 #    0 - kPionKaonProton
 #    1 - kProtonK0short
 #    2 - kLambdaPion
-set decayChannel=0
+set decayChannel=1
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
@@ -44,8 +44,9 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 #set input=${baseFolder}/lists/test.list
+set input=${baseFolder}/test.list
 # set input=${baseFolder}/listAllNov17.list
-set input=${baseFolder}/divideList/listAll3.list
+#set input=${baseFolder}/divideList/listAll3.list
 #set input=${baseFolder}/picoLists/picoList_all.list
 #set input=${baseFolder}/DiffNov17LambdaPi.list
 #set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
@@ -55,7 +56,7 @@ set input=${baseFolder}/divideList/listAll3.list
 #    0 - kAnalyze, 
 #    1 - kWrite
 #    2 - kRead
-set makerMode=2
+set makerMode=1
 
 # -- set root macro
 set rootMacro=runPicoHFLambdaCMaker.C
