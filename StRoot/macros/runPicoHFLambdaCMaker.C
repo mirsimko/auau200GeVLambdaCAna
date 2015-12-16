@@ -177,16 +177,18 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
     // -- pi
-
+    hfCuts->setPiDcaCut(0.005);
 
     // -- Ks0
     float dcaDaughtersMax = 0.03;    // maximum  (100 um)
-    float decayLengthMin  = 0.1;     // 1 mm minimum  (cT 2.68 cm)
+    float decayLengthMin  = 0.;     // 1 mm minimum  (cT 2.68 cm)
     float decayLengthMax  = 300;
     float cosThetaMin     = 0.;    // minimum  >> dca2vtx = cosTheta * decaylength = 0.98*0.1 
     float minMass         = 0.4;
     float maxMass         = 0.6;
+    float dcaToPvMax	  = 0.1;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
+    hfCuts->setTertiaryDcaToPvMax(dcaToPvMax);
 
     // -- LambdaC
     dcaDaughtersMax = 0.03;   // maximum (200 um)

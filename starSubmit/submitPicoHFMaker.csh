@@ -44,7 +44,7 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 #set input=${baseFolder}/lists/test.list
-set input=${baseFolder}/test.list
+set input=${baseFolder}/oldlists/test.list
 # set input=${baseFolder}/listAllNov17.list
 #set input=${baseFolder}/divideList/listAll3.list
 #set input=${baseFolder}/picoLists/picoList_all.list
