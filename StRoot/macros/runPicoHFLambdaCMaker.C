@@ -160,13 +160,13 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     
     hfCuts->setCutPrimaryDCAtoVtxMax(999.0);  // DCA to check for TOF usage
 
-    hfCuts->setCutPionPtRange(0.5, 999.);
+    hfCuts->setCutPionPtRange(0., 999.);
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
     hfCuts->setCutPionPtotRangeHybridTOF(0., 999.);
     hfCuts->setPiDcaCut(0.005);
 
-    hfCuts->setCutProtonPtRange(0.5, 999.);
+    hfCuts->setCutProtonPtRange(0., 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
     hfCuts->setCutProtonPtotRangeHybridTOF(0., 999.);

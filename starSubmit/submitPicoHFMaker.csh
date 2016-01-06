@@ -44,10 +44,12 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 #set input=${baseFolder}/lists/test.list
-set input=${baseFolder}/oldlists/test.list
+#set input=${baseFolder}/oldlists/test.list
+set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
 # set input=${baseFolder}/listAllNov17.list
 #set input=${baseFolder}/divideList/listAll3.list
 #set input=${baseFolder}/picoLists/picoList_all.list
+#set input=${baseFolder}/picoLists/split/$1
 #set input=${baseFolder}/DiffNov17LambdaPi.list
 #set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
 #set input=${baseFolder}/lists/${tree}/${tree}_all.list
@@ -56,7 +58,7 @@ set input=${baseFolder}/oldlists/test.list
 #    0 - kAnalyze, 
 #    1 - kWrite
 #    2 - kRead
-set makerMode=1
+set makerMode=2
 
 # -- set root macro
 set rootMacro=runPicoHFLambdaCMaker.C
