@@ -1,0 +1,62 @@
+# /* *********************************************************************
+#  *  ROOT macro - Toy Monte Carlo Simulation for D0 decay
+#  *  Includes Momentum Resolution, DCA, hft ration, TPC efficiency ...
+#  *
+#  *  Authors:
+#  *            Guannan Xie (guannanxie@lbl.gov)
+#  *            **Mustafa Mustafa (mmustafa@lbl.gov)
+#  *            Hao Qiu (hqiu@lbl.gov)
+#  *		Miroslav Simko (msimko@bnl.gov)
+#  *
+#  *  ** Code Maintainer
+#  *
+#  * *********************************************************************
+# */
+
+
+# ************************************************************************
+# how to install Lambda_c toyMC on RCF:
+# ************************************************************************
+
+mkdir toyMC
+# create base directory
+cd toyMC
+# go there
+git clone https://github.com/mirsimko/auau200GeVRun14Ana.git
+# download from git
+ln -s auau200GeVRun14Ana/StRoot
+# make link to StRoot
+cd StRoot/StLambdaCToyMC/macros/
+# go to toyMC macross folder
+wget http://portal.nersc.gov/project/star/simkomir/phys_constants.h
+# download phys_constants.h from the URL (won't work without it)
+cd -
+# go back to the toyMC folder
+wget http://portal.nersc.gov/project/star/simkomir/rootFilesToyMC.tar
+# download root files with toyMC input
+tar -xzf  rootFilesToyMC.tar
+# unzip rootFilesToyMC.tar
+ln -s auau200GeVRun14Ana/StRoot/StLambdaCToyMC/macros/runToyMC.sh
+# link to the runToyMC.sh macro 
+
+
+# ************************************************************************
+# how to run Lambda_c toyMC:
+# ************************************************************************
+
+starver SL15c
+# correct version of STAR sw
+./runToyMC.sh <output file name> <decay mode> <number of entries>
+# runs the toy MC
+# for example: 
+./runToyMC.sh LCout.root 3 3000000
+# will generate 3M three body decay events into LCout.root 
+
+# ************************************************************************
+# deacy modes:
+# ************************************************************************
+# kKstarProton=0, kLambda1520Pion=1, kDeltaPPkaon=2, kPionKaonProton=3, kLambdaPion=4, kKshortProton=5
+# deccay modes 4 and 5 are not compatible with the current toy MC, and are not, therefore, fully implemented
+
+
+
