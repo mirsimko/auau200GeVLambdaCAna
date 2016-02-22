@@ -1,4 +1,6 @@
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include "TNtuple.h"
 #include "TClonesArray.h"
 
@@ -19,6 +21,7 @@
 
 #include "StPicoHFLambdaCMaker.h"
 
+using namespace std;
 ClassImp(StPicoHFLambdaCMaker)
 
 // _________________________________________________________
@@ -77,6 +80,13 @@ int StPicoHFLambdaCMaker::FinishHF() {
 
 // _________________________________________________________
 int StPicoHFLambdaCMaker::MakeHF() {
+  // For debugging: redirecting cout
+  // streambuf* coutbuf = cout.rdbuf();
+  // ofstream out;
+  // out.open("/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/dbg.log", ofstream::out | ofstream::app); // open for append
+  // cout.rdbuf(out.rdbuf());
+
+  // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::MakeHF\"" << endm;
 
   if (isMakerMode() == StPicoHFMaker::kWrite) {
     createCandidates();
@@ -90,6 +100,10 @@ int StPicoHFLambdaCMaker::MakeHF() {
     analyzeCandidates();
   }
 
+  // redirecting cout back
+  // cout.rdbuf(coutbuf);
+  // out.close();
+
   return kStOK;
 }
 
@@ -97,9 +111,10 @@ int StPicoHFLambdaCMaker::MakeHF() {
 int StPicoHFLambdaCMaker::createCandidates() {
   // create candidate pairs/ triplet and fill them in arrays (in StPicoHFEvent)
 
-  // cout << " N pions    : " << mIdxPicoPions.size()	 << endl;
-  // cout << " N kaons    : " << mIdxPicoKaons.size()  	 << endl;
-  // cout << " N protons  : " << mIdxPicoProtons.size()  << endl;
+  // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::createCandidates\"" << endm;
+  // LOG_INFO << " N pions    : " << mIdxPicoPions.size()	            << endm;
+  // LOG_INFO << " N kaons    : " << mIdxPicoKaons.size()              << endm;
+  // LOG_INFO << " N protons  : " << mIdxPicoProtons.size()            << endm;
   
   // -- Decay channel proton - K0Short (pi+ - pi-)
   if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
@@ -148,8 +163,8 @@ int StPicoHFLambdaCMaker::createCandidates() {
       } // for (unsigned int idxK0Short = 0; idxK0Short <  mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
     } //  if (mPicoHFEvent->nHFTertiaryVertices() > 0) {
 
-    //    cout << "      N K0Shorts : " << mPicoHFEvent->nHFTertiaryVertices() << endl;
-    //    cout << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endl;
+    // LOG_INFO << "      N K0Shorts : " << mPicoHFEvent->nHFTertiaryVertices() << endm;
+    // LOG_INFO << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endm;
 
   } // if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
 

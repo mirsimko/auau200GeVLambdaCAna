@@ -166,7 +166,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutPionPtotRangeHybridTOF(0., 999.);
     hfCuts->setPiDcaCut(0.005);
 
-    hfCuts->setCutProtonPtRange(0., 999.);
+    hfCuts->setCutProtonPtRange(0.2, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
     hfCuts->setCutProtonPtotRangeHybridTOF(0., 999.);
@@ -177,7 +177,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
     // -- pi
-    hfCuts->setPiDcaCut(0.005);
+    hfCuts->setPiDcaCut(0.1);
 
     // -- Ks0
     float dcaDaughtersMax = 0.03;    // maximum  (100 um)
@@ -223,7 +223,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
     // -- Lambda
-    float dcaDaughtersMax = 0.02;    // maximum  (100 um)
+    float dcaDaughtersMax = 0.02;    // maximum  (200 um)
     float decayLengthMin  = 0.;      // minimum  (cT )
     float decayLengthMax  = 300; 
     float cosThetaMin     = 0.98;   // minimum
@@ -287,7 +287,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   if(nEvents>total) nEvents = total;
 
   for (Int_t i=0; i<nEvents; i++) {
-    if(i%10000==0)
+    if(i%1000==0)
       cout << "Working on eventNumber " << i << endl;
     
     chain->Clear();

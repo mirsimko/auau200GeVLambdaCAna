@@ -18,7 +18,7 @@ using namespace std;
 // Declaration of cuts
 // dEdx cuts
 static const Float_t pNSigmaCut = 2.;
-static const Float_t piNSigmaCut = 2.;
+static const Float_t piNSigmaCut = 3.;
 static const Float_t KNSigmaCut = 2.;
 static const pair<float,float> mCut (2.266, 2.306);
 

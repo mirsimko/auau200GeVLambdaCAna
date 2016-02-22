@@ -1,4 +1,3 @@
-#define simCutsMaker_cxx
 #include "simCutsMaker.h"
 #include <TH2.h>
 #include <TStyle.h>
@@ -9,7 +8,11 @@
 #include "TString.h"
 #include <iostream>
 
+#include "cutsConsts.h"
+using namespace firstIter;
+
 using namespace std;
+
 
 // --------------------------------------------------
 void simCutsMaker::Loop(Long64_t first, Long64_t last)
@@ -136,13 +139,13 @@ void simCutsMaker::setCutsFromIndex(int const *index)
   // ***********************************************
   // First iteration
   // ***********************************************
-  float MdLength = 0.034 + 0.001* index[0];
-  float MdcaDaughters = 0.0055 - 0.00025*index[1];
-  float MmaxVdist = 0.022 - 0.0005*index[2];
-  float MpPt = 1.7 + 0.05*index[3];
-  float MpiPt = 0.775 + 0.0125*index[4];
-  float MkPt = 1.0375 + 0.0125*index[5];
-  float McosTheta = 0.9986 + 0.0001*index[6];
+  float MdLength = DLstart + DLinc* index[0];
+  float MdcaDaughters = dcaDaughtersStart - dcaDaughtersInc*index[1];
+  float MmaxVdist = maxVdistStart - maxVdistInc*index[2];
+  float MpPt = pPtStart + pPtInc*index[3];
+  float MpiPt = piPtStart + piPtInc*index[4];
+  float MkPt = KPtStart + KPtInc*index[5];
+  float McosTheta = cosThetaStart + cosThetaInc*index[6];
   // ***********************************************
 
   unsigned int iArr = 0;
@@ -161,20 +164,20 @@ void simCutsMaker::calculateIndices()
 {
   unsigned int iArr = 0;
   // dLength cut
-  indices[iArr++] = int(ceil( (dLength - 0.034)/0.001 ));
+  indices[iArr++] = int(ceil( (dLength - DLstart)/DLinc ));
   // daughters DCA cut
   // calculate maximum of daughters DCA
   float maxDcaDaughters = dcaDaugthers12 > dcaDaugthers23 ? dcaDaugthers12 : dcaDaugthers23;
   maxDcaDaughters = maxDcaDaughters > dcaDaugthers31 ? maxDcaDaughters : dcaDaugthers31;
-  indices[iArr++] = int(ceil( (-maxDcaDaughters + 0.0055 )/0.00025 ));
+  indices[iArr++] = int(ceil( (-maxDcaDaughters + dcaDaughtersStart )/dcaDaughtersInc ));
   // maxVDist cut
-  indices[iArr++] = int(ceil( (-maxVertexDist + 0.022)/0.0005 ));
+  indices[iArr++] = int(ceil( (-maxVertexDist + maxVdistStart )/maxVdistInc ));
   // daughters pT
-  indices[iArr++] = int(ceil( (p2pt - 1.7)/0.05 )); // proton
-  indices[iArr++] = int(ceil( (p3pt - 0.775)/0.0125 )); // pion
-  indices[iArr++] = int(ceil( (p1pt - 1.0375)/0.0125 )); // kaon
+  indices[iArr++] = int(ceil( (p2pt - pPtStart )/pPtInc )); // proton
+  indices[iArr++] = int(ceil( (p3pt - piPtStart)/piPtInc )); // pion
+  indices[iArr++] = int(ceil( (p1pt - KPtStart)/KPtInc )); // kaon
   // cos(theta)
-  indices[iArr++] = int(ceil( (cosPntAngle - 0.9986)/0.0001 ));
+  indices[iArr++] = int(ceil( (cosPntAngle - cosThetaStart)/cosThetaInc ));
 
   for(int i = 0; i < 7; ++i)
   {
@@ -218,3 +221,4 @@ inline int simCutsMaker::indexInArray(int ii, int jj, int kk, int ll, int mm, in
 {
   return oo+5*nn+25*mm+125*ll+625*kk+3125*jj+15625*ii;
 }
+

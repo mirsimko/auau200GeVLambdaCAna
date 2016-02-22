@@ -1,11 +1,12 @@
 /* *********************************************************************
- *  ROOT macro - Toy Monte Carlo Simulation for D0 decay
+ *  ROOT macro - Toy Monte Carlo Simulation for Lambda_c decay
  *  Includes Momentum Resolution, DCA, hft ration, TPC efficiency ...
  *
  *  Authors:
  *            Guannan Xie (guannanxie@lbl.gov)
- *            **Mustafa Mustafa (mmustafa@lbl.gov)
+ *            Mustafa Mustafa (mmustafa@lbl.gov)
  *            Hao Qiu (hqiu@lbl.gov)
+ *            Miroslav Simko (simkomir@fjfi.cvut.cz)
  *
  *  ** Code Maintainer
  *

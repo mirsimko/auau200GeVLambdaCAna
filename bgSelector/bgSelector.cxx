@@ -98,11 +98,11 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    // GetEntry(entry);
 
    // get only wrong charge background
-   // if (charges > 0.)
-   //   return -1;
+   if (charges > 0.)
+     return -1;
    // dEdx cuts
-   // if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
-   //  return -1;
+   if ( TMath::Abs(pNSigma) > pNSigmaCut || TMath::Abs(piNSigma) > piNSigmaCut || TMath::Abs(KNSigma) > KNSigmaCut)
+    return -1;
    // decay length cut
    // if (dLength < 0.02)
    // {
@@ -119,32 +119,32 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    // *********************************************************************
    //
    // pt cut
-   if (p1pt < 1.05 || p2pt < 1.8 || p3pt < 1.05) //  kaon, proton, pion
-     return -1;
+   // if (p1pt < 1.05 || p2pt < 1.8 || p3pt < 1.05) //  kaon, proton, pion
+   //   return -1;
 
-   //dLength
-   if (dLength < 0.036)
-     return -1;
+   // //dLength
+   // if (dLength < 0.036)
+   //   return -1;
 
-   // DCA daughters
-   if (dcaDaugthers12 < 0.00525 || dcaDaugthers23 < 0.00525 || dcaDaugthers31 < 0.00525)
-     return -1;
+   // // DCA daughters
+   // if (dcaDaugthers12 < 0.00525 || dcaDaugthers23 < 0.00525 || dcaDaugthers31 < 0.00525)
+   //   return -1;
 
-   // pairs vertices distance
-   if (maxVertexDist < 0.0215)
-     return -1;
+   // // pairs vertices distance
+   // if (maxVertexDist < 0.0215)
+   //   return -1;
 
-   // cos(theta)
-   if (cosPntAngle < 0.9988)
-     return -1;
+   // // cos(theta)
+   // if (cosPntAngle < 0.9988)
+   //   return -1;
 
-   // Require TOF for kaons and protons
-   const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
-   if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed)
-     return -1;
+   // // Require TOF for kaons and protons
+   // const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
+   // if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed)
+   //   return -1;
 
    // event was not rejected
-   cout << "Event selected" << endl;
+   // cout << "Event selected" << endl;
    return 1;
 }
 
