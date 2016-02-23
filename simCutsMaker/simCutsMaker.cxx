@@ -139,8 +139,6 @@ void simCutsMaker::setCutsFromIndex(int const *index)
 {
 
   // ***********************************************
-  // First iteration
-  // ***********************************************
   float MdLength = DLstart + DLinc* index[0];
   float MdcaDaughters = dcaDaughtersStart - dcaDaughtersInc*index[1];
   float MmaxVdist = maxVdistStart - maxVdistInc*index[2];
