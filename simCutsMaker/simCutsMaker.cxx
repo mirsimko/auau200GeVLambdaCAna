@@ -1,3 +1,4 @@
+#define simCutsMaker_cxx
 #include "simCutsMaker.h"
 #include <TH2.h>
 #include <TStyle.h>
@@ -13,6 +14,7 @@ using namespace firstIter;
 
 using namespace std;
 
+// class simCutsMaker;
 
 // --------------------------------------------------
 void simCutsMaker::Loop(Long64_t first, Long64_t last)

@@ -1,7 +1,7 @@
 #ifndef _cutsConsts_h_
 #define _cutsConsts_h_
 
-namespace(firstIter)
+namespace firstIter
 {
   const float DLstart = 0.003;
   const float DLinc = 0.01;
