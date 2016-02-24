@@ -117,7 +117,7 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    //3       2       0       4       2       2       4       0.033   0.01    0.022   1.4     0.8     0.8     0.996   0.0979951       0.629   40.5705 0.0155039
    //
    // pt cut
-   if (p1pt < 0.5 || p2pt < 0.5 || p3pt < 0.5 //  kaon, proton, pion
+   if (p1pt < 0.5 || p2pt < 0.5 || p3pt < 0.5) //  kaon, proton, pion
      return -1;
 
    //dLength
