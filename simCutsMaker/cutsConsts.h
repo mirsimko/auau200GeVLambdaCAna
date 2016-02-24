@@ -103,5 +103,27 @@ namespace firstIter
   const float cosThetaStart = 0.98;
   const float cosThetaInc = 0.004;
 }
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 3 2 0 4	2 2 4 0.033 0.01  0.022	1.4 0.8	0.8 0.996 0.0979951 0.629 40.5705 0.0155039
+
+
+namespace secondIter
+{
+  const float DLstart = 0.02;
+  const float DLinc = 0.005;
+  const float dcaDaughtersStart = 0.015;
+  const float dcaDaughtersInc = 0.0025;
+  const float maxVdistStart = 0.022;
+  const float maxVdistInc = 0.005;
+  const float pPtStart = 1.;
+  const float pPtInc = 0.3;
+  const float piPtStart = 0.5;
+  const float piPtInc = 0.15;
+  const float KPtStart = 0.5;
+  const float KPtInc = 0.15;
+  const float cosThetaStart = 0.99;
+  const float cosThetaInc = 0.002;
+}
 
 #endif // #ifndef _cutsConsts_h_
