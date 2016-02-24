@@ -155,6 +155,10 @@ void simCutsMaker::Init(TTree *tree)
    // (once per file to be processed).
 
    // Set branch addresses and branch pointers
+   cout << "Running on tree \"" << tree->GetName() << "\" ..." << endl;
+
+   
+
    if (!tree) return;
    fChain = tree;
    fCurrent = -1;

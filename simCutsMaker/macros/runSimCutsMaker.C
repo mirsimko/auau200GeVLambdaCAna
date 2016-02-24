@@ -20,10 +20,11 @@ void runSimCutsMaker(Long64_t first = 1, Long64_t last = LLONG_MAX)
   // TFile *inf = new TFile("SimSelectedLcMassCut.root");  
   // TFile *inf = new TFile("LC.dataDriven.root");  
   TFile *inf = new TFile("bgSelected1stIter.root");  
-  TNtuple *nt = (TNtuple*) inf->Get("ntTMVA");
+  // TNtuple *nt = (TNtuple*) inf->Get("ntTMVA");
+  TNtuple *nt = (TNtuple*) inf->Get("secondarySelected");
   cout << "Initializing simCutsMaker ..." << endl;
   // simCutsMaker mSimCutsMaker((TTree*) nt, Form("bgCutsPlots_%09lld_%09lld.root", first, last) );
-  simCutsMaker mSimCutsMaker((TTree*) nt,"bgCutsPlots2ndIter.root" );
+  simCutsMaker mSimCutsMaker((TTree*) nt,"bkgCutsPlots2ndIter.root" );
 
   cout << "Running on events ..." << endl;
   mSimCutsMaker.Loop(first, last);
