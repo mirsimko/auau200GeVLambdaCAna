@@ -113,35 +113,33 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
    // mass cut
    //
    // *********************************************************************
-   // Optimal cuts
-   // ii  jj  kk  ll  mm  nn  oo  dLength dcaD	Vdist pPt piPt	kPt cos(t)  significance  nSim	nBKG  ratio
-   // 2	1 1 2 2	1 2 0.036 0.00525 0.0215  1.8 0.8 1.05	0.9988	0.460922  0.9116  3 0.303867
-   // *********************************************************************
+   //ii      jj      kk      ll      mm      nn      oo      dLength dcaD    Vdist   pPt     piPt    kPt     cos(t)  significance    nSim    nBKG    ratio
+   //3       2       0       4       2       2       4       0.033   0.01    0.022   1.4     0.8     0.8     0.996   0.0979951       0.629   40.5705 0.0155039
    //
    // pt cut
-   // if (p1pt < 1.05 || p2pt < 1.8 || p3pt < 1.05) //  kaon, proton, pion
-   //   return -1;
+   if (p1pt < 0.5 || p2pt < 0.5 || p3pt < 0.5 //  kaon, proton, pion
+     return -1;
 
-   // //dLength
-   // if (dLength < 0.036)
-   //   return -1;
+   //dLength
+   if (dLength < 0.02)
+     return -1;
 
-   // // DCA daughters
-   // if (dcaDaugthers12 < 0.00525 || dcaDaugthers23 < 0.00525 || dcaDaugthers31 < 0.00525)
-   //   return -1;
+   // DCA daughters
+   if (dcaDaugthers12 < 0.015 || dcaDaugthers23 < 0.015 || dcaDaugthers31 < 0.015)
+     return -1;
 
-   // // pairs vertices distance
-   // if (maxVertexDist < 0.0215)
-   //   return -1;
+   // pairs vertices distance
+   if (maxVertexDist < 0.03)
+     return -1;
 
-   // // cos(theta)
-   // if (cosPntAngle < 0.9988)
-   //   return -1;
+   // cos(theta)
+   if (cosPntAngle < 0.99)
+     return -1;
 
-   // // Require TOF for kaons and protons
-   // const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
-   // if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed)
-   //   return -1;
+   // Require TOF for kaons and protons
+   const float TOFnotUsed = std::numeric_limits<float>::quiet_NaN();
+   if (KTOFbeta == TOFnotUsed || pTOFbeta == TOFnotUsed)
+     return -1;
 
    // event was not rejected
    // cout << "Event selected" << endl;
