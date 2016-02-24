@@ -9,8 +9,9 @@ using namespace firstIter;
 
 using namespace std;
 
-const float simScale = 0.0001;
-const float bkgScale = 1./3.;
+const float bkgRatio = 0.0918578;      // background triplets in the Lambda_C peak window
+const float simScale = 0.001;          // 1000 times more LC were produced
+const float bkgScale = bkgRatio*1./3.; // third because there are 3 times more bkg combinations than LC combinations
 
 void setCutsFromIndex(int const *index, float *cuts)
 {
@@ -37,8 +38,8 @@ void setCutsFromIndex(int const *index, float *cuts)
 
 void getSignificance()
 {
-  TFile *simF = new TFile("simCuts7thIter.root");
-  TFile *bkgF = new TFile("bgCuts7thIter.root");
+  TFile *simF = new TFile("simCutsPlots.root");
+  TFile *bkgF = new TFile("bgCutsPlotsNew.root");
 
   cout << "************************************************" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
