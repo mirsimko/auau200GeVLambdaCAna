@@ -7,7 +7,8 @@
 #include "simCutsMaker/cutsConsts.h"
 // using namespace firstIter;
 // using namespace secondIter;
-using namespace thirdIter;
+// using namespace thirdIter;
+using namespace fourthIter;
 
 using namespace std;
 
@@ -40,8 +41,8 @@ void setCutsFromIndex(int const *index, float *cuts)
 
 void getSignificance()
 {
-  TFile *simF = new TFile("simCutsPlots2ndIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots2ndIter.root");
+  TFile *simF = new TFile("simCutsPlots4thIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots4thIter.root");
 
   cout << "************************************************" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
