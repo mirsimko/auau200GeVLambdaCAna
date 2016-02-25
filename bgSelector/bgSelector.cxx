@@ -125,7 +125,7 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
      return -1;
 
    // DCA daughters
-   if (dcaDaugthers12 < 0.015 || dcaDaugthers23 < 0.015 || dcaDaugthers31 < 0.015)
+   if (dcaDaugthers12 > 0.015 || dcaDaugthers23 > 0.015 || dcaDaugthers31 > 0.015)
      return -1;
 
    // pairs vertices distance
