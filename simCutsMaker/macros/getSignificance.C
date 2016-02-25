@@ -5,7 +5,9 @@
 #include "TH1.h"
 
 #include "simCutsMaker/cutsConsts.h"
-using namespace firstIter;
+// using namespace firstIter;
+// using namespace secondIter;
+using namespace thirdIter;
 
 using namespace std;
 
@@ -38,8 +40,8 @@ void setCutsFromIndex(int const *index, float *cuts)
 
 void getSignificance()
 {
-  TFile *simF = new TFile("simCutsPlots.root");
-  TFile *bkgF = new TFile("bgCutsPlotsNew.root");
+  TFile *simF = new TFile("simCutsPlots2ndIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots2ndIter.root");
 
   cout << "************************************************" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
@@ -73,6 +75,11 @@ void getSignificance()
 
 		TH1D* simHist = (TH1D*) simF->Get(Form("H%d%d%d%d%d%d%d", ii, jj, kk, ll, mm, nn, oo));
 		TH1D* bkgHist = (TH1D*) bkgF->Get(Form("H%d%d%d%d%d%d%d", ii, jj, kk, ll, mm, nn, oo));
+		if(!(simHist && bkgHist))
+		{
+		  cerr << "histogram not found" << endl;
+		  throw;
+		}
 
 		float simCounts = simHist->Integral()*simScale;
 		float bkgCounts = bkgHist->Integral()*bkgScale;

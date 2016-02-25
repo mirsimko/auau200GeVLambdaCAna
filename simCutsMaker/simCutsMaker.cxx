@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "cutsConsts.h"
-using namespace secondIter;
+using namespace thirdIter;
 
 using namespace std;
 
@@ -63,20 +63,25 @@ void simCutsMaker::Loop(Long64_t first, Long64_t last)
 
       calculateIndices();
 
-      for (int ii = 0; ii < indices[0]; ++ii)
+      for (int ii = 0; ii < indices[0]; ++ii) // dLength
       {
-	for (int jj = 0; jj < indices[1]; ++jj)
+	// cout << "dLength" << endl;
+	for (int jj = 0; jj < indices[1]; ++jj) // daughters DCA
 	{
-	  for (int kk = 0; kk < indices[2]; ++kk)
+	  // cout << "daughters DCA" << endl;
+	  for (int kk = 0; kk < indices[2]; ++kk) // daghters vertex dist
 	  {
-	    for (int ll = 0; ll < indices[3]; ++ll)
+	    // cout << "daughters DCA and daughters vertex dist" << endl;
+	    for (int ll = 0; ll < indices[3]; ++ll) // p pT
 	    {
-	      for (int mm = 0; mm < indices[4]; ++mm)
+	      for (int mm = 0; mm < indices[4]; ++mm) // K pT
 	      {
-		for (int nn = 0; nn < indices[5]; ++nn)
+		for (int nn = 0; nn < indices[5]; ++nn) // pi pT
 		{
-		  for (int oo = 0; oo < indices[6]; ++oo)
+		  // cout << "pT cuts" << endl;
+		  for (int oo = 0; oo < indices[6]; ++oo) // cos(theta)
 		  {
+		    // cout << "Event selected" << endl;
 		    H[indexInArray(ii,jj,kk,ll,mm,nn,oo)]->Fill(pt);
 		  }
 		}
