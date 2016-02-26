@@ -1,8 +1,15 @@
 #include "TFile.h"
+#include "TCanvas.h"
+#include "TGraph.h"
+#include <vector>
 #include "TNtuple.h"
 #include <iostream>
+#include <fstream>
 #include "TMath.h"
 #include "TH1.h"
+#include <cmath>
+#include <climits>
+#include "TString.h"
 
 #include "simCutsMaker/cutsConsts.h"
 // using namespace firstIter;
@@ -12,12 +19,29 @@ using namespace fourthIter;
 
 using namespace std;
 
+inline int indexInArray(int index[]) ;
+
 const float bkgRatio = 0.0918578;      // background triplets in the Lambda_C peak window
 const float simScale = 0.001;          // 1000 times more LC were produced
 const float bkgScale = bkgRatio*1./3.; // third because there are 3 times more bkg combinations than LC combinations
 
+const double AllBkg = 900215583*bkgScale;
+const double AllSim = 105791*simScale;
+
+const int Nplots = 5*5*5*5*5*5*5;
+
+struct significanceVariables
+{
+  double significance[Nplots];
+  double bkgRejection[Nplots];
+  double simRejection[Nplots];
+  double ratio[Nplots];
+};
+
 void setCutsFromIndex(int const *index, float *cuts)
 {
+  // cut constants are in cutsConsts.h
+  // namespace has to be chosen depending on the iteration number
   // ***********************************************
   float MdLength = DLstart + DLinc* index[0];
   float MdcaDaughters = dcaDaughtersStart - dcaDaughtersInc*index[1];
@@ -41,13 +65,23 @@ void setCutsFromIndex(int const *index, float *cuts)
 
 void getSignificance()
 {
+  significanceVariables s;
+
   TFile *simF = new TFile("simCutsPlots4thIter.root");
   TFile *bkgF = new TFile("bkgCutsPlots4thIter.root");
 
+  TString outfileName = "signiTableTest.txt";
+  // changging output of cout to outf
+  ofstream outf(outfileName);
+  cout << "Writing significance table into \"" << outfileName << "\"" << endl;
+  streambuf *oldBuf = cout.rdbuf(outf.rdbuf());
+
+  // head
   cout << "************************************************" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
   cout << endl;
   
+  // max significance variables
   float max = 0;
   float maxRatio = 0;
   float maxSimCounts = 0;
@@ -88,6 +122,7 @@ void getSignificance()
 		float significance = simCounts/TMath::Sqrt(simCounts + bkgCounts);
 		float ratio = simCounts/bkgCounts;
 
+		// printing
 		cout << ii << "\t";
 		cout << jj << "\t";
 		cout << kk << "\t";
@@ -103,6 +138,20 @@ void getSignificance()
 		cout << cuts[4] << "\t";
 		cout << cuts[5] << "\t";
 		cout << cuts[6] << "\t";
+
+		int ind = indexInArray(index);
+
+		s.significance[ind]= significance;
+		s.ratio[ind] = ratio;
+		if(simCounts)
+		  s.simRejection[ind] = AllSim/simCounts;
+		else
+		  s.simRejection[ind] = std::numeric_limits<double>::quiet_NaN();
+
+		if(bkgCounts)
+		  s.bkgRejection[ind] = AllBkg/bkgCounts;
+		else
+		  s.bkgRejection[ind] = std::numeric_limits<double>::quiet_NaN();
 
 		cout << significance << "\t";
 		cout << simCounts << "\t";
@@ -147,4 +196,48 @@ void getSignificance()
   cout << maxSimCounts << "\t";
   cout << maxBkgCounts << "\t";
   cout << maxRatio << endl;
+  // changing cout back
+  cout.rdbuf(oldBuf);
+
+  TCanvas *C1 = new TCanvas("C1", "significance", 600,400);
+  TCanvas *C2 = new TCanvas("C2", "BKG rejection", 600,400);
+  TCanvas *C3 = new TCanvas("C3", "ratio", 600,400);
+
+  TGraph *signiGraph = new TGraph(Nplots,s.simRejection,s.significance);
+  TGraph *bkgRejectionGraph = new TGraph(Nplots,s.simRejection,s.bkgRejection);
+  TGraph *ratioGraph = new TGraph(Nplots,s.simRejection,s.ratio);
+
+  TF1 *unity = new TF1("TF1", "x", 0, 10000000);
+  for (int i = 0; i < Nplots; ++i)
+  {
+    if(!isnormal(s.simRejection[i]))
+    {
+      ratioGraph->RemovePoint(i);
+      signiGraph->RemovePoint(i);
+      bkgRejectionGraph->RemovePoint(i);
+    }
+    else
+    {
+      if(!isnormal(s.significance[i]))
+	signiGraph->RemovePoint(i);
+      if(!isnormal(s.bkgRejection[i]))
+	bkgRejectionGraph->RemovePoint(i);
+      if(!isnormal(s.ratio[i]))
+	ratioGraph->RemovePoint(i);
+    }
+  }
+
+  C1->cd();
+  signiGraph->Draw("A*");
+  C2->cd();
+  bkgRejectionGraph->Draw("A*");
+  unity->Draw("same");
+  C3->cd();
+  ratioGraph->Draw("A*");
 }
+
+inline int indexInArray(int index[]) 
+{
+    return index[6]+5*index[5]+25*index[4]+125*index[3]+625*index[2]+3125*index[1]+15625*index[0];
+}
+
