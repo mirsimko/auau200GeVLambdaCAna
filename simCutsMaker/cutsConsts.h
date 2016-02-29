@@ -226,7 +226,7 @@ namespace fifthIter
   const float pPtInc = 0.075;
   const float piPtStart = 1.025;
   const float piPtInc = 0.0375;
-  const float KPtStart = 1,5125;
+  const float KPtStart = 1.5125;
   const float KPtInc = 0.0375;
   const float cosThetaStart = 0.9976;
   const float cosThetaInc = 0.0002;
