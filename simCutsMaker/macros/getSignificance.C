@@ -69,10 +69,10 @@ void getSignificance()
 {
   significanceVariables s;
 
-  TFile *simF = new TFile("simCutsPlots2ndIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots2ndIter.root");
+  TFile *simF = new TFile("simCutsPlots3rdIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots3rdIter.root");
 
-  TString iter = "2nd iteration";
+  TString iter = "3rd iteration";
   TString outfileName = "signiTable3rdIter.txt";
   // changging output of cout to outf
   ofstream outf(outfileName);

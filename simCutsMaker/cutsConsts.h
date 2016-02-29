@@ -154,11 +154,37 @@ namespace thirdIter
 // 1 4 3 1	1 4 2 0.04  0.005 0.015	1.9 1.1	1.55  0.9976  0.164317	0.027 0	inf
 
 
+// ********************************************
+// most likely overtrained
+// ********************************************
+//
+// namespace fourthIter
+// {
+//   const float DLstart = 0.0375;
+//   const float DLinc = 0.0025;
+//   const float dcaDaughtersStart = 0.00725;
+//   const float dcaDaughtersInc = 0.00125;
+//   const float maxVdistStart = 0.02;
+//   const float maxVdistInc = 0.0025;
+//   const float pPtStart = 1.6;
+//   const float pPtInc = 0.15;
+//   const float piPtStart = 0.95;
+//   const float piPtInc = 0.075;
+//   const float KPtStart = 1.25;
+//   const float KPtInc = 0.075;
+//   const float cosThetaStart = 0.9968;
+//   const float cosThetaInc = 0.0004;
+// }
+
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 1 2 1 1	1 4 2 0.04  0.0075  0.025 1.9 1.1 1.55	0.9976	0.127288  0.079	0.306193  0.258007
+
 namespace fourthIter
 {
-  const float DLstart = 0.0375;
+  const float DLstart = 0.035;
   const float DLinc = 0.0025;
-  const float dcaDaughtersStart = 0.00725;
+  const float dcaDaughtersStart = 0.00625;
   const float dcaDaughtersInc = 0.00125;
   const float maxVdistStart = 0.02;
   const float maxVdistInc = 0.0025;
@@ -166,7 +192,7 @@ namespace fourthIter
   const float pPtInc = 0.15;
   const float piPtStart = 0.95;
   const float piPtInc = 0.075;
-  const float KPtStart = 1.25;
+  const float KPtStart = 1.475;
   const float KPtInc = 0.075;
   const float cosThetaStart = 0.9968;
   const float cosThetaInc = 0.0004;
