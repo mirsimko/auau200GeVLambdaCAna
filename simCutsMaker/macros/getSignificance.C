@@ -17,7 +17,8 @@
 // using namespace firstIter;
 // using namespace secondIter;
 // using namespace thirdIter;
-using namespace fourthIter;
+// using namespace fourthIter;
+using namespace fifthIter;
 
 using namespace std;
 
@@ -70,11 +71,11 @@ void getSignificance()
   significanceVariables s;
 
   bool printTable = false;
-  TFile *simF = new TFile("simCutsPlots4thIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots4thIter.root");
+  TFile *simF = new TFile("simCutsPlots5thIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots5thIter.root");
 
-  TString iter = "4th iteration";
-  TString outfileName = "signiTable4thIter.txt";
+  TString iter = "5th iteration";
+  TString outfileName = "signiTable5thIter.txt";
   // changging output of cout to outf
   ofstream outf(outfileName, std::ofstream::out | std::ofstream::app);
   cout << "Writing significance table into \"" << outfileName << "\"" << endl;
