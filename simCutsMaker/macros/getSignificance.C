@@ -1,3 +1,4 @@
+#include "TLine.h"
 #include "TFile.h"
 #include "TCanvas.h"
 #include "TGraph.h"
@@ -10,12 +11,13 @@
 #include <cmath>
 #include <climits>
 #include "TString.h"
+#include "TF1.h"
 
 #include "simCutsMaker/cutsConsts.h"
 // using namespace firstIter;
 // using namespace secondIter;
-// using namespace thirdIter;
-using namespace fourthIter;
+using namespace thirdIter;
+// using namespace fourthIter;
 
 using namespace std;
 
@@ -67,10 +69,11 @@ void getSignificance()
 {
   significanceVariables s;
 
-  TFile *simF = new TFile("simCutsPlots4thIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots4thIter.root");
+  TFile *simF = new TFile("simCutsPlots2ndIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots2ndIter.root");
 
-  TString outfileName = "signiTableTest.txt";
+  TString iter = "2nd iteration";
+  TString outfileName = "signiTable3rdIter.txt";
   // changging output of cout to outf
   ofstream outf(outfileName);
   cout << "Writing significance table into \"" << outfileName << "\"" << endl;
@@ -88,6 +91,8 @@ void getSignificance()
   float maxBkgCounts = 0;
   float maxCuts[7] = {0,0,0,0,0,0};
   float maxIdx[7] = {0,0,0,0,0,0};
+
+  float maximumRatio = 0;
 
   for (int ii = 0; ii < 5; ++ii)
   {
@@ -158,7 +163,10 @@ void getSignificance()
 		cout << bkgCounts << "\t";
 		cout << ratio << endl;
 
-		if (significance > max)
+		if ( ratio > maximumRatio && isnormal(ratio)) 
+		  maximumRatio = ratio;
+
+		if (significance > max && AllSim/simCounts < 2000) // get maximum ... 2000 is protection against overtraining
 		{
 		  max =  significance;
 		  maxRatio = ratio;
@@ -207,7 +215,28 @@ void getSignificance()
   TGraph *bkgRejectionGraph = new TGraph(Nplots,s.simRejection,s.bkgRejection);
   TGraph *ratioGraph = new TGraph(Nplots,s.simRejection,s.ratio);
 
-  TF1 *unity = new TF1("TF1", "x", 0, 10000000);
+  //setting the axes labels
+  signiGraph->GetXaxis()->SetTitle("sig0/sig []"); //x
+  bkgRejectionGraph->GetXaxis()->SetTitle("sig0/sig []");
+  ratioGraph->GetXaxis()->SetTitle("sig0/sig []");
+
+  signiGraph->GetYaxis()->SetTitle("s/#sqrt{s + b} []"); //y
+  bkgRejectionGraph->GetYaxis()->SetTitle("bkg0/bkg []");
+  ratioGraph->GetYaxis()->SetTitle("s/b []");
+
+  // marker style
+  signiGraph->SetMarkerStyle(2);
+  bkgRejectionGraph->SetMarkerStyle(2);
+  ratioGraph->SetMarkerStyle(2);
+  signiGraph->SetMarkerColor(38);
+  bkgRejectionGraph->SetMarkerColor(38);
+  ratioGraph->SetMarkerColor(38);
+
+  signiGraph->SetTitle(iter.Data());
+  bkgRejectionGraph->SetTitle(iter.Data());
+  ratioGraph->SetTitle(iter.Data());
+
+  TF1 *unity = new TF1("unity", "x", 0, 10000000);
   for (int i = 0; i < Nplots; ++i)
   {
     if(!isnormal(s.simRejection[i]))
@@ -228,12 +257,22 @@ void getSignificance()
   }
 
   C1->cd();
-  signiGraph->Draw("A*");
+  C1->SetLogx();
+  signiGraph->Draw("AP");
+
+  TLine *l = new TLine(2000,0,2000,0.1);
+  l->SetLineColor(kRed);
+  l->Draw();;
   C2->cd();
-  bkgRejectionGraph->Draw("A*");
+  C2->SetLogx();
+  C2->SetLogy();
+  C2->SetLogx();
+  bkgRejectionGraph->Draw("AP");
   unity->Draw("same");
   C3->cd();
-  ratioGraph->Draw("A*");
+  C3->SetLogx();
+  ratioGraph->GetYaxis()->SetRangeUser(0.,maximumRatio*1.05);
+  ratioGraph->Draw("AP");
 }
 
 inline int indexInArray(int index[]) 
