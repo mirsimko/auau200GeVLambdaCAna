@@ -16,8 +16,8 @@
 #include "simCutsMaker/cutsConsts.h"
 // using namespace firstIter;
 // using namespace secondIter;
-using namespace thirdIter;
-// using namespace fourthIter;
+// using namespace thirdIter;
+using namespace fourthIter;
 
 using namespace std;
 
@@ -69,20 +69,24 @@ void getSignificance()
 {
   significanceVariables s;
 
-  TFile *simF = new TFile("simCutsPlots3rdIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots3rdIter.root");
+  bool printTable = false;
+  TFile *simF = new TFile("simCutsPlots4thIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots4thIter.root");
 
-  TString iter = "3rd iteration";
-  TString outfileName = "signiTable3rdIter.txt";
+  TString iter = "4th iteration";
+  TString outfileName = "signiTable4thIter.txt";
   // changging output of cout to outf
-  ofstream outf(outfileName);
+  ofstream outf(outfileName, std::ofstream::out | std::ofstream::app);
   cout << "Writing significance table into \"" << outfileName << "\"" << endl;
   streambuf *oldBuf = cout.rdbuf(outf.rdbuf());
 
   // head
-  cout << "************************************************" << endl;
-  cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
-  cout << endl;
+  if(printTable)
+  {
+    cout << "************************************************" << endl;
+    cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
+    cout << endl;
+  }
   
   // max significance variables
   float max = 0;
@@ -127,22 +131,25 @@ void getSignificance()
 		float significance = simCounts/TMath::Sqrt(simCounts + bkgCounts);
 		float ratio = simCounts/bkgCounts;
 
-		// printing
-		cout << ii << "\t";
-		cout << jj << "\t";
-		cout << kk << "\t";
-		cout << ll << "\t";
-		cout << mm << "\t";
-		cout << nn << "\t";
-		cout << oo << "\t";
+		if(printTable)
+		{
+		  // printing
+		  cout << ii << "\t";
+		  cout << jj << "\t";
+		  cout << kk << "\t";
+		  cout << ll << "\t";
+		  cout << mm << "\t";
+		  cout << nn << "\t";
+		  cout << oo << "\t";
 
-		cout << cuts[0] << "\t";
-		cout << cuts[1] << "\t";
-		cout << cuts[2] << "\t";
-		cout << cuts[3] << "\t";
-		cout << cuts[4] << "\t";
-		cout << cuts[5] << "\t";
-		cout << cuts[6] << "\t";
+		  cout << cuts[0] << "\t";
+		  cout << cuts[1] << "\t";
+		  cout << cuts[2] << "\t";
+		  cout << cuts[3] << "\t";
+		  cout << cuts[4] << "\t";
+		  cout << cuts[5] << "\t";
+		  cout << cuts[6] << "\t";
+		}
 
 		int ind = indexInArray(index);
 
@@ -158,15 +165,18 @@ void getSignificance()
 		else
 		  s.bkgRejection[ind] = std::numeric_limits<double>::quiet_NaN();
 
-		cout << significance << "\t";
-		cout << simCounts << "\t";
-		cout << bkgCounts << "\t";
-		cout << ratio << endl;
+		if(printTable)
+		{
+		  cout << significance << "\t";
+		  cout << simCounts << "\t";
+		  cout << bkgCounts << "\t";
+		  cout << ratio << endl;
+		}
 
 		if ( ratio > maximumRatio && isnormal(ratio)) 
 		  maximumRatio = ratio;
 
-		if (significance > max && AllSim/simCounts < 2000) // get maximum ... 2000 is protection against overtraining
+		if (significance > max /* && AllSim/simCounts < 1333 */ ) // get maximum ... 1333 is protection against overtraining
 		{
 		  max =  significance;
 		  maxRatio = ratio;
@@ -262,7 +272,7 @@ void getSignificance()
 
   TLine *l = new TLine(2000,0,2000,0.1);
   l->SetLineColor(kRed);
-  l->Draw();;
+  // l->Draw();
   C2->cd();
   C2->SetLogx();
   C2->SetLogy();
