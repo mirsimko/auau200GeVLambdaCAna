@@ -69,6 +69,7 @@ void bgSelector::Loop()
 	 "pTOFbeta:KTOFbeta:piTOFbeta:"
 	 "maxVertexDist"
       */
+      // cout << "dcaDaugthers12 = " << dcaDaugthers12 << endl;
       Float_t Arr[100] = {p1pt, p2pt, p3pt,
 			  charges,
 			  m,pt,eta,phi,
@@ -129,8 +130,8 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
      return -1;
 
    // pairs vertices distance
-   if (maxVertexDist < 0.03)
-     return -1;
+   // if (maxVertexDist > 0.03)
+   //   return -1;
 
    // cos(theta)
    if (cosPntAngle < 0.99)
