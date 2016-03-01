@@ -24,6 +24,11 @@ using namespace std;
 
 inline int indexInArray(int index[]) ;
 
+enum variableType {kDL, kDCAdaughters, kVdist, kPPt, kPiPt, kKPt, kCosTheta};
+
+float newCut(variableType v, int maxIndex[], float maxCuts[]);
+float newIdx(variableType v, int maxIndex[]);
+
 const float bkgRatio = 0.0918578;      // background triplets in the Lambda_C peak window
 const float simScale = 0.001;          // 1000 times more LC were produced
 const float bkgScale = bkgRatio*1./3.; // third because there are 3 times more bkg combinations than LC combinations
@@ -177,7 +182,7 @@ void getSignificance()
 		if ( ratio > maximumRatio && isnormal(ratio)) 
 		  maximumRatio = ratio;
 
-		if (significance > max /* && AllSim/simCounts < 1333 */ ) // get maximum ... 1333 is protection against overtraining
+		if (significance > max /* && AllSim/simCounts < 1250*/ ) // get maximum ... 1333 is protection against overtraining
 		{
 		  max =  significance;
 		  maxRatio = ratio;
@@ -215,6 +220,25 @@ void getSignificance()
   cout << maxSimCounts << "\t";
   cout << maxBkgCounts << "\t";
   cout << maxRatio << endl;
+
+  // new cuts:
+  // *******************************************
+  cout << endl;
+  cout << "DLstart = " <<             newCut(kDL, maxIdx, maxCuts) << endl;
+  cout << "DLinc = " <<               newIdx(kDL, maxIdx) << endl;
+  cout << "dcaDaughtersStart = " <<   newCut(kDCAdaughters, maxIdx, maxCuts) << endl;
+  cout << "dcaDaughtersInc = " <<     newIdx(kDCAdaughters, maxIdx) << endl;
+  cout << "maxVdistStart = " <<       newCut(kVdist, maxIdx, maxCuts) << endl;
+  cout << "maxVdistInc = " <<         newIdx(kVdist, maxIdx) << endl;
+  cout << "pPtStart = " <<            newCut(kPPt, maxIdx, maxCuts) << endl;
+  cout << "pPtInc = " <<              newIdx(kPPt, maxIdx) << endl;
+  cout << "piPtStart = " <<           newCut(kPiPt, maxIdx, maxCuts) << endl;
+  cout << "piPtInc = " <<             newIdx(kPiPt, maxIdx) << endl;
+  cout << "KPtStart = " <<            newCut(kKPt, maxIdx, maxCuts) <<endl;
+  cout << "KPtInc = " <<              newIdx(kKPt, maxIdx) << endl;
+  cout << "cosThetaStart = " <<       newCut(kCosTheta, maxIdx, maxCuts) << endl;
+  cout << "cosThetaInc = " <<         newIdx(kCosTheta, maxIdx) << endl;
+
   // changing cout back
   cout.rdbuf(oldBuf);
 
@@ -286,8 +310,108 @@ void getSignificance()
   ratioGraph->Draw("AP");
 }
 
+// ------------------------------------------------------
 inline int indexInArray(int index[]) 
 {
     return index[6]+5*index[5]+25*index[4]+125*index[3]+625*index[2]+3125*index[1]+15625*index[0];
 }
 
+// ------------------------------------------------------
+float newCut(variableType v, int maxIndex[], float maxCuts[])
+{
+  float start;
+  float inc;
+  float plusOrMinus;
+  switch(v)
+  {
+    case kDL:
+      start = DLstart;
+      inc = DLinc;
+      plusOrMinus = 1;
+      break;
+    case kDCAdaughters:
+      start = dcaDaughtersStart;
+      inc = dcaDaughtersInc;
+      plusOrMinus = -1;
+      break;
+    case kVdist:
+      start = maxVdistStart;
+      inc  = maxVdistInc;
+      plusOrMinus = -1;
+      break;
+    case kPPt:
+      start  = pPtStart;
+      inc = pPtInc;
+      plusOrMinus = 1;
+      break;
+    case kPiPt:
+      start = piPtStart;
+      inc = piPtInc;
+      plusOrMinus = 1;
+      break;
+    case kKPt:
+      start = KPtStart;
+      inc = KPtInc;
+      plusOrMinus = 1;
+      break;
+    case kCosTheta:
+      start = cosThetaStart;
+      inc = cosThetaInc;
+      plusOrMinus = 1;
+      break;
+    default:
+      cerr << "newCut: unknown variable" << endl;
+      throw;
+  }
+
+  int index = maxIndex[static_cast<int>(v)];
+  float cut  = maxCuts[static_cast<int>(v)];
+
+  if(index == 0)
+    return cut - plusOrMinus*3.*inc;
+
+  if(index == 4)
+    return cut - plusOrMinus*inc;
+  
+  return cut - plusOrMinus*inc;
+}
+
+// ------------------------------------------------------
+float newIdx(variableType v, int maxIndex[])
+{
+  float inc;
+  float plusOrMinus;
+  switch(v)
+  {
+    case kDL:
+      inc = DLinc;
+      break;
+    case kDCAdaughters:
+      inc = dcaDaughtersInc;
+      break;
+    case kVdist:
+      inc  = maxVdistInc;
+      break;
+    case kPPt:
+      inc = pPtInc;
+      break;
+    case kPiPt:
+      inc = piPtInc;
+      break;
+    case kKPt:
+      inc = KPtInc;
+      break;
+    case kCosTheta:
+      inc = cosThetaInc;
+      break;
+    default:
+      cerr << "newIdx: unknown variable" << endl;
+      throw;
+  }
+
+  index = maxIndex[static_cast<int>(v)];
+  if(index == 0 || index == 4)
+    return inc;
+
+  return 0.5*inc;
+}

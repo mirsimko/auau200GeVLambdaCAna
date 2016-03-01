@@ -220,7 +220,7 @@ namespace fifthIter
   const float DLinc = 0.000675;
   const float dcaDaughtersStart = 0.01125;
   const float dcaDaughtersInc = 0.00125;
-  const float maxVdistStart = 0.0275;
+  const float maxVdistStart = 0.035;
   const float maxVdistInc = 0.0025;
   const float pPtStart = 1.6;
   const float pPtInc = 0.075;
@@ -232,6 +232,27 @@ namespace fifthIter
   const float cosThetaInc = 0.0002;
 }
 
+// ************************************************
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 1 2 0 2	4 1 0 0.04255 0.00875 0.035 1.75  1.175	1.55  0.9976  0.152318	0.112 0.42867 0.261273
 
+namespace sixthIter
+{
+  const float DLstart = 0.041875;
+  const float DLinc = 0.000675;
+  const float dcaDaughtersStart = 0.01125;
+  const float dcaDaughtersInc = 0.00125;
+  const float maxVdistStart = 0.0275;
+  const float maxVdistInc = 0.0025;
+  const float pPtStart = 1.6;
+  const float pPtInc = 0.075;
+  const float piPtStart = 1.025;
+  const float piPtInc = 0.0375;
+  const float KPtStart = 1.5125;
+  const float KPtInc = 0.0375;
+  const float cosThetaStart = 0.9976;
+  const float cosThetaInc = 0.0002;
+}
 
 #endif // #ifndef _cutsConsts_h_
