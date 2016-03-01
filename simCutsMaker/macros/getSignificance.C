@@ -26,8 +26,8 @@ inline int indexInArray(int index[]) ;
 
 enum variableType {kDL, kDCAdaughters, kVdist, kPPt, kPiPt, kKPt, kCosTheta};
 
-float newCut(variableType v, int maxIndex[], float maxCuts[]);
-float newIdx(variableType v, int maxIndex[]);
+float newCut(const variableType v, int const maxIndex[], float const maxCuts[]);
+float newIdx(const variableType v, int const maxIndex[]);
 
 const float bkgRatio = 0.0918578;      // background triplets in the Lambda_C peak window
 const float simScale = 0.001;          // 1000 times more LC were produced
@@ -100,7 +100,7 @@ void getSignificance()
   float maxSimCounts = 0;
   float maxBkgCounts = 0;
   float maxCuts[7] = {0,0,0,0,0,0};
-  float maxIdx[7] = {0,0,0,0,0,0};
+  int maxIdx[7] = {0,0,0,0,0,0};
 
   float maximumRatio = 0;
 
@@ -208,6 +208,8 @@ void getSignificance()
   cout << "Max significance" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
 
+  cout << "************************************************" << endl;
+
   for (int i = 0; i < 7; ++i)
   {
     cout << maxIdx[i] << "\t";
@@ -224,20 +226,20 @@ void getSignificance()
   // new cuts:
   // *******************************************
   cout << endl;
-  cout << "DLstart = " <<             newCut(kDL, maxIdx, maxCuts) << endl;
-  cout << "DLinc = " <<               newIdx(kDL, maxIdx) << endl;
-  cout << "dcaDaughtersStart = " <<   newCut(kDCAdaughters, maxIdx, maxCuts) << endl;
-  cout << "dcaDaughtersInc = " <<     newIdx(kDCAdaughters, maxIdx) << endl;
-  cout << "maxVdistStart = " <<       newCut(kVdist, maxIdx, maxCuts) << endl;
-  cout << "maxVdistInc = " <<         newIdx(kVdist, maxIdx) << endl;
-  cout << "pPtStart = " <<            newCut(kPPt, maxIdx, maxCuts) << endl;
-  cout << "pPtInc = " <<              newIdx(kPPt, maxIdx) << endl;
-  cout << "piPtStart = " <<           newCut(kPiPt, maxIdx, maxCuts) << endl;
-  cout << "piPtInc = " <<             newIdx(kPiPt, maxIdx) << endl;
-  cout << "KPtStart = " <<            newCut(kKPt, maxIdx, maxCuts) <<endl;
-  cout << "KPtInc = " <<              newIdx(kKPt, maxIdx) << endl;
-  cout << "cosThetaStart = " <<       newCut(kCosTheta, maxIdx, maxCuts) << endl;
-  cout << "cosThetaInc = " <<         newIdx(kCosTheta, maxIdx) << endl;
+  cout << "DLstart = " <<             newCut(kDL, maxIdx, maxCuts) << ";" << endl;
+  cout << "DLinc = " <<               newIdx(kDL, maxIdx) << ";" << endl;
+  cout << "dcaDaughtersStart = " <<   newCut(kDCAdaughters, maxIdx, maxCuts) << ";" << endl;
+  cout << "dcaDaughtersInc = " <<     newIdx(kDCAdaughters, maxIdx) << ";" << endl;
+  cout << "maxVdistStart = " <<       newCut(kVdist, maxIdx, maxCuts) << ";" << endl;
+  cout << "maxVdistInc = " <<         newIdx(kVdist, maxIdx) << ";" << endl;
+  cout << "pPtStart = " <<            newCut(kPPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "pPtInc = " <<              newIdx(kPPt, maxIdx) << ";" << endl;
+  cout << "piPtStart = " <<           newCut(kPiPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "piPtInc = " <<             newIdx(kPiPt, maxIdx) << ";" << endl;
+  cout << "KPtStart = " <<            newCut(kKPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "KPtInc = " <<              newIdx(kKPt, maxIdx) << ";" << endl;
+  cout << "cosThetaStart = " <<       newCut(kCosTheta, maxIdx, maxCuts) << ";" << endl;
+  cout << "cosThetaInc = " <<         newIdx(kCosTheta, maxIdx) << ";" << endl;
 
   // changing cout back
   cout.rdbuf(oldBuf);
@@ -317,45 +319,37 @@ inline int indexInArray(int index[])
 }
 
 // ------------------------------------------------------
-float newCut(variableType v, int maxIndex[], float maxCuts[])
+float newCut(const variableType v, int const maxIndex[], float const maxCuts[])
 {
-  float start;
   float inc;
   float plusOrMinus;
   switch(v)
   {
     case kDL:
-      start = DLstart;
       inc = DLinc;
       plusOrMinus = 1;
       break;
     case kDCAdaughters:
-      start = dcaDaughtersStart;
       inc = dcaDaughtersInc;
       plusOrMinus = -1;
       break;
     case kVdist:
-      start = maxVdistStart;
       inc  = maxVdistInc;
       plusOrMinus = -1;
       break;
     case kPPt:
-      start  = pPtStart;
       inc = pPtInc;
       plusOrMinus = 1;
       break;
     case kPiPt:
-      start = piPtStart;
       inc = piPtInc;
       plusOrMinus = 1;
       break;
     case kKPt:
-      start = KPtStart;
       inc = KPtInc;
       plusOrMinus = 1;
       break;
     case kCosTheta:
-      start = cosThetaStart;
       inc = cosThetaInc;
       plusOrMinus = 1;
       break;
@@ -364,8 +358,8 @@ float newCut(variableType v, int maxIndex[], float maxCuts[])
       throw;
   }
 
-  int index = maxIndex[static_cast<int>(v)];
-  float cut  = maxCuts[static_cast<int>(v)];
+  int index = maxIndex[v];
+  float cut  = maxCuts[v];
 
   if(index == 0)
     return cut - plusOrMinus*3.*inc;
@@ -377,7 +371,7 @@ float newCut(variableType v, int maxIndex[], float maxCuts[])
 }
 
 // ------------------------------------------------------
-float newIdx(variableType v, int maxIndex[])
+float newIdx(const variableType v, int const maxIndex[])
 {
   float inc;
   float plusOrMinus;
@@ -409,7 +403,7 @@ float newIdx(variableType v, int maxIndex[])
       throw;
   }
 
-  index = maxIndex[static_cast<int>(v)];
+  int index = maxIndex[v];
   if(index == 0 || index == 4)
     return inc;
 
