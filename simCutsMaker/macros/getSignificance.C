@@ -1,23 +1,55 @@
+#include "TLine.h"
 #include "TFile.h"
+#include "TCanvas.h"
+#include "TGraph.h"
+#include <vector>
 #include "TNtuple.h"
 #include <iostream>
+#include <fstream>
 #include "TMath.h"
 #include "TH1.h"
+#include <cmath>
+#include <climits>
+#include "TString.h"
+#include "TF1.h"
 
 #include "simCutsMaker/cutsConsts.h"
 // using namespace firstIter;
 // using namespace secondIter;
 // using namespace thirdIter;
-using namespace fourthIter;
+// using namespace fourthIter;
+using namespace fifthIter;
 
 using namespace std;
+
+inline int indexInArray(int index[]) ;
+
+enum variableType {kDL, kDCAdaughters, kVdist, kPPt, kPiPt, kKPt, kCosTheta};
+
+float newCut(const variableType v, int const maxIndex[], float const maxCuts[]);
+float newIdx(const variableType v, int const maxIndex[]);
 
 const float bkgRatio = 0.0918578;      // background triplets in the Lambda_C peak window
 const float simScale = 0.001;          // 1000 times more LC were produced
 const float bkgScale = bkgRatio*1./3.; // third because there are 3 times more bkg combinations than LC combinations
 
+const double AllBkg = 900215583*bkgScale;
+const double AllSim = 105791*simScale;
+
+const int Nplots = 5*5*5*5*5*5*5;
+
+struct significanceVariables
+{
+  double significance[Nplots];
+  double bkgRejection[Nplots];
+  double simRejection[Nplots];
+  double ratio[Nplots];
+};
+
 void setCutsFromIndex(int const *index, float *cuts)
 {
+  // cut constants are in cutsConsts.h
+  // namespace has to be chosen depending on the iteration number
   // ***********************************************
   float MdLength = DLstart + DLinc* index[0];
   float MdcaDaughters = dcaDaughtersStart - dcaDaughtersInc*index[1];
@@ -41,19 +73,36 @@ void setCutsFromIndex(int const *index, float *cuts)
 
 void getSignificance()
 {
-  TFile *simF = new TFile("simCutsPlots4thIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots4thIter.root");
+  significanceVariables s;
 
-  cout << "************************************************" << endl;
-  cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
-  cout << endl;
+  bool printTable = false;
+  TFile *simF = new TFile("simCutsPlots5thIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots5thIter.root");
+
+  TString iter = "5th iteration";
+  TString outfileName = "signiTable5thIter.txt";
+  // changging output of cout to outf
+  ofstream outf(outfileName, std::ofstream::out | std::ofstream::app);
+  cout << "Writing significance table into \"" << outfileName << "\"" << endl;
+  streambuf *oldBuf = cout.rdbuf(outf.rdbuf());
+
+  // head
+  if(printTable)
+  {
+    cout << "************************************************" << endl;
+    cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
+    cout << endl;
+  }
   
+  // max significance variables
   float max = 0;
   float maxRatio = 0;
   float maxSimCounts = 0;
   float maxBkgCounts = 0;
   float maxCuts[7] = {0,0,0,0,0,0};
-  float maxIdx[7] = {0,0,0,0,0,0};
+  int maxIdx[7] = {0,0,0,0,0,0};
+
+  float maximumRatio = 0;
 
   for (int ii = 0; ii < 5; ++ii)
   {
@@ -88,28 +137,52 @@ void getSignificance()
 		float significance = simCounts/TMath::Sqrt(simCounts + bkgCounts);
 		float ratio = simCounts/bkgCounts;
 
-		cout << ii << "\t";
-		cout << jj << "\t";
-		cout << kk << "\t";
-		cout << ll << "\t";
-		cout << mm << "\t";
-		cout << nn << "\t";
-		cout << oo << "\t";
+		if(printTable)
+		{
+		  // printing
+		  cout << ii << "\t";
+		  cout << jj << "\t";
+		  cout << kk << "\t";
+		  cout << ll << "\t";
+		  cout << mm << "\t";
+		  cout << nn << "\t";
+		  cout << oo << "\t";
 
-		cout << cuts[0] << "\t";
-		cout << cuts[1] << "\t";
-		cout << cuts[2] << "\t";
-		cout << cuts[3] << "\t";
-		cout << cuts[4] << "\t";
-		cout << cuts[5] << "\t";
-		cout << cuts[6] << "\t";
+		  cout << cuts[0] << "\t";
+		  cout << cuts[1] << "\t";
+		  cout << cuts[2] << "\t";
+		  cout << cuts[3] << "\t";
+		  cout << cuts[4] << "\t";
+		  cout << cuts[5] << "\t";
+		  cout << cuts[6] << "\t";
+		}
 
-		cout << significance << "\t";
-		cout << simCounts << "\t";
-		cout << bkgCounts << "\t";
-		cout << ratio << endl;
+		int ind = indexInArray(index);
 
-		if (significance > max)
+		s.significance[ind]= significance;
+		s.ratio[ind] = ratio;
+		if(simCounts)
+		  s.simRejection[ind] = AllSim/simCounts;
+		else
+		  s.simRejection[ind] = std::numeric_limits<double>::quiet_NaN();
+
+		if(bkgCounts)
+		  s.bkgRejection[ind] = AllBkg/bkgCounts;
+		else
+		  s.bkgRejection[ind] = std::numeric_limits<double>::quiet_NaN();
+
+		if(printTable)
+		{
+		  cout << significance << "\t";
+		  cout << simCounts << "\t";
+		  cout << bkgCounts << "\t";
+		  cout << ratio << endl;
+		}
+
+		if ( ratio > maximumRatio && isnormal(ratio)) 
+		  maximumRatio = ratio;
+
+		if (significance > max /* && AllSim/simCounts < 1250*/ ) // get maximum ... 1333 is protection against overtraining
 		{
 		  max =  significance;
 		  maxRatio = ratio;
@@ -135,6 +208,8 @@ void getSignificance()
   cout << "Max significance" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
 
+  cout << "************************************************" << endl;
+
   for (int i = 0; i < 7; ++i)
   {
     cout << maxIdx[i] << "\t";
@@ -147,4 +222,190 @@ void getSignificance()
   cout << maxSimCounts << "\t";
   cout << maxBkgCounts << "\t";
   cout << maxRatio << endl;
+
+  // new cuts:
+  // *******************************************
+  cout << endl;
+  cout << "DLstart = " <<             newCut(kDL, maxIdx, maxCuts) << ";" << endl;
+  cout << "DLinc = " <<               newIdx(kDL, maxIdx) << ";" << endl;
+  cout << "dcaDaughtersStart = " <<   newCut(kDCAdaughters, maxIdx, maxCuts) << ";" << endl;
+  cout << "dcaDaughtersInc = " <<     newIdx(kDCAdaughters, maxIdx) << ";" << endl;
+  cout << "maxVdistStart = " <<       newCut(kVdist, maxIdx, maxCuts) << ";" << endl;
+  cout << "maxVdistInc = " <<         newIdx(kVdist, maxIdx) << ";" << endl;
+  cout << "pPtStart = " <<            newCut(kPPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "pPtInc = " <<              newIdx(kPPt, maxIdx) << ";" << endl;
+  cout << "piPtStart = " <<           newCut(kPiPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "piPtInc = " <<             newIdx(kPiPt, maxIdx) << ";" << endl;
+  cout << "KPtStart = " <<            newCut(kKPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "KPtInc = " <<              newIdx(kKPt, maxIdx) << ";" << endl;
+  cout << "cosThetaStart = " <<       newCut(kCosTheta, maxIdx, maxCuts) << ";" << endl;
+  cout << "cosThetaInc = " <<         newIdx(kCosTheta, maxIdx) << ";" << endl;
+
+  // changing cout back
+  cout.rdbuf(oldBuf);
+
+  TCanvas *C1 = new TCanvas("C1", "significance", 600,400);
+  TCanvas *C2 = new TCanvas("C2", "BKG rejection", 600,400);
+  TCanvas *C3 = new TCanvas("C3", "ratio", 600,400);
+
+  TGraph *signiGraph = new TGraph(Nplots,s.simRejection,s.significance);
+  TGraph *bkgRejectionGraph = new TGraph(Nplots,s.simRejection,s.bkgRejection);
+  TGraph *ratioGraph = new TGraph(Nplots,s.simRejection,s.ratio);
+
+  //setting the axes labels
+  signiGraph->GetXaxis()->SetTitle("sig0/sig []"); //x
+  bkgRejectionGraph->GetXaxis()->SetTitle("sig0/sig []");
+  ratioGraph->GetXaxis()->SetTitle("sig0/sig []");
+
+  signiGraph->GetYaxis()->SetTitle("s/#sqrt{s + b} []"); //y
+  bkgRejectionGraph->GetYaxis()->SetTitle("bkg0/bkg []");
+  ratioGraph->GetYaxis()->SetTitle("s/b []");
+
+  // marker style
+  signiGraph->SetMarkerStyle(2);
+  bkgRejectionGraph->SetMarkerStyle(2);
+  ratioGraph->SetMarkerStyle(2);
+  signiGraph->SetMarkerColor(38);
+  bkgRejectionGraph->SetMarkerColor(38);
+  ratioGraph->SetMarkerColor(38);
+
+  signiGraph->SetTitle(iter.Data());
+  bkgRejectionGraph->SetTitle(iter.Data());
+  ratioGraph->SetTitle(iter.Data());
+
+  TF1 *unity = new TF1("unity", "x", 0, 10000000);
+  for (int i = 0; i < Nplots; ++i)
+  {
+    if(!isnormal(s.simRejection[i]))
+    {
+      ratioGraph->RemovePoint(i);
+      signiGraph->RemovePoint(i);
+      bkgRejectionGraph->RemovePoint(i);
+    }
+    else
+    {
+      if(!isnormal(s.significance[i]))
+	signiGraph->RemovePoint(i);
+      if(!isnormal(s.bkgRejection[i]))
+	bkgRejectionGraph->RemovePoint(i);
+      if(!isnormal(s.ratio[i]))
+	ratioGraph->RemovePoint(i);
+    }
+  }
+
+  C1->cd();
+  C1->SetLogx();
+  signiGraph->Draw("AP");
+
+  TLine *l = new TLine(2000,0,2000,0.1);
+  l->SetLineColor(kRed);
+  // l->Draw();
+  C2->cd();
+  C2->SetLogx();
+  C2->SetLogy();
+  C2->SetLogx();
+  bkgRejectionGraph->Draw("AP");
+  unity->Draw("same");
+  C3->cd();
+  C3->SetLogx();
+  ratioGraph->GetYaxis()->SetRangeUser(0.,maximumRatio*1.05);
+  ratioGraph->Draw("AP");
+}
+
+// ------------------------------------------------------
+inline int indexInArray(int index[]) 
+{
+    return index[6]+5*index[5]+25*index[4]+125*index[3]+625*index[2]+3125*index[1]+15625*index[0];
+}
+
+// ------------------------------------------------------
+float newCut(const variableType v, int const maxIndex[], float const maxCuts[])
+{
+  float inc;
+  float plusOrMinus;
+  switch(v)
+  {
+    case kDL:
+      inc = DLinc;
+      plusOrMinus = 1;
+      break;
+    case kDCAdaughters:
+      inc = dcaDaughtersInc;
+      plusOrMinus = -1;
+      break;
+    case kVdist:
+      inc  = maxVdistInc;
+      plusOrMinus = -1;
+      break;
+    case kPPt:
+      inc = pPtInc;
+      plusOrMinus = 1;
+      break;
+    case kPiPt:
+      inc = piPtInc;
+      plusOrMinus = 1;
+      break;
+    case kKPt:
+      inc = KPtInc;
+      plusOrMinus = 1;
+      break;
+    case kCosTheta:
+      inc = cosThetaInc;
+      plusOrMinus = 1;
+      break;
+    default:
+      cerr << "newCut: unknown variable" << endl;
+      throw;
+  }
+
+  int index = maxIndex[v];
+  float cut  = maxCuts[v];
+
+  if(index == 0)
+    return cut - plusOrMinus*3.*inc;
+
+  if(index == 4)
+    return cut - plusOrMinus*inc;
+  
+  return cut - plusOrMinus*inc;
+}
+
+// ------------------------------------------------------
+float newIdx(const variableType v, int const maxIndex[])
+{
+  float inc;
+  float plusOrMinus;
+  switch(v)
+  {
+    case kDL:
+      inc = DLinc;
+      break;
+    case kDCAdaughters:
+      inc = dcaDaughtersInc;
+      break;
+    case kVdist:
+      inc  = maxVdistInc;
+      break;
+    case kPPt:
+      inc = pPtInc;
+      break;
+    case kPiPt:
+      inc = piPtInc;
+      break;
+    case kKPt:
+      inc = KPtInc;
+      break;
+    case kCosTheta:
+      inc = cosThetaInc;
+      break;
+    default:
+      cerr << "newIdx: unknown variable" << endl;
+      throw;
+  }
+
+  int index = maxIndex[v];
+  if(index == 0 || index == 4)
+    return inc;
+
+  return 0.5*inc;
 }
