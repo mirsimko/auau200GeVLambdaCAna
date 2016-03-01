@@ -239,20 +239,67 @@ namespace fifthIter
 
 namespace sixthIter
 {
+  const float DLstart = 0.041875         ;
+  const float DLinc = 0.0003375          ;
+  const float dcaDaughtersStart = 0.01   ;
+  const float dcaDaughtersInc = 0.000625 ;
+  const float maxVdistStart = 0.0425     ;
+  const float maxVdistInc = 0.0025       ;
+  const float pPtStart = 1.675           ;
+  const float pPtInc = 0.0375            ;
+  const float piPtStart = 1.1375         ;
+  const float piPtInc = 0.0375           ;
+  const float KPtStart = 1.5125          ;
+  const float KPtInc = 0.01875           ;
+  const float cosThetaStart = 0.997      ;
+  const float cosThetaInc = 0.0002       ;       
+}
+
+// ************************************************
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 1 1 0 2	0 2 3 0.0422125	0.009375  0.0425  1.75	1.1375	1.55  0.9976  0.174153	0.138 0.489908	0.281685
+
+
+namespace seventhIter
+{
   const float DLstart = 0.041875;
-  const float DLinc = 0.000675;
-  const float dcaDaughtersStart = 0.01125;
-  const float dcaDaughtersInc = 0.00125;
-  const float maxVdistStart = 0.0275;
+  const float DLinc = 0.00016875;
+  const float dcaDaughtersStart = 0.01;
+  const float dcaDaughtersInc = 0.0003125;
+  const float maxVdistStart = 0.05;
   const float maxVdistInc = 0.0025;
-  const float pPtStart = 1.6;
-  const float pPtInc = 0.075;
+  const float pPtStart = 1.7125;
+  const float pPtInc = 0.01875;
   const float piPtStart = 1.025;
   const float piPtInc = 0.0375;
-  const float KPtStart = 1.5125;
-  const float KPtInc = 0.0375;
-  const float cosThetaStart = 0.9976;
-  const float cosThetaInc = 0.0002;
+  const float KPtStart = 1.53125;
+  const float KPtInc = 0.009375;
+  const float cosThetaStart = 0.9974;
+  const float cosThetaInc = 0.0001;
+}
+
+// ************************************************
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 1 2 0 1	4 2 1 0.0420437	0.009375  0.05	1.73125	1.175 1.55  0.9975  0.189917  0.148 0.459289  0.322237
+
+namespace eighthIter
+{
+  const float DLstart = 0.041875;
+  const float DLinc = 8.4375e-05;
+  const float dcaDaughtersStart = 0.0096875;
+  const float dcaDaughtersInc = 0.00015625;
+  const float maxVdistStart = 0.0575;
+  const float maxVdistInc = 0.0025;
+  const float pPtStart = 1.7125;
+  const float pPtInc = 0.009375;
+  const float piPtStart = 1.1375;
+  const float piPtInc = 0.0375;
+  const float KPtStart = 1.54062;
+  const float KPtInc = 0.0046875;
+  const float cosThetaStart = 0.9974;
+  const float cosThetaInc = 5e-05;
 }
 
 #endif // #ifndef _cutsConsts_h_
