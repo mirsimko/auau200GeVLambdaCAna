@@ -21,7 +21,9 @@
 // using namespace fifthIter;
 // using namespace sixthIter;
 // using namespace seventhIter;
-using namespace eighthIter;
+// using namespace eighthIter;
+// using namespace ninthIter;
+using namespace tenthIter;
 
 using namespace std;
 
@@ -56,11 +58,11 @@ void getSignificance()
   significanceVariables s;
 
   bool printTable = false;
-  TFile *simF = new TFile("simCutsPlots8thIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots8thIter.root");
+  TFile *simF = new TFile("simCutsPlots10thIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots10thIter.root");
 
-  TString iter = "8th iteration";
-  TString outfileName = "signiTable8thIter.txt";
+  TString iter = "10th iteration";
+  TString outfileName = "signiTable10thIter.txt";
   // Cange above this line
   // =======================================================
   // changging output of cout to outf
@@ -191,8 +193,6 @@ void getSignificance()
   cout << "Max significance" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
 
-  cout << "************************************************" << endl;
-
   for (int i = 0; i < 7; ++i)
   {
     cout << maxIdx[i] << "\t";
@@ -205,6 +205,8 @@ void getSignificance()
   cout << maxSimCounts << "\t";
   cout << maxBkgCounts << "\t";
   cout << maxRatio << endl;
+
+  cout << "************************************************" << endl;
 
   // new cuts:
   // *******************************************

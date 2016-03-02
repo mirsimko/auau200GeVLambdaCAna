@@ -302,4 +302,51 @@ namespace eighthIter
   const float cosThetaInc = 5e-05;
 }
 
+// ************************************************
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 1 1 3 1	1 1 1 0.0419594	0.00953125  0.05  1.72187 1.175	1.54531	0.99745	0.146169  0.158	1.01044	0.156368
+
+namespace ninthIter
+{
+  const float DLstart = 0.041875;
+  const float DLinc = 4.21875e-05;
+  const float dcaDaughtersStart = 0.0096875;
+  const float dcaDaughtersInc = 7.8125e-05;
+  const float maxVdistStart = 0.0525;
+  const float maxVdistInc = 0.00125;
+  const float pPtStart = 1.7125;
+  const float pPtInc = 0.0046875;
+  const float piPtStart = 1.1375;
+  const float piPtInc = 0.01875;
+  const float KPtStart = 1.54062;
+  const float KPtInc = 0.00234375;
+  const float cosThetaStart = 0.9974;
+  const float cosThetaInc = 2.5e-05;
+}
+
+
+// ************************************************
+// Max significance
+// ii  jj	kk  ll	mm  nn	oo  dLength dcaD  Vdist	pPt piPt  kPt cos(t)  significance  nSim  nBKG	ratio
+// 2 2 3 2	2 2 2 0.0419594	0.00953125  0.04875 1.72187 1.175 1.54531 0.99745 0.147506  0.155 0.949197  0.163296
+
+namespace tenthIter
+{
+  const float DLstart = 0.0419172;
+  const float DLinc = 2.10938e-05;
+  const float dcaDaughtersStart = 0.00960938;
+  const float dcaDaughtersInc = 3.90625e-05;
+  const float maxVdistStart = 0.05;
+  const float maxVdistInc = 0.000625;
+  const float pPtStart = 1.71719;
+  const float pPtInc = 0.00234375;
+  const float piPtStart = 1.15625;
+  const float piPtInc = 0.009375;
+  const float KPtStart = 1.54296;
+  const float KPtInc = 0.00117188;
+  const float cosThetaStart = 0.997425;
+  const float cosThetaInc = 1.25e-05;
+}
+
 #endif // #ifndef _cutsConsts_h_
