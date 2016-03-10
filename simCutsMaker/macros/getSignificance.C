@@ -18,7 +18,12 @@
 // using namespace secondIter;
 // using namespace thirdIter;
 // using namespace fourthIter;
-using namespace fifthIter;
+// using namespace fifthIter;
+// using namespace sixthIter;
+// using namespace seventhIter;
+// using namespace eighthIter;
+// using namespace ninthIter;
+using namespace tenthIter;
 
 using namespace std;
 
@@ -46,41 +51,20 @@ struct significanceVariables
   double ratio[Nplots];
 };
 
-void setCutsFromIndex(int const *index, float *cuts)
-{
-  // cut constants are in cutsConsts.h
-  // namespace has to be chosen depending on the iteration number
-  // ***********************************************
-  float MdLength = DLstart + DLinc* index[0];
-  float MdcaDaughters = dcaDaughtersStart - dcaDaughtersInc*index[1];
-  float MmaxVdist = maxVdistStart - maxVdistInc*index[2];
-  float MpPt = pPtStart + pPtInc*index[3];
-  float MpiPt = piPtStart + piPtInc*index[4];
-  float MkPt = KPtStart + KPtInc*index[5];
-  float McosTheta = cosThetaStart + cosThetaInc*index[6];
-  // ***********************************************
-
-  unsigned int iArr = 0;                                  
-  cuts[iArr++]=MdLength;                                  
-  cuts[iArr++]=MdcaDaughters;                             
-  cuts[iArr++]=MmaxVdist;                                 
-  cuts[iArr++]=MpPt;                                      
-  cuts[iArr++]=MpiPt;                                     
-  cuts[iArr++]=MkPt;                                      
-  cuts[iArr++]=McosTheta;    
-}
-
+void setCutsFromIndex(int const *index, float *cuts);
 
 void getSignificance()
 {
   significanceVariables s;
 
   bool printTable = false;
-  TFile *simF = new TFile("simCutsPlots5thIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots5thIter.root");
+  TFile *simF = new TFile("simCutsPlots10thIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots10thIter.root");
 
-  TString iter = "5th iteration";
-  TString outfileName = "signiTable5thIter.txt";
+  TString iter = "10th iteration";
+  TString outfileName = "signiTable10thIter.txt";
+  // Cange above this line
+  // =======================================================
   // changging output of cout to outf
   ofstream outf(outfileName, std::ofstream::out | std::ofstream::app);
   cout << "Writing significance table into \"" << outfileName << "\"" << endl;
@@ -104,6 +88,7 @@ void getSignificance()
 
   float maximumRatio = 0;
 
+  // looping over all histograms
   for (int ii = 0; ii < 5; ++ii)
   {
     for (int jj = 0; jj < 5; ++jj)
@@ -208,8 +193,6 @@ void getSignificance()
   cout << "Max significance" << endl;
   cout << "ii\tjj\tkk\tll\tmm\tnn\too\tdLength\tdcaD\tVdist\tpPt\tpiPt\tkPt\tcos(t)\tsignificance\tnSim\tnBKG\tratio" << endl;
 
-  cout << "************************************************" << endl;
-
   for (int i = 0; i < 7; ++i)
   {
     cout << maxIdx[i] << "\t";
@@ -223,23 +206,25 @@ void getSignificance()
   cout << maxBkgCounts << "\t";
   cout << maxRatio << endl;
 
+  cout << "************************************************" << endl;
+
   // new cuts:
   // *******************************************
   cout << endl;
-  cout << "DLstart = " <<             newCut(kDL, maxIdx, maxCuts) << ";" << endl;
-  cout << "DLinc = " <<               newIdx(kDL, maxIdx) << ";" << endl;
-  cout << "dcaDaughtersStart = " <<   newCut(kDCAdaughters, maxIdx, maxCuts) << ";" << endl;
-  cout << "dcaDaughtersInc = " <<     newIdx(kDCAdaughters, maxIdx) << ";" << endl;
-  cout << "maxVdistStart = " <<       newCut(kVdist, maxIdx, maxCuts) << ";" << endl;
-  cout << "maxVdistInc = " <<         newIdx(kVdist, maxIdx) << ";" << endl;
-  cout << "pPtStart = " <<            newCut(kPPt, maxIdx, maxCuts) << ";" << endl;
-  cout << "pPtInc = " <<              newIdx(kPPt, maxIdx) << ";" << endl;
-  cout << "piPtStart = " <<           newCut(kPiPt, maxIdx, maxCuts) << ";" << endl;
-  cout << "piPtInc = " <<             newIdx(kPiPt, maxIdx) << ";" << endl;
-  cout << "KPtStart = " <<            newCut(kKPt, maxIdx, maxCuts) << ";" << endl;
-  cout << "KPtInc = " <<              newIdx(kKPt, maxIdx) << ";" << endl;
-  cout << "cosThetaStart = " <<       newCut(kCosTheta, maxIdx, maxCuts) << ";" << endl;
-  cout << "cosThetaInc = " <<         newIdx(kCosTheta, maxIdx) << ";" << endl;
+  cout << "DLstart = " <<           newCut(kDL, maxIdx, maxCuts) << ";" << endl;
+  cout << "DLinc = " <<             newIdx(kDL, maxIdx) << ";" << endl;
+  cout << "dcaDaughtersStart = " << newCut(kDCAdaughters, maxIdx, maxCuts) << ";" << endl;
+  cout << "dcaDaughtersInc = " <<   newIdx(kDCAdaughters, maxIdx) << ";" << endl;
+  cout << "maxVdistStart = " <<     newCut(kVdist, maxIdx, maxCuts) << ";" << endl;
+  cout << "maxVdistInc = " <<       newIdx(kVdist, maxIdx) << ";" << endl;
+  cout << "pPtStart = " <<          newCut(kPPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "pPtInc = " <<            newIdx(kPPt, maxIdx) << ";" << endl;
+  cout << "piPtStart = " <<         newCut(kPiPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "piPtInc = " <<           newIdx(kPiPt, maxIdx) << ";" << endl;
+  cout << "KPtStart = " <<          newCut(kKPt, maxIdx, maxCuts) << ";" << endl;
+  cout << "KPtInc = " <<            newIdx(kKPt, maxIdx) << ";" << endl;
+  cout << "cosThetaStart = " <<     newCut(kCosTheta, maxIdx, maxCuts) << ";" << endl;
+  cout << "cosThetaInc = " <<       newIdx(kCosTheta, maxIdx) << ";" << endl;
 
   // changing cout back
   cout.rdbuf(oldBuf);
@@ -374,7 +359,6 @@ float newCut(const variableType v, int const maxIndex[], float const maxCuts[])
 float newIdx(const variableType v, int const maxIndex[])
 {
   float inc;
-  float plusOrMinus;
   switch(v)
   {
     case kDL:
@@ -409,3 +393,29 @@ float newIdx(const variableType v, int const maxIndex[])
 
   return 0.5*inc;
 }
+
+// ------------------------------------------------------
+void setCutsFromIndex(int const *index, float *cuts)
+{
+  // cut constants are in cutsConsts.h
+  // namespace has to be chosen depending on the iteration number
+  // ***********************************************
+  float MdLength = DLstart + DLinc* index[0];
+  float MdcaDaughters = dcaDaughtersStart - dcaDaughtersInc*index[1];
+  float MmaxVdist = maxVdistStart - maxVdistInc*index[2];
+  float MpPt = pPtStart + pPtInc*index[3];
+  float MpiPt = piPtStart + piPtInc*index[4];
+  float MkPt = KPtStart + KPtInc*index[5];
+  float McosTheta = cosThetaStart + cosThetaInc*index[6];
+  // ***********************************************
+
+  unsigned int iArr = 0;                                  
+  cuts[iArr++]=MdLength;                                  
+  cuts[iArr++]=MdcaDaughters;                             
+  cuts[iArr++]=MmaxVdist;                                 
+  cuts[iArr++]=MpPt;                                      
+  cuts[iArr++]=MpiPt;                                     
+  cuts[iArr++]=MkPt;                                      
+  cuts[iArr++]=McosTheta;    
+}
+
