@@ -10,7 +10,7 @@
 #include <iostream>
 
 #include "cutsConsts.h"
-using namespace tenthIter;
+using namespace firstIter;
 
 using namespace std;
 
