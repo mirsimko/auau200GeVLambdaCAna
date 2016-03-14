@@ -14,8 +14,8 @@
 #include "TF1.h"
 
 #include "simCutsMaker/cutsConsts.h"
-using namespace firstIter;
-// using namespace secondIter;
+// using namespace firstIter;
+using namespace secondIter;
 // using namespace thirdIter;
 // using namespace fourthIter;
 // using namespace fifthIter;
@@ -57,11 +57,11 @@ void getSignificance()
   significanceVariables s;
 
   bool printTable = false;
-  TFile *simF = new TFile("simCutsPlots1stIter.root");
-  TFile *bkgF = new TFile("bkgCutsPlots1stIter.root");
+  TFile *simF = new TFile("simCutsPlots2ndIter.root");
+  TFile *bkgF = new TFile("bkgCutsPlots2ndIter.root");
 
-  TString iter = "1st iteration";
-  TString outfileName = "signiTable1stIter.txt";
+  TString iter = "2nd iteration";
+  TString outfileName = "signiTable2ndIter.txt";
   // Cange above this line
   // =======================================================
   // changging output of cout to outf
