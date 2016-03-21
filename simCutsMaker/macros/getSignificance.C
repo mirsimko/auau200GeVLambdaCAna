@@ -55,6 +55,7 @@ void setCutsFromIndex(int const *index, float *cuts);
 void getSignificance()
 {
   significanceVariables s;
+  const double maxSigniToLook = 100.;
 
   bool printTable = false;
   TFile *simF = new TFile("simCutsPlots2ndIter.root");
@@ -166,7 +167,7 @@ void getSignificance()
 		if ( ratio > maximumRatio && isnormal(ratio)) 
 		  maximumRatio = ratio;
 
-		if (significance > max /* && AllSim/simCounts < 1250*/ ) // get maximum ... 1333 is protection against overtraining
+		if (significance > max && AllSim/simCounts < maxSigniToLook ) // get maximum ... 1333 is protection against overtraining
 		{
 		  max =  significance;
 		  maxRatio = ratio;
@@ -281,9 +282,9 @@ void getSignificance()
   C1->SetLogx();
   signiGraph->Draw("AP");
 
-  TLine *l = new TLine(2000,0,2000,0.1);
+  TLine *l = new TLine(maxSigniToLook,0.03,maxSigniToLook,0.12);
   l->SetLineColor(kRed);
-  // l->Draw();
+  l->Draw();
   C2->cd();
   C2->SetLogx();
   C2->SetLogy();
