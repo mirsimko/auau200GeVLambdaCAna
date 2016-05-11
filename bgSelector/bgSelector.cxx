@@ -126,15 +126,15 @@ Int_t bgSelector::Cut(/*Long64_t entry*/)
      return -1;
 
    // DCA daughters
-   if (dcaDaugthers12 > 0.015 || dcaDaugthers23 > 0.015 || dcaDaugthers31 > 0.015)
-     return -1;
+   // if (dcaDaugthers12 > 0.02 || dcaDaugthers23 > 0.02 || dcaDaugthers31 > 0.02)
+   //   return -1;
 
    // pairs vertices distance
    // if (maxVertexDist > 0.03)
    //   return -1;
 
    // cos(theta)
-   if (cosPntAngle < 0.99)
+   if (cosPntAngle < 0.982)
      return -1;
 
    // Require TOF for kaons and protons

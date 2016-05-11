@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <job >
   <command>
-    # pushd /global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/CutsOptimization > /dev/null
-    set baseDir=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/CutsOptimization
-    cp -r -L ${baseDir}/simCutsMaker .
-    cp ${baseDir}/runSimCutsMaker.sh .
-    ln -s ${baseDir}/bgSelectedAllStat.root
+    ln -s &baseDir;/&inputFile;
     
-    starver pro
-    # kKstarProton=0, kLambda1520Pion=1, kDeltaPPkaon=2, kPionKaonProton=3, kLambdaPion=4, kKshortProton=5
     ./runSimCutsMaker.sh &first; &last;
 
-    mv bgCutsPlots*.root ${baseDir}/prod
-
-    # popd > /dev/null
   </command>
-  <stdout URL="file:/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/CutsOptimization/log/CutsOptimizationBGplots&first;.log" />
-  <stderr URL="file:/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/CutsOptimization/err/CutsOptimizationBGplots&first;.err"/>
+  <stdout URL="file:&baseDir;/log/CutsOptimizationBGplots&first;.log" />
+  <stderr URL="file:&baseDir;/err/CutsOptimizationBGplots&first;.err"/>
+  <output fromScratch="bkg*.root" toURL="file:&baseDir;/" />
+
+  <SandBox installer="ZIP">
+    <Package name="LocalLibraries">
+      <File>file:./runSimCutsMaker.sh</File>
+      <File>file:./simCutsMaker/</File>
+    </Package>
+  </SandBox>
+
 </job>
 
