@@ -484,7 +484,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
-			    (float)TMath::Cos( (Double_t)lambdaC->pointingAngle() ), lambdaC->decayLength(), 
+			    static_cast<Float_t>( TMath::Cos( static_cast<Double_t>(lambdaC->pointingAngle()) ) ), lambdaC->decayLength(), 
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
 			    lambdaC->cosThetaStar(),
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
