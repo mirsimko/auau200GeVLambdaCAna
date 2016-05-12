@@ -7,7 +7,7 @@
 #    all submission related files will end up there
 #
 #  - in ${baseFolder} the script expects (links or the actual folders)
-#      .sl64_gcc447
+#      .sl64_gcc482
 #      StRoot                     ( from the git repo )
 #      run14AuAu200GeVPrescales   ( from the git repo )
 #      starSubmit                 ( from the git repo )
@@ -102,7 +102,7 @@ mkdir -p report err log list csh
 # -----------------------------------------------
 
 # -- check for prerequisits and create links
-set folders=".sl64_gcc447 run14AuAu200GeVPrescales"
+set folders=".sl64_gcc482 run14AuAu200GeVPrescales"
 
 echo -n "Checking prerequisits folders ...  "
 foreach folder ( $folders ) 
