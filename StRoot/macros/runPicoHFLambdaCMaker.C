@@ -40,7 +40,13 @@
 #include "StPicoHFLambdaCMaker/StPicoHFLambdaCMaker.h"
 #include "StPicoHFMyAnaMaker/StPicoHFMyAnaMaker.h"
 
-#include "loadSharedHFLibraries.C"
+#include "macros/loadSharedHFLibraries.C"
+
+#include <iostream>
+#include <ctime>
+#include <cstdio>
+
+using namespace std;
 
 #else
 class StChain;
@@ -48,7 +54,7 @@ class StChain;
 
 StChain *chain;
 
-void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", const unsigned int makerMode = 0 /*kAnalyze*/, 
+void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", const unsigned int makerMode = 1 /*kWrite*/, 
        	                   const Char_t *badRunListFileName = "picoList_bad_MB.list", const Char_t *treeName = "picoHFtree",
 			   const Char_t *productionBasePath = "/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic",
 			   const unsigned int decayChannel = 0 /* kPionKaonProton */) { 
@@ -64,7 +70,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   //  bool useMC = true;
 
 
-  Int_t nEvents = 10000;
+  Int_t nEvents = 100000000;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
@@ -154,35 +160,41 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     
     hfCuts->setCutPrimaryDCAtoVtxMax(999.0);  // DCA to check for TOF usage
 
-    hfCuts->setCutPionPtRange(0.3, 999.);
+    hfCuts->setCutPionPtRange(0., 999.);
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
-    hfCuts->setCutPionPtotRangeHybridTOF(0.3, 999.);
+    hfCuts->setCutPionPtotRangeHybridTOF(0., 999.);
+    hfCuts->setPiDcaCut(0.005);
 
-    hfCuts->setCutProtonPtRange(0.3, 999.);
+    hfCuts->setCutProtonPtRange(0.2, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
-    hfCuts->setCutProtonPtotRangeHybridTOF(0.3, 999.);
+    hfCuts->setCutProtonPtotRangeHybridTOF(0., 999.);
 
     hfCuts->setCutKaonPtRange(5., 999.);        // turn off kaons
     hfCuts->setCutTPCNSigmaKaon(0.);            // turn off kaons
     hfCuts->setCutTOFDeltaOneOverBetaKaon(0.);  // turn off kaons
     hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
+    // -- pi
+    hfCuts->setPiDcaCut(0.1);
+
     // -- Ks0
-    float dcaDaughtersMax = 0.02;    // maximum  (100 um)
-    float decayLengthMin  = 0.1;     // 1 mm minimum  (cT 2.68 cm)
+    float dcaDaughtersMax = 0.03;    // maximum  (100 um)
+    float decayLengthMin  = 0.;     // 1 mm minimum  (cT 2.68 cm)
     float decayLengthMax  = 300;
-    float cosThetaMin     = 0.98;    // minimum  >> dca2vtx = cosTheta * decaylength = 0.98*0.1 
+    float cosThetaMin     = 0.;    // minimum  >> dca2vtx = cosTheta * decaylength = 0.98*0.1 
     float minMass         = 0.4;
     float maxMass         = 0.6;
+    float dcaToPvMax	  = 0.1;
     hfCuts->setCutTertiaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
+    hfCuts->setTertiaryDcaToPvMax(dcaToPvMax);
 
     // -- LambdaC
-    dcaDaughtersMax = 0.02;   // maximum (200 um)
+    dcaDaughtersMax = 0.03;   // maximum (200 um)
     decayLengthMin  = 0.003;  // minimum (30 um)
     decayLengthMax  = 300.; 
-    cosThetaMin     = 0.98;   // minimum
+    cosThetaMin     = 0.;   // minimum
     minMass         = 2.0;
     maxMass         = 2.5;
     hfCuts->setCutSecondaryPair(dcaDaughtersMax, decayLengthMin, decayLengthMax, cosThetaMin, minMass, maxMass);
@@ -199,7 +211,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
     hfCuts->setCutPionPtotRangeHybridTOF(0.3, 999.);
-      
+
     hfCuts->setCutProtonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
     hfCuts->setCutTOFDeltaOneOverBetaProton(0.04);
@@ -211,8 +223,8 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutKaonPtotRangeHybridTOF(0.3, 999.);
 
     // -- Lambda
-    float dcaDaughtersMax = 0.02;    // maximum  (100 um)
-    float decayLengthMin  = 0.1;      // minimum  (cT )
+    float dcaDaughtersMax = 0.02;    // maximum  (200 um)
+    float decayLengthMin  = 0.;      // minimum  (cT )
     float decayLengthMax  = 300; 
     float cosThetaMin     = 0.98;   // minimum
     float minMass         = 1.08;
@@ -240,7 +252,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     hfCuts->setCutPionPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaPion(3);
     hfCuts->setCutTOFDeltaOneOverBetaPion(0.04);
-    hfCuts->setCutPionPtotRangeTOF(0.5, 999.);
+    hfCuts->setCutPionPtotRangeTOF(0.3, 999.);
       
     hfCuts->setCutProtonPtRange(0.3, 999.);
     hfCuts->setCutTPCNSigmaProton(3);
@@ -267,6 +279,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
   // ========================================================================================
 
+  std::clock_t start = std::clock(); // getting starting time 
   chain->Init();
   cout << "chain->Init();" << endl;
   int total = picoDstMaker->chain()->GetEntries();
@@ -274,7 +287,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   if(nEvents>total) nEvents = total;
 
   for (Int_t i=0; i<nEvents; i++) {
-    if(i%10000==0)
+    if(i%1000==0)
       cout << "Working on eventNumber " << i << endl;
     
     chain->Clear();
@@ -289,8 +302,11 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   cout << "Work done... now its time to close up shop!"<< endl;
   cout << "****************************************** " << endl;
   chain->Finish();
+  double duration = (double) (std::clock() - start) / (double) CLOCKS_PER_SEC;
   cout << "****************************************** " << endl;
   cout << "total number of events  " << nEvents << endl;
+  cout << "****************************************** " << endl;
+  cout << "Time needed " << duration << " s" << endl;
   cout << "****************************************** " << endl;
   
   delete chain;

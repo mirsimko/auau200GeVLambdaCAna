@@ -1,4 +1,6 @@
 #include <vector>
+#include <iostream>
+#include <fstream>
 #include "TNtuple.h"
 #include "TClonesArray.h"
 
@@ -19,6 +21,7 @@
 
 #include "StPicoHFLambdaCMaker.h"
 
+using namespace std;
 ClassImp(StPicoHFLambdaCMaker)
 
 // _________________________________________________________
@@ -44,7 +47,19 @@ int StPicoHFLambdaCMaker::InitHF() {
       mNtupleTertiary = new TNtuple("tertiary", "tertiary", "p1pt:p2pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:cosThetaStar:dcaDaugthers"); 
     }
     else
-      mNtupleSecondary = new TNtuple("secondary", "secondary", "p1pt:p2pt:p3pt:charges:m:pt:eta:phi:cosPntAngle:dLength:p1Dca:p2Dca:p3Dca:cosThetaStar:dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:mLambda1520:mDelta:mKstar");
+      mNtupleSecondary = new TNtuple("secondary", "secondary", 
+				     "p1pt:p2pt:p3pt:"
+				     "charges:"
+	  			     "m:pt:eta:phi:"
+	  			     "cosPntAngle:dLength:"
+	  			     "p1Dca:p2Dca:p3Dca:"
+	  			     "cosThetaStar:"
+	  			     "dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:"
+	  			     "mLambda1520:mDelta:mKstar:"
+	  			     "pNSigma:KNSigma:piNSigma:"
+	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
+	  			     "maxVertexDist"
+	  			     );
   }
   
   return kStOK;
@@ -65,6 +80,13 @@ int StPicoHFLambdaCMaker::FinishHF() {
 
 // _________________________________________________________
 int StPicoHFLambdaCMaker::MakeHF() {
+  // For debugging: redirecting cout
+  // streambuf* coutbuf = cout.rdbuf();
+  // ofstream out;
+  // out.open("/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC/dbg.log", ofstream::out | ofstream::app); // open for append
+  // cout.rdbuf(out.rdbuf());
+
+  // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::MakeHF\"" << endm;
 
   if (isMakerMode() == StPicoHFMaker::kWrite) {
     createCandidates();
@@ -78,6 +100,10 @@ int StPicoHFLambdaCMaker::MakeHF() {
     analyzeCandidates();
   }
 
+  // redirecting cout back
+  // cout.rdbuf(coutbuf);
+  // out.close();
+
   return kStOK;
 }
 
@@ -85,9 +111,10 @@ int StPicoHFLambdaCMaker::MakeHF() {
 int StPicoHFLambdaCMaker::createCandidates() {
   // create candidate pairs/ triplet and fill them in arrays (in StPicoHFEvent)
 
-  // cout << " N pions    : " << mIdxPicoPions.size()  << endl;
-  // cout << " N kaons    : " << mIdxPicoKaons.size()  << endl;
-  // cout << " N protons  : " << mIdxPicoProtons.size()  << endl;
+  // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::createCandidates\"" << endm;
+  // LOG_INFO << " N pions    : " << mIdxPicoPions.size()	            << endm;
+  // LOG_INFO << " N kaons    : " << mIdxPicoKaons.size()              << endm;
+  // LOG_INFO << " N protons  : " << mIdxPicoProtons.size()            << endm;
   
   // -- Decay channel proton - K0Short (pi+ - pi-)
   if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
@@ -136,8 +163,8 @@ int StPicoHFLambdaCMaker::createCandidates() {
       } // for (unsigned int idxK0Short = 0; idxK0Short <  mPicoHFEvent->nHFTertiaryVertices(); ++idxK0Short) {
     } //  if (mPicoHFEvent->nHFTertiaryVertices() > 0) {
 
-    //    cout << "      N K0Shorts : " << mPicoHFEvent->nHFTertiaryVertices() << endl;
-    //    cout << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endl;
+    // LOG_INFO << "      N K0Shorts : " << mPicoHFEvent->nHFTertiaryVertices() << endm;
+    // LOG_INFO << "      N Lambda_C : " << mPicoHFEvent->nHFSecondaryVertices() << endm;
 
   } // if (mDecayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
 
@@ -438,16 +465,34 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 	  lambdaC->particle3Idx() ,
 	  mPrimVtx, mBField);
       
+      // distatces between closest points of pairs
+      StThreeVectorF const vertexDistVec1 = LambdaPair.decayVertex() - DeltaPair.decayVertex(); // pK - pip
+      StThreeVectorF const vertexDistVec2 = DeltaPair.decayVertex() - KstarPair.decayVertex();  // pip - piK
+      StThreeVectorF const vertexDistVec3 = KstarPair.decayVertex() - LambdaPair.decayVertex(); // piK - pK
+
+      float const vertexDist1 = vertexDistVec1.mag(); // pK - pip
+      float const vertexDist2 = vertexDistVec2.mag(); // pip - piK
+      float const vertexDist3 = vertexDistVec3.mag(); // piK - pK
+
+      // calculating max distance between two v0s
+      float maxVdist =  vertexDist1 > vertexDist2 ? vertexDist1 : vertexDist2;
+      maxVdist = maxVdist > vertexDist3 ? maxVdist : vertexDist3;
+
       float isCorrectSign = (kaon->charge() != pion->charge() && pion->charge() == proton->charge()) ? 1. : -1.;
+
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
-			    lambdaC->pointingAngle(), lambdaC->decayLength(), 
+			    static_cast<Float_t>( TMath::Cos( static_cast<Double_t>(lambdaC->pointingAngle()) ) ), lambdaC->decayLength(), 
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
 			    lambdaC->cosThetaStar(),
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
-			    LambdaPair.m(), DeltaPair.m(), KstarPair.m()};
+			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
+			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
+			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion),
+			    maxVdist
+			    };
 
       mNtupleSecondary->Fill(aSecondary);
       
@@ -461,7 +506,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 bool StPicoHFLambdaCMaker::isPion(StPicoTrack const * const trk) const {
   // -- is good pion 
   //    -> used for initial filling of vectors only
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk) && mHFCuts->isHybridTOFPion(trk));
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk) && mHFCuts->isHybridTOFPion(trk) );
 }
 
 // _________________________________________________________
