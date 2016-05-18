@@ -56,20 +56,17 @@ StChain *chain;
 
 void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", const unsigned int makerMode = 1 /*kWrite*/, 
        	                   const Char_t *badRunListFileName = "picoList_bad_MB.list", const Char_t *treeName = "picoHFtree",
-			   const Char_t *productionBasePath = "/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic",
+			   const Char_t *productionBasePath = "/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P16id",
 			   const unsigned int decayChannel = 0 /* kPionKaonProton */) { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
-  string SL_version = "SL15c";
+  string SL_version = "SL16d";
   string env_SL = getenv ("STAR");
   if (env_SL.find(SL_version)==string::npos) {
       cout<<"Environment Star Library does not match the requested library in runPicoHFLambdaCMaker.C. Exiting..."<<endl;
       exit(1);
   }
   
-  //  bool useMC = true;
-
-
   Int_t nEvents = 100000000;
 
 #ifdef __CINT__
@@ -146,7 +143,12 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
   hfCuts->setCutVzMax(6.);
   hfCuts->setCutVzVpdVzMax(3.);
-  hfCuts->setCutTriggerWord(0x1F);
+
+  hfCuts->addTriggerId(450050);    // vpdmb-5-p-nobsmd-hlt 
+  hfCuts->addTriggerId(450060);    // vpdmb-5-p-nobsmd-hlt 
+  hfCuts->addTriggerId(450005);    // vpdmb-5-p-nobsmd 
+  hfCuts->addTriggerId(450015);    // vpdmb-5-p-nobsmd 
+  hfCuts->addTriggerId(450025);    // vpdmb-5-p-nobsmd 
 
   hfCuts->setCutNHitsFitMax(15); 
   hfCuts->setCutRequireHFT(true);
