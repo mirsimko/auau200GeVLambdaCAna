@@ -25,7 +25,7 @@
 #    0 - kPionKaonProton
 #    1 - kProtonK0short
 #    2 - kLambdaPion
-set decayChannel=1
+set decayChannel=0
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
@@ -38,24 +38,28 @@ endif
 # ###############################################
 
 # -- baseFolder of job
-set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
+#set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
+set baseFolder=/global/project/projectdirs/starprod/rnc/jthaeder/lambdaC
 
 # --input file 
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
+
 #set input=${baseFolder}/lists/test.list
+set input=${baseFolder}/lists/picoList_all_05_17.list
+
 #set input=${baseFolder}/oldlists/test.list
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
 # set input=${baseFolder}/listAllNov17.list
 #set input=${baseFolder}/divideList/listAll3.list
 #set input=${baseFolder}/picoLists/picoList_all.list
-set input=${baseFolder}/picoLists/split/$1
 #set input=${baseFolder}/picoLists/split/test.list
 #set input=${baseFolder}/oldlists/K0s1file.list
 #set input=${baseFolder}/testK0s.list
 #set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
 #set input=${baseFolder}/lists/${tree}/${tree}_all.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
+
 # -- set maker mode
 #    0 - kAnalyze, 
 #    1 - kWrite
@@ -79,7 +83,7 @@ set treeName=${tree}
 set productionId=`date +%F_%H-%M`
 
 # -- production base path (to find picoDsts to corresponding trees
-set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P15ic
+set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P16id
 
 # -- submission xml file 
 set xmlFile=submitPicoHFMaker.xml
