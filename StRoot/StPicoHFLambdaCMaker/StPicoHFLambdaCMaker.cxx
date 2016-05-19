@@ -257,7 +257,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
 			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	    continue;
-	  
+
 	  // -- get corrected TOF beta
 	  // ----------------------------
 
@@ -268,7 +268,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	    continue;
 
 	  mPicoHFEvent->addHFSecondaryVertexTriplet(&lambdaC);
-	  
+
 	} // for (unsigned short idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
       } // for (unsigned short idxKaon = 0; idxKaon < mIdxPicoKaons.size(); ++idxKaon) {
     } // for (unsigned short idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
@@ -501,25 +501,35 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 
  return kStOK;
 }
+
+// _________________________________________________________
+bool StPicoHFLambdaCMaker::isHadron(StPicoTrack const * const trk, int pidFlag) const {
+  // -- is good hadron
+  //    -> used for initial filling of vectors only
+  
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag));
+}
   
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isPion(StPicoTrack const * const trk) const {
   // -- is good pion 
   //    -> used for initial filling of vectors only
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCPion(trk) && mHFCuts->isHybridTOFPion(trk) );
+
+  return isHadron(trk, StPicoCutsBase::kPion);
 }
 
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isKaon(StPicoTrack const * const trk) const {
   // -- is good kaon 
   //    -> used for initial filling of vectors only
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCKaon(trk) && mHFCuts->isHybridTOFKaon(trk));
-} 
+
+  return isHadron(trk, StPicoCutsBase::kKaon);
+}
 
 // _________________________________________________________
 bool StPicoHFLambdaCMaker::isProton(StPicoTrack const * const trk) const {
   // -- good proton
   //    -> used for initial filling of vectors only
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->isTPCProton(trk) && mHFCuts->isHybridTOFProton(trk));
+  
+  return isHadron(trk, StPicoCutsBase::kProton);
 }
-
