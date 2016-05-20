@@ -157,9 +157,6 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   // >>>>>>>>>>>>>>>>>>>>>>------------------------------<<<<<<<<<<<<<<<<<<<<<<
   // -- Lc -> p + Ks0 , Ks0 -> pi+ + pi-
   // >>>>>>>>>>>>>>>>>>>>>>------------------------------<<<<<<<<<<<<<<<<<<<<<<
-
-
-
   if (decayChannel == StPicoHFLambdaCMaker::kProtonK0short) {
     picoHFLambdaCMaker->setDecayMode(StPicoHFEvent::kTwoAndTwoParticleDecay);
 
