@@ -45,18 +45,11 @@ set baseFolder=/global/project/projectdirs/starprod/rnc/jthaeder/lambdaC
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 
-set input=${baseFolder}/lists/test.list
-#set input=${baseFolder}/lists/picoList_all_05_17.list
+#set input=${baseFolder}/lists/test.list
+set input=${baseFolder}/lists/picoList_all_05_18.list
 
 #set input=${baseFolder}/oldlists/test.list
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
-#set input=${baseFolder}/listAllNov17.list
-#set input=${baseFolder}/divideList/listAll3.list
-#set input=${baseFolder}/picoLists/picoList_all.list
-#set input=${baseFolder}/picoLists/split/test.list
-#set input=${baseFolder}/oldlists/K0s1file.list
-#set input=${baseFolder}/testK0s.list
-#set input=${baseFolder}/lists/picoList_all_incl_2015-06-09.list
 #set input=${baseFolder}/lists/${tree}/${tree}_all.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
 
