@@ -40,9 +40,11 @@ pushd $baseFolder > /dev/null
 
 #    0 - kPionKaonProton
 ./submitPicoHFMakerTreeProduction.csh 0 ${listName}
+sleep 100
 
 #    1 - kProtonK0short
 ./submitPicoHFMakerTreeProduction.csh 1 ${listName}
+sleep 100
 
 #    2 - kLambdaPion
 ./submitPicoHFMakerTreeProduction.csh 2 ${listName}
