@@ -12,16 +12,15 @@
   </Generator>
   
   <command>
-    starver SL16d
+    starver &starVersion;
     
     setenv PRODPATH &basePath;/production/&prodId;
     setenv LOGPATH  &basePath;/jobs/log/&prodId;
     
     mkdir -p ${PRODPATH} ${LOGPATH}
 
-
     if ("&mMode;" == "1") then
-        starSubmit/parseFileList.csh ${FILELIST} &basePath; &prodId; &mMode; &treeName; ${JOBID} &rootMacro; picoList_badRuns.list &productionBasePath; &decayChannel;
+         &basePath;/jobs/&prodId;/starSubmit/parseFileList.csh ${FILELIST} &basePath; &prodId; &mMode; &treeName; ${JOBID} &rootMacro; picoList_badRuns.list &productionBasePath; &decayChannel; &starVersion;
     else
         root -q -b -l StRoot/macros/loadSharedHFLibraries.C StRoot/macros/&rootMacro;++\(\"$FILELIST\",\"&prodId;_$JOBINDEX\",&mMode;,\"picoList_badRuns.list\",\"&treeName;\",\"&productionBasePath;\",&decayChannel;\) &gt;&amp; ${JOBID}.log
         tar -zcvf ${JOBID}.log.tgz ${JOBID}.log
@@ -31,6 +30,7 @@
 
   <output fromScratch="*.root"    toURL="$PRODPATH/" />
   <output fromScratch="*.log.tgz" toURL="$LOGPATH/" />
+  <output fromScratch="*.log"     toURL="$LOGPATH/" />
   
   <SandBox installer="ZIP">
     <Package name="LocalLibraries">

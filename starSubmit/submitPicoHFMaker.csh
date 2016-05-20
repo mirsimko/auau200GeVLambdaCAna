@@ -3,7 +3,7 @@
 #   Submit fileLists for classes derived from 
 #    StPicoHFMaker;
 #
-#  - script will create a folder ${baseFolder}/jobs
+#  - script will create a folder ${baseFolder}/jobs/${productionId}
 #    all submission related files will end up there
 #
 #  - in ${baseFolder} the script expects (links or the actual folders)
@@ -25,7 +25,7 @@
 #    0 - kPionKaonProton
 #    1 - kProtonK0short
 #    2 - kLambdaPion
-set decayChannel=0
+set decayChannel=1
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
@@ -45,12 +45,12 @@ set baseFolder=/global/project/projectdirs/starprod/rnc/jthaeder/lambdaC
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 
-#set input=${baseFolder}/lists/test.list
-set input=${baseFolder}/lists/picoList_all_05_17.list
+set input=${baseFolder}/lists/test.list
+#set input=${baseFolder}/lists/picoList_all_05_17.list
 
 #set input=${baseFolder}/oldlists/test.list
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
-# set input=${baseFolder}/listAllNov17.list
+#set input=${baseFolder}/listAllNov17.list
 #set input=${baseFolder}/divideList/listAll3.list
 #set input=${baseFolder}/picoLists/picoList_all.list
 #set input=${baseFolder}/picoLists/split/test.list
@@ -82,6 +82,9 @@ set treeName=${tree}
 # -- production Id (kAnalyse / kRead)
 set productionId=`date +%F_%H-%M`
 
+# -- set STAR software version
+set starVersion=SL16d
+
 # -- production base path (to find picoDsts to corresponding trees
 set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P16id
 
@@ -93,12 +96,12 @@ set xmlFile=submitPicoHFMaker.xml
 # ###############################################
 
 # -- job submission directory
-mkdir -p ${baseFolder}/jobs
+mkdir -p ${baseFolder}/jobs/${productionId}
 
 # -- result directory
-mkdir -p ${baseFolder}/production
+mkdir -p ${baseFolder}/production/${productionId}
 
-pushd ${baseFolder}/jobs > /dev/null
+pushd ${baseFolder}/jobs/${productionId} > /dev/null
 
 # -- prepare folder
 mkdir -p report err log list csh
@@ -114,7 +117,7 @@ foreach folder ( $folders )
 	echo "${folder} does not exist in ${baseFolder}"
 	exit
     else
-	ln -sf  ${baseFolder}/${folder}
+	ln -sf ${baseFolder}/${folder}
     endif
 end
 echo "ok"
@@ -130,7 +133,7 @@ foreach folder ( $folders )
 	echo "${folder} does not exist in ${baseFolder}"
 	exit
     else
-	cp -rfL  ${baseFolder}/${folder} .
+	cp -rfL ${baseFolder}/${folder} .
     endif
 end
 echo "ok"
@@ -232,22 +235,23 @@ if ( -e submitPicoHFMaker_temp.xml  ) then
     rm submitPicoHFMaker_temp.xml 
 endif 
 
-echo '<?xml version="1.0" encoding="utf-8" ?>'			   > $hackTemplate
-echo '<\!DOCTYPE note ['                      			  >> $hackTemplate
-echo '<\!ENTITY treeName "'${treeName}'">'    			  >> $hackTemplate
-echo '<\!ENTITY decayChannel "'${decayChannel}'">'		  >> $hackTemplate
-echo '<\!ENTITY mMode "'${makerMode}'">'			  >> $hackTemplate
-echo '<\!ENTITY rootMacro "'${rootMacro}'">'  			  >> $hackTemplate
-echo '<\!ENTITY prodId "'${productionId}'">'  			  >> $hackTemplate
-echo '<\!ENTITY basePath "'${baseFolder}'">'  			  >> $hackTemplate
-echo '<\!ENTITY listOfFiles "'${input}'">'    			  >> $hackTemplate
-echo '<\!ENTITY productionBasePath "'${productionbasePath}'">'    >> $hackTemplate
-echo ']>'							  >> $hackTemplate
+echo '<?xml version="1.0" encoding="utf-8" ?>'		        > $hackTemplate
+echo '<\!DOCTYPE note ['                      		       >> $hackTemplate
+echo '<\!ENTITY treeName "'${treeName}'">'    		       >> $hackTemplate
+echo '<\!ENTITY decayChannel "'${decayChannel}'">'	       >> $hackTemplate
+echo '<\!ENTITY mMode "'${makerMode}'">'		       >> $hackTemplate
+echo '<\!ENTITY rootMacro "'${rootMacro}'">'  		       >> $hackTemplate
+echo '<\!ENTITY prodId "'${productionId}'">'  		       >> $hackTemplate
+echo '<\!ENTITY basePath "'${baseFolder}'">'  		       >> $hackTemplate
+echo '<\!ENTITY listOfFiles "'${input}'">'                     >> $hackTemplate
+echo '<\!ENTITY productionBasePath "'${productionbasePath}'">' >> $hackTemplate
+echo '<\!ENTITY starVersion "'${starVersion}'">'               >> $hackTemplate
+echo ']>'					       	       >> $hackTemplate
 
 tail -n +2 ${xmlFile} >> $hackTemplate
 
 star-submit -u ie $hackTemplate
 
-#star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro}
+#star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro},starVersion=${starVersion}
 
 popd > /dev/null
