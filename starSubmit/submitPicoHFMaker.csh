@@ -50,14 +50,14 @@ set input=${baseFolder}/lists/picoList_all_05_18.list
 
 #set input=${baseFolder}/oldlists/test.list
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
-#set input=${baseFolder}/lists/${tree}/${tree}_all.list
+set input=${baseFolder}/lists/${tree}/${tree}_all.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
 
 # -- set maker mode
 #    0 - kAnalyze, 
 #    1 - kWrite
 #    2 - kRead
-set makerMode=1
+set makerMode=2
 
 # -- set root macro
 set rootMacro=runPicoHFLambdaCMaker.C
@@ -83,6 +83,10 @@ set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/
 
 # -- submission xml file 
 set xmlFile=submitPicoHFMaker.xml
+
+# -- set min and mx number of files
+set minNFiles=200
+set maxNFiles=400
 
 # ###############################################
 # -- DON'T CHANGE BELOW THAT LINE
@@ -239,12 +243,13 @@ echo '<\!ENTITY basePath "'${baseFolder}'">'  		       >> $hackTemplate
 echo '<\!ENTITY listOfFiles "'${input}'">'                     >> $hackTemplate
 echo '<\!ENTITY productionBasePath "'${productionbasePath}'">' >> $hackTemplate
 echo '<\!ENTITY starVersion "'${starVersion}'">'               >> $hackTemplate
+echo '<\!ENTITY minNFiles "'${minNFiles}'">'                   >> $hackTemplate
+echo '<\!ENTITY maxNFiles "'${maxNFiles}'">'                   >> $hackTemplate
 echo ']>'					       	       >> $hackTemplate
 
 tail -n +2 ${xmlFile} >> $hackTemplate
 
 star-submit -u ie $hackTemplate
 
-#star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro},starVersion=${starVersion}
-
+#star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro},starVersion=${starVersion},minNFiles=${minNFiles},maxNFiles=${maxNFiles}
 popd > /dev/null
