@@ -58,6 +58,8 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "mLambda1520:mDelta:mKstar:"
 	  			     "pNSigma:KNSigma:piNSigma:"
 	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
+				     "pEta:KEta:piEta:"
+				     "pPhi:KPhi:piPhi:"
 	  			     "maxVertexDist"
 	  			     );
   }
@@ -491,6 +493,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
 			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
 			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion),
+			    proton->pMom().pseudoRapidity(), kaon->pMom().pseudoRapidity(), pion->pMom().pseudoRapidity(), 
+			    proton->pMom().phi(), kaon->pMom().phi(), pion->pMom().phi(), 
 			    maxVdist
 			    };
 
