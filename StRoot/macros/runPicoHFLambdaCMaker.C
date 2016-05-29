@@ -67,7 +67,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
-  Int_t nEvents = 10000000000;
+  Int_t nEvents = 2;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
@@ -317,7 +317,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     picoHFLambdaCMaker->setDecayMode(StPicoHFEvent::kThreeParticleDecay);
 
     if (makerMode == StPicoHFMaker::kWrite) { // <--- Tree creation cuts
-      hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
+      // hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kPion);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kPion);          // minimum 50um
@@ -329,17 +329,24 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kKaon);          // minimum 50um
-      hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kKaon);
+      hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kKaon);
 
       // -- LambdaC
-      float LCdcaDaughtersMax = 0.03;   // maximum 300um 
-      float LCdecayLengthMin  = 0.003;  // minimum  30um
-      float LCdecayLengthMax  = 300.;
-      float LCcosThetaMin     = 0.95;   // minimum
-      float LCminMass         = 2.0;
-      float LCmaxMass         = 2.5;
+      float LCdcaDaughtersMax = 3000000.;   // maximum 300um 
+      float LCdecayLengthMin  = 0.00;  // minimum  30um
+      float LCdecayLengthMax  = 300000.;
+      float LCcosThetaMin     = -1.;   // minimum
+      float LCminMass         = 0.;
+      float LCmaxMass         = 1000000.;
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax, 
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
+
+      cout << "***************cuts of pairs*****************" << endl;
+      cout << "cos(theta) min: " << hfCuts->cutSecondaryPairCosThetaMin() << endl;
+      cout << "DCA daughters max: " << hfCuts->cutSecondaryPairDcaDaughtersMax() << endl;
+      cout << "dLength min: " << hfCuts->cutSecondaryPairDecayLengthMin() << endl;
+      cout << "*********************************************" << endl;
+
     }
     else if (makerMode == StPicoHFMaker::kRead) {
       // hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
@@ -363,12 +370,12 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       // hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kKaon);
 
       // -- LambdaC
-      float LCdcaDaughtersMax = 0.03;   // maximum 300um 
-      float LCdecayLengthMin  = 0.003;  // minimum  30um
-      float LCdecayLengthMax  = 300.;
-      float LCcosThetaMin     = 0.95;   // minimum
-      float LCminMass         = 2.0;
-      float LCmaxMass         = 2.5;
+      float LCdcaDaughtersMax = 3000000.;   // maximum 300um 
+      float LCdecayLengthMin  = 0.00;  // minimum  30um
+      float LCdecayLengthMax  = 300000.;
+      float LCcosThetaMin     = -1.;   // minimum
+      float LCminMass         = 0.;
+      float LCmaxMass         = 1000000.;
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax, 
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
     }
@@ -386,7 +393,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   if(nEvents>total) nEvents = total;
 
   for (Int_t i=0; i<nEvents; i++) {
-    if(i%1000==0)
+    if(i%10==0)
       cout << "Working on eventNumber " << i << endl;
     
     chain->Clear();
