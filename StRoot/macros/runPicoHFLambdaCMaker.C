@@ -67,7 +67,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
-  Int_t nEvents = 2;
+  Int_t nEvents = 100000000;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
@@ -322,30 +322,27 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kPion);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kPion);          // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kPion);
+      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // we do not cut on TOF
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kProton);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kProton);        // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kProton);
+      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kProton); // we do not cut on TOF
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kKaon);          // minimum 50um
-      hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kKaon);
+      hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kKaon);
+      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kKaon); // we do not cut on TOF
 
       // -- LambdaC
-      float LCdcaDaughtersMax = 3000000.;   // maximum 300um 
-      float LCdecayLengthMin  = 0.00;  // minimum  30um
+      float LCdcaDaughtersMax = 0.03;   // maximum 300um 
+      float LCdecayLengthMin  = 0.003;  // minimum  30um
       float LCdecayLengthMax  = 300000.;
-      float LCcosThetaMin     = -1.;   // minimum
-      float LCminMass         = 0.;
-      float LCmaxMass         = 1000000.;
+      float LCcosThetaMin     = 0.95;   // minimum
+      float LCminMass         = 2.0;
+      float LCmaxMass         = 2.5;
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax, 
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
-
-      cout << "***************cuts of pairs*****************" << endl;
-      cout << "cos(theta) min: " << hfCuts->cutSecondaryPairCosThetaMin() << endl;
-      cout << "DCA daughters max: " << hfCuts->cutSecondaryPairDcaDaughtersMax() << endl;
-      cout << "dLength min: " << hfCuts->cutSecondaryPairDecayLengthMin() << endl;
-      cout << "*********************************************" << endl;
 
     }
     else if (makerMode == StPicoHFMaker::kRead) {
