@@ -45,7 +45,8 @@
  *
  *  --------------------------------------------------
  *  Authors: 
- *            Jochen Thaeder (jmthader@lbl.gov)   
+ *            Jochen Thaeder (jmthader@lbl.gov)
+ *            Miroslav Simko  (msimko@bnl.gov)
  *
  * **************************************************
  */
