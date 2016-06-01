@@ -241,7 +241,6 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	if (mIdxPicoKaons[idxKaon] == mIdxPicoProtons[idxProton]) 
 	  continue;
 
-	// make a pion kaon pair
 	StHFPair tmpProtonKaon(kaon, proton, 
 			       mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
 			       mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mPrimVtx, mBField);
@@ -262,9 +261,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
 			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
 
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
-	  {
 	    continue;
-	  }
 
 	  // -- get corrected TOF beta
 	  // ----------------------------
@@ -273,9 +270,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex())) ||
 	       ! mHFCuts->isHybridTOFKaon(  kaon,   mHFCuts->getTofBeta(kaon,   lambdaC.lorentzVector(), lambdaC.decayVertex())) ||
 	       ! mHFCuts->isHybridTOFPion(  pion,   mHFCuts->getTofBeta(pion,   lambdaC.lorentzVector(), lambdaC.decayVertex())) )
-	  {
 	    continue;
-	  }
 
 	  mPicoHFEvent->addHFSecondaryVertexTriplet(&lambdaC);
 

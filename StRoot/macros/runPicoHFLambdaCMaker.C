@@ -38,7 +38,6 @@
 #include "StPicoHFMaker/StHFCuts.h"
 
 #include "StPicoHFLambdaCMaker/StPicoHFLambdaCMaker.h"
-// #include "StPicoHFMyAnaMaker/StPicoHFMyAnaMaker.h"
 
 #include "macros/loadSharedHFLibraries.C"
 
