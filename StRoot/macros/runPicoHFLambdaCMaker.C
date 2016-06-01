@@ -342,28 +342,27 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       float LCmaxMass         = 2.5;
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax, 
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
-
     }
     else if (makerMode == StPicoHFMaker::kRead) {
       hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kPion);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kPion);          // minimum 50um
-      hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kPion);
-      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kPion);
-      // hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kPion);
+      hfCuts->setCutTPCNSigma(2.5, StPicoCutsBase::kPion);
+      hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kPion);
+      //    hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kPion);
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kProton);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kProton);        // minimum 50um
-      hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kProton);
-      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kProton);
-      // hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kProton);
+      hfCuts->setCutTPCNSigma(2.5, StPicoCutsBase::kProton);
+      hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kProton);
+      //    hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kProton);
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kKaon);          // minimum 50um
-      hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kKaon);
-      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kKaon);
-      // hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kKaon);
+      hfCuts->setCutTPCNSigma(2.5, StPicoCutsBase::kKaon);
+      hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kKaon);
+      //    hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kKaon);
 
       // -- LambdaC
       float LCdcaDaughtersMax = 0.03;   // maximum 300um 
