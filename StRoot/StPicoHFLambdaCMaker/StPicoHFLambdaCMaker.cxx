@@ -255,11 +255,11 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  if (mIdxPicoProtons[idxProton] == mIdxPicoPions[idxPion] || mIdxPicoKaons[idxKaon] == mIdxPicoPions[idxPion]) 
 	    continue;
 
-	  StHFTriplet lambdaC(kaon, pion, proton, 
+	  StHFTriplet lambdaC(kaon, proton, pion,  
 			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
-			      mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
 			      mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
-			      mIdxPicoKaons[idxKaon],  mIdxPicoPions[idxPion],mIdxPicoProtons[idxProton], mPrimVtx, mBField);
+			      mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
+			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
 
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	  {
