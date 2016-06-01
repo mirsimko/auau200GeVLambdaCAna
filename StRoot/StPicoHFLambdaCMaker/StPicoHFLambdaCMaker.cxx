@@ -58,6 +58,8 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "mLambda1520:mDelta:mKstar:"
 	  			     "pNSigma:KNSigma:piNSigma:"
 	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
+				     "pEta:KEta:piEta:"
+				     "pPhi:KPhi:piPhi:"
 	  			     "maxVertexDist"
 	  			     );
   }
@@ -232,29 +234,32 @@ int StPicoHFLambdaCMaker::createCandidates() {
 
     for (unsigned short idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
       StPicoTrack const *proton = mPicoDst->track(mIdxPicoProtons[idxProton]);
-      
+
       for (unsigned short idxKaon = 0; idxKaon < mIdxPicoKaons.size(); ++idxKaon) {
 	StPicoTrack const *kaon = mPicoDst->track(mIdxPicoKaons[idxKaon]);
-	
+
 	if (mIdxPicoKaons[idxKaon] == mIdxPicoProtons[idxProton]) 
 	  continue;
-	
+
 	StHFPair tmpProtonKaon(kaon, proton, 
 			       mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
 			       mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mPrimVtx, mBField);
 	if (!mHFCuts->isClosePair(tmpProtonKaon)) 
 	  continue;
 	
-  	for (unsigned short idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
+	for (unsigned short idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
 	  StPicoTrack const *pion = mPicoDst->track(mIdxPicoPions[idxPion]);
+	
 	  
 	  if (mIdxPicoProtons[idxProton] == mIdxPicoPions[idxPion] || mIdxPicoKaons[idxKaon] == mIdxPicoPions[idxPion]) 
 	    continue;
-	  
-	  StHFTriplet lambdaC(kaon, proton, pion, 
-			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
+
+	  StHFTriplet lambdaC(kaon, proton, pion,  
+			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
+			      mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
 			      mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
 			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
+
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	    continue;
 
@@ -483,6 +488,13 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 
       float isCorrectSign = (kaon->charge() != pion->charge() && pion->charge() == proton->charge()) ? 1. : -1.;
 
+      float const pEta = proton->gMom(mPrimVtx, mBField).pseudoRapidity();
+      float const KEta = kaon->gMom(mPrimVtx, mBField).pseudoRapidity();
+      float const piEta = pion->gMom(mPrimVtx, mBField).pseudoRapidity();
+           
+      float const pPhi = proton->gMom(mPrimVtx, mBField).phi();
+      float const KPhi = kaon->gMom(mPrimVtx, mBField).phi();
+      float const piPhi = pion->gMom(mPrimVtx, mBField).phi();
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
@@ -494,6 +506,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
 			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
 			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion),
+			    pEta, KEta, piEta, 
+			    pPhi, KPhi, piPhi, 
 			    maxVdist
 			    };
 
@@ -509,8 +523,10 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 bool StPicoHFLambdaCMaker::isHadron(StPicoTrack const * const trk, int pidFlag) const {
   // -- is good hadron
   //    -> used for initial filling of vectors only
+  // double eta = trk->gMom(mPrimVtx,mBField).pseudoRapidity();
   
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag));
+  // return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag) && abs(eta) < 1.);
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag) );
 }
   
 // _________________________________________________________

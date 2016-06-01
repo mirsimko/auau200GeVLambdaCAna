@@ -25,7 +25,7 @@
 #    0 - kPionKaonProton
 #    1 - kProtonK0short
 #    2 - kLambdaPion
-set decayChannel=1
+set decayChannel=0
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
@@ -38,15 +38,20 @@ endif
 # ###############################################
 
 # -- baseFolder of job
-#set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
-set baseFolder=/global/project/projectdirs/starprod/rnc/jthaeder/lambdaC
+set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
+# set baseFolder=/global/project/projectdirs/starprod/rnc/jthaeder/lambdaC
 
 # --input file 
 #    makerMode 0,1 : list must contain picoDst.root files
 #    makerMode 2   : list must contain ${treeName}.root files
 
 #set input=${baseFolder}/lists/test.list
-set input=${baseFolder}/lists/picoList_all_05_18.list
+#set input=${baseFolder}/lists/picoList_all_05_18.list
+#set input=${baseFolder}/lists/LambdaC.kPionKaonProton.picoHFtree/LambdaC.kPionKaonProton.picoHFtree_all.list
+# set input=${baseFolder}/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_all.list
+# set input=${baseFolder}/lists/LambdaC.kLambdaPion.picoHFtree/LambdaC.kLambdaPion.picoHFtree_all.list
+set input=${baseFolder}/kPionKaonProton_2016-05-24.list
+
 
 #set input=${baseFolder}/oldlists/test.list
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
