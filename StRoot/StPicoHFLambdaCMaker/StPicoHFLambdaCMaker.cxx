@@ -54,7 +54,7 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "cosPntAngle:dLength:"
 	  			     "p1Dca:p2Dca:p3Dca:"
 	  			     "cosThetaStar:"
-	  			     "dcaDaugthers12:dcaDaugthers23:dcaDaugthers31:"
+	  			     "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
 	  			     "mLambda1520:mDelta:mKstar:"
 	  			     "pNSigma:KNSigma:piNSigma:"
 	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
