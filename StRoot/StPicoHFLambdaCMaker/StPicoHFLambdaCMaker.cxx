@@ -452,9 +452,9 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton) )
 	continue;
 
-      float const betaInvDiffPion = getBetaInvDiff(pionBeta, pion->gMom(mPrimVtx, mBField), mHFCuts->getHypotheticalMass(StHFCuts::kPion));
-      float const betaInvDiffKaon = getBetaInvDiff(kaonBeta, kaon->gMom(mPrimVtx, mBField), mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
-      float const betaInvDiffProton = getBetaInvDiff(protonBeta, proton->gMom(mPrimVtx, mBField), mHFCuts->getHypotheticalMass(StHFCuts::kProton));
+      float const betaInvDiffPion = getBetaInvDiff(pionBeta, pion->gMom(mPrimVtx, mBField).mag(), mHFCuts->getHypotheticalMass(StHFCuts::kPion));
+      float const betaInvDiffKaon = getBetaInvDiff(kaonBeta, kaon->gMom(mPrimVtx, mBField).mag(), mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
+      float const betaInvDiffProton = getBetaInvDiff(protonBeta, proton->gMom(mPrimVtx, mBField).mag(), mHFCuts->getHypotheticalMass(StHFCuts::kProton));
             
       // JMT - recalculate topological cuts with updated secondary vertex
       
@@ -522,7 +522,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 	}
       }
 
-      mRefmultCorrUtil->initEvent(mPicoEvent->refMult(), mPrimVtx.z(), mPicoEvent->ZDCx()) ;
+      mRefmultCorrUtil->initEvent(mPicoDst->event()->refMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
       int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 

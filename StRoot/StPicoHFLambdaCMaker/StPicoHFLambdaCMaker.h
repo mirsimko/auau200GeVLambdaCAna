@@ -81,8 +81,8 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
 
   enum eDecayChannel {kPionKaonProton, kProtonK0short, kLambdaPion};
 
-  void setRefMutCorr(StRefMultCorr* gRefMultCorr) { mRefMultCorr = gRefMultCorr; }
-  StRefMultCorr* getRefMultCorr() { return mRefMultCorr; }
+  void setRefMutCorr(StRefMultCorr* gRefMultCorr) { mRefmultCorrUtil = gRefMultCorr; }
+  StRefMultCorr* getRefMultCorr() { return mRefmultCorrUtil; }
 
  protected:
   virtual bool isHadron(StPicoTrack const*, int pidFlag) const;
