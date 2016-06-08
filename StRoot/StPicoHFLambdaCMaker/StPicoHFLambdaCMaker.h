@@ -101,9 +101,10 @@ private:
   TNtuple*  mNtupleSecondary;
   TNtuple*  mNtupleTertiary;
 
-  StRefMultCorr* grefmultCorrUtil ;
+  StRefMultCorr* mRefmultCorrUtil ;
 
   int mRunNumber;
+  int mEventNumber;
 
   inline float getBetaInvDiff(float mom, float beta, float mass);
 
