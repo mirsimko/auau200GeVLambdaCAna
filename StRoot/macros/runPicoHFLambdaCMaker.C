@@ -21,6 +21,7 @@
  *
  * --------------------------------------------------
  *  Authors:  Jochen Thaeder  (jmthader@lbl.gov)
+ *	      Miroslav Simko  (msimko@bnl.gov)
  *
  * **************************************************
  */
@@ -36,6 +37,7 @@
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StPicoHFMaker/StPicoHFEvent.h"
 #include "StPicoHFMaker/StHFCuts.h"
+#include "StRefMultCorr/StRefMultCorr.h"
 
 #include "StPicoHFLambdaCMaker/StPicoHFLambdaCMaker.h"
 
@@ -49,6 +51,7 @@ using namespace std;
 
 #else
 class StChain;
+
 #endif
 
 StChain *chain;
@@ -71,6 +74,8 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
   loadSharedHFLibraries();
+
+  gSystem->Load("StRefMultCorr");
 #endif
 
   chain = new StChain();
@@ -152,7 +157,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   hfCuts->setCutNHitsFitMin(20); 
   hfCuts->setCutRequireHFT(true);
   hfCuts->setCutNHitsFitnHitsMax(0.52);
- 
+
   // >>>>>>>>>>>>>>>>>>>>>>------------------------------<<<<<<<<<<<<<<<<<<<<<<
   // -- Lc -> p + Ks0 , Ks0 -> pi+ + pi-
   // >>>>>>>>>>>>>>>>>>>>>>------------------------------<<<<<<<<<<<<<<<<<<<<<<

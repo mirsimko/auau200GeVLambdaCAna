@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <limits>
 #include "TNtuple.h"
 #include "TClonesArray.h"
 
@@ -20,6 +21,7 @@
 #include "StPicoHFMaker/StHFTriplet.h"
 
 #include "StPicoHFLambdaCMaker.h"
+#include "StRefMultCorr/StRefMultCorr.h"
 
 using namespace std;
 ClassImp(StPicoHFLambdaCMaker)
@@ -60,9 +62,13 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
 				     "pEta:KEta:piEta:"
 				     "pPhi:KPhi:piPhi:"
-	  			     "maxVertexDist"
+	  			     "maxVertexDist:"
+				     "centrality"
 	  			     );
   }
+  // initializing centrality maker
+  mRunNumber = 0;
+  grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr() ;
   
   return kStOK;
 }
@@ -439,10 +445,16 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* kaon   = mPicoDst->track(lambdaC->particle2Idx());
       StPicoTrack const* pion   = mPicoDst->track(lambdaC->particle3Idx());
 
-      if ( ! mHFCuts->isHybridTOFHadron(pion, mHFCuts->getTofBeta(pion, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kPion) ||
-	   ! mHFCuts->isHybridTOFHadron(kaon, mHFCuts->getTofBeta(kaon, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kKaon) ||
-	   ! mHFCuts->isHybridTOFHadron(proton, mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kProton) )
+      float const pionBeta = mHFCuts->getTofBeta(pion, lambdaC->lorentzVector(), lambdaC->decayVertex());
+      float const kaonBeta = mHFCuts->getTofBeta(kaon, lambdaC->lorentzVector(), lambdaC->decayVertex());
+      float const protonBeta = mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex());
+
+      if ( ! mHFCuts->isHybridTOFHadron(pion, pionBeta, StPicoCutsBase::kPion) ||
+	   ! mHFCuts->isHybridTOFHadron(kaon, kaonBeta, StPicoCutsBase::kKaon) ||
+	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton) )
 	continue;
+
+      
             
       // JMT - recalculate topological cuts with updated secondary vertex
       
@@ -494,6 +506,23 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float const KPhi = kaon->gMom(mPrimVtx, mBField).phi();
       float const piPhi = pion->gMom(mPrimVtx, mBField).phi();
 
+      // getting centrality
+      int const currentRun = mPicoHFEvent->runId;
+
+      if(currentRun != mRunNumber)
+      {
+	mRunNumber = currentRun;
+
+	grefmultCorrUtil->init(mRunNumber);
+	grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
+	grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
+	for(Int_t i=0;i<6;i++){
+	  grefmultCorrUtil->get(i, 0);
+	}
+      }
+      grefmultCorrUtil->initEvent(grefmult, vz, zdcCoincidenceRate) ;
+      int const centrality = grefmultCorrUtil->getCentralityBin9() ;
+
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
@@ -506,7 +535,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion),
 			    pEta, KEta, piEta, 
 			    pPhi, KPhi, piPhi, 
-			    maxVdist
+			    maxVdist,
+			    centrality			    
 			    };
 
       mNtupleSecondary->Fill(aSecondary);
@@ -515,6 +545,15 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
   } // else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
 
  return kStOK;
+}
+// _________________________________________________________
+inline float StPicoHFLambdaCMaker::getBetaInvDiff(float mom, float beta, float mass)
+{
+  if(beta != beta) // if beta is NaN
+    return std::numeric_limits<float>::quiet_NaN();
+
+  float const theoreticalBetaInv = sqrt( (mass*mass) / (mom*mom) + 1);
+  return 1./beta - theoreticalBetaInv;
 }
 
 // _________________________________________________________
@@ -550,3 +589,4 @@ bool StPicoHFLambdaCMaker::isProton(StPicoTrack const * const trk) const {
   
   return isHadron(trk, StPicoCutsBase::kProton);
 }
+

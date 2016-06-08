@@ -2,6 +2,7 @@
 #define StPicoHFLambdaCMaker_h
 
 #include "StPicoHFMaker/StPicoHFMaker.h"
+#include "StRefMultCorr/StRefMultCorr.h"
 
 /* **************************************************
  *  Class for HF LambdaC analysis
@@ -46,7 +47,7 @@
  *  --------------------------------------------------
  *  Authors: 
  *            Jochen Thaeder (jmthader@lbl.gov)
- *            Miroslav Simko  (msimko@bnl.gov)
+ *            Miroslav Simko (msimko@bnl.gov)
  *
  * **************************************************
  */
@@ -62,6 +63,7 @@ class StPicoHFEvent;
 class StHFPair;
 class StHFTriplet;
 class StHFCuts;
+class StRefMultCorr;
 
 class StPicoHFLambdaCMaker : public StPicoHFMaker 
 {
@@ -79,6 +81,9 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
 
   enum eDecayChannel {kPionKaonProton, kProtonK0short, kLambdaPion};
 
+  void setRefMutCorr(StRefMultCorr* gRefMultCorr) { mRefMultCorr = gRefMultCorr; }
+  StRefMultCorr* getRefMultCorr() { return mRefMultCorr; }
+
  protected:
   virtual bool isHadron(StPicoTrack const*, int pidFlag) const;
   virtual bool isPion(StPicoTrack const*) const;
@@ -95,6 +100,12 @@ private:
 
   TNtuple*  mNtupleSecondary;
   TNtuple*  mNtupleTertiary;
+
+  StRefMultCorr* grefmultCorrUtil ;
+
+  int mRunNumber;
+
+  inline float getBetaInvDiff(float mom, float beta, float mass);
 
   ClassDef(StPicoHFLambdaCMaker, 1)
 };
