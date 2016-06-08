@@ -30,7 +30,7 @@ ClassImp(StPicoHFLambdaCMaker)
 StPicoHFLambdaCMaker::StPicoHFLambdaCMaker(char const* name, StPicoDstMaker* picoMaker, char const* outputBaseFileName,  
 					   char const* inputHFListHFtree = "") :
   StPicoHFMaker(name, picoMaker, outputBaseFileName, inputHFListHFtree),
-  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL) {
+  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mRefmultCorrUtil(NULL) {
   // constructor
 }
 
@@ -59,16 +59,14 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
 	  			     "mLambda1520:mDelta:mKstar:"
 	  			     "pNSigma:KNSigma:piNSigma:"
-	  			     "pTOFbeta:KTOFbeta:piTOFbeta:"
+	  			     "pTOFinvBetaDiff:KTOFnvBetaDiff:piTOFinvBetaDiff:"
 				     "pEta:KEta:piEta:"
 				     "pPhi:KPhi:piPhi:"
 	  			     "maxVertexDist:"
 				     "centrality"
 	  			     );
   }
-  // initializing centrality maker
   mRunNumber = 0;
-  grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr() ;
   
   return kStOK;
 }
@@ -454,7 +452,9 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton) )
 	continue;
 
-      
+      float const betaInvDiffPion = getBetaInvDiff(pionBeta, pion->gMom(mPrimVtx, mBField), mHFCuts->getHypotheticalMass(StHFCuts::kPion));
+      float const betaInvDiffKaon = getBetaInvDiff(kaonBeta, kaon->gMom(mPrimVtx, mBField), mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
+      float const betaInvDiffProton = getBetaInvDiff(protonBeta, proton->gMom(mPrimVtx, mBField), mHFCuts->getHypotheticalMass(StHFCuts::kProton));
             
       // JMT - recalculate topological cuts with updated secondary vertex
       
@@ -507,21 +507,23 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float const piPhi = pion->gMom(mPrimVtx, mBField).phi();
 
       // getting centrality
-      int const currentRun = mPicoHFEvent->runId;
+      int const currentRun = mPicoHFEvent->runId();
 
       if(currentRun != mRunNumber)
       {
+	// init a new run
 	mRunNumber = currentRun;
 
-	grefmultCorrUtil->init(mRunNumber);
-	grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
-	grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
+	mRefmultCorrUtil->init(mRunNumber);
+	mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
+	mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
 	for(Int_t i=0;i<6;i++){
-	  grefmultCorrUtil->get(i, 0);
+	  mRefmultCorrUtil->get(i, 0);
 	}
       }
-      grefmultCorrUtil->initEvent(grefmult, vz, zdcCoincidenceRate) ;
-      int const centrality = grefmultCorrUtil->getCentralityBin9() ;
+
+      mRefmultCorrUtil->initEvent(mPicoEvent->refMult(), mPrimVtx.z(), mPicoEvent->ZDCx()) ;
+      int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
 			    isCorrectSign,
@@ -532,11 +534,11 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
 			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
-			    mHFCuts->getTofBeta(proton), mHFCuts->getTofBeta(kaon), mHFCuts->getTofBeta(pion),
+			    betaInvDiffProton, betaInvDiffKaon, betaInvDiffPion,
 			    pEta, KEta, piEta, 
 			    pPhi, KPhi, piPhi, 
 			    maxVdist,
-			    centrality			    
+			    centrality
 			    };
 
       mNtupleSecondary->Fill(aSecondary);
