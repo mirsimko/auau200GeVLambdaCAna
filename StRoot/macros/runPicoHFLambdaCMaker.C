@@ -38,6 +38,7 @@
 #include "StPicoHFMaker/StPicoHFEvent.h"
 #include "StPicoHFMaker/StHFCuts.h"
 #include "StRefMultCorr/StRefMultCorr.h"
+#include "StRefMultCorr/CentralityMaker.h"
 
 #include "StPicoHFLambdaCMaker/StPicoHFLambdaCMaker.h"
 
@@ -75,7 +76,6 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   gROOT->LoadMacro("loadSharedHFLibraries.C");
   loadSharedHFLibraries();
 
-  gSystem->Load("StRefMultCorr");
 #endif
 
   chain = new StChain();
