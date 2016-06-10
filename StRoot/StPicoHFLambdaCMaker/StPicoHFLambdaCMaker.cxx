@@ -452,9 +452,9 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton) )
 	continue;
 
-      float const betaInvDiffPion = getBetaInvDiff(pionBeta, pion->gMom(mPrimVtx, mBField).mag(), mHFCuts->getHypotheticalMass(StHFCuts::kPion));
-      float const betaInvDiffKaon = getBetaInvDiff(kaonBeta, kaon->gMom(mPrimVtx, mBField).mag(), mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
-      float const betaInvDiffProton = getBetaInvDiff(protonBeta, proton->gMom(mPrimVtx, mBField).mag(), mHFCuts->getHypotheticalMass(StHFCuts::kProton));
+      float const betaInvDiffPion = getBetaInvDiff(pion->gMom(mPrimVtx, mBField).mag(), pionBeta, mHFCuts->getHypotheticalMass(StHFCuts::kPion));
+      float const betaInvDiffKaon = getBetaInvDiff(kaon->gMom(mPrimVtx, mBField).mag(), kaonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
+      float const betaInvDiffProton = getBetaInvDiff(proton->gMom(mPrimVtx, mBField).mag(), protonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kProton));
             
       // JMT - recalculate topological cuts with updated secondary vertex
       
@@ -554,7 +554,7 @@ inline float StPicoHFLambdaCMaker::getBetaInvDiff(float mom, float beta, float m
   if(beta != beta) // if beta is NaN
     return std::numeric_limits<float>::quiet_NaN();
 
-  float const theoreticalBetaInv = sqrt( (mass*mass) / (mom*mom) + 1);
+  float const theoreticalBetaInv = sqrt( mass*mass + mom*mom )/mom;
   return 1./beta - theoreticalBetaInv;
 }
 
