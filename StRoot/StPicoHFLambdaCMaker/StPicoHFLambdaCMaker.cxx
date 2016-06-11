@@ -59,7 +59,7 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
 	  			     "mLambda1520:mDelta:mKstar:"
 	  			     "pNSigma:KNSigma:piNSigma:"
-	  			     "pTOFinvBetaDiff:KTOFnvBetaDiff:piTOFinvBetaDiff:"
+	  			     "pTOFinvBetaDiff:KTOFinvBetaDiff:piTOFinvBetaDiff:"
 				     "pEta:KEta:piEta:"
 				     "pPhi:KPhi:piPhi:"
 	  			     "maxVertexDist:"
