@@ -380,7 +380,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
       // -- LambdaC
       float LCdcaDaughtersMax = 0.03;   // maximum 300um 
-      float LCdecayLengthMin  = 0.006;  // minimum  30um
+      float LCdecayLengthMin  = 0.006;  // minimum  60um
       float LCdecayLengthMax  = 300.;
       float LCcosThetaMin     = 0.97;   // minimum
       float LCminMass         = 2.1;
