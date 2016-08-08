@@ -52,15 +52,15 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
 # set input=${baseFolder}/lists/${tree}/${tree}_all.list
 # set input=${baseFolder}/picoLists/picoList_all.list
-# set input=${baseFolder}/diffedPicos.list
-set input=${baseFolder}/divideList/listAll0.list
+set input=${baseFolder}/treeProdAug5.list
+# set input=${baseFolder}/divideList/listAll0.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
 
 # -- set maker mode
 #    0 - kAnalyze, 
 #    1 - kWrite
 #    2 - kRead
-set makerMode=0
+set makerMode=1
 
 # -- set root macro
 set rootMacro=runPicoHFLambdaCMaker.C
@@ -88,8 +88,8 @@ set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/
 set xmlFile=submitPicoHFMaker.xml
 
 # -- set min and mx number of files
-set minNFiles=20
-set maxNFiles=50
+set minNFiles=10
+set maxNFiles=30
 
 # ###############################################
 # -- DON'T CHANGE BELOW THAT LINE

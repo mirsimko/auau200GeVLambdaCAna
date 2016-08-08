@@ -33,6 +33,7 @@
 
 #include "StMaker.h"
 #include "StChain.h"
+#include "TStopwatch.h"
 
 #include "StPicoDstMaker/StPicoDstMaker.h"
 #include "StPicoHFMaker/StPicoHFEvent.h"
@@ -70,7 +71,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
-  Int_t nEvents = 10000000000;
+  Int_t nEvents = 1000;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
@@ -333,18 +334,23 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kPion);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kPion);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kPion);          // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kPion);
       hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // we do not cut on TOF
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kProton);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kProton);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kProton);        // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kProton);
+      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kProton);
       hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kProton); // we do not cut on TOF
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kKaon);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kKaon);          // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kKaon);
+      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kKaon);
       hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kKaon); // we do not cut on TOF
 
       // -- LambdaC
@@ -361,28 +367,31 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kPion);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kPion);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kPion);          // minimum 50um
       hfCuts->setCutTPCNSigma(3., StPicoCutsBase::kPion);
       // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kPion);
-      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // TOFF is not used for pions
+      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // TOF is not used for pions
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kProton);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kProton);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kProton);        // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kProton);
       hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kProton);
-      //    hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kProton);
+      // hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kProton);
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kKaon);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kKaon);          // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kKaon);
       hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kKaon);
-      //    hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kKaon);
+      // hfCuts->setCutPtotRangeHybridTOF(0., 999., StPicoCutsBase::kKaon);
 
       // -- LambdaC
       float LCdcaDaughtersMax = 0.03;   // maximum 300um 
-      float LCdecayLengthMin  = 0.006;  // minimum  60um
+      float LCdecayLengthMin  = 0.003;  // minimum  60um
       float LCdecayLengthMax  = 300.;
-      float LCcosThetaMin     = 0.97;   // minimum
+      float LCcosThetaMin     = 0.95;   // minimum
       float LCminMass         = 2.1;
       float LCmaxMass         = 2.5;
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax, 
@@ -394,7 +403,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
   // ========================================================================================
 
-  std::clock_t start = std::clock(); // getting starting time 
+  TStopwatch totalTime; // getting starting time 
   chain->Init();
   cout << "chain->Init();" << endl;
   int total = picoDstMaker->chain()->GetEntries();
@@ -417,11 +426,11 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   cout << "Work done... now its time to close up shop!"<< endl;
   cout << "****************************************** " << endl;
   chain->Finish();
-  double duration = (double) (std::clock() - start) / (double) CLOCKS_PER_SEC;
+  totalTime.Stop();
   cout << "****************************************** " << endl;
   cout << "total number of events  " << nEvents << endl;
   cout << "****************************************** " << endl;
-  cout << "Time needed " << duration << " s" << endl;
+  cout << "Time needed " << totalTime.RealTime() << " s" << endl;
   cout << "****************************************** " << endl;
   
   delete chain;

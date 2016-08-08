@@ -94,6 +94,8 @@ int StPicoHFLambdaCMaker::MakeHF() {
 
   // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::MakeHF\"" << endm;
 
+  fillSingleParticleHistos();
+
   if (isMakerMode() == StPicoHFMaker::kWrite) {
     createCandidates();
   }
@@ -549,13 +551,30 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
  return kStOK;
 }
 // _________________________________________________________
-inline float StPicoHFLambdaCMaker::getBetaInvDiff(float mom, float beta, float mass)
-{
+
+int StPicoHFLambdaCMaker::fillSingleParticleHistos() {
+  // fill control plots for single particles
+
+}
+
+// _________________________________________________________
+inline float StPicoHFLambdaCMaker::getBetaInvDiff(float mom, float beta, float mass) {
   if(beta != beta) // if beta is NaN
     return std::numeric_limits<float>::quiet_NaN();
 
   float const theoreticalBetaInv = sqrt( mass*mass + mom*mom )/mom;
   return 1./beta - theoreticalBetaInv;
+}
+
+// _________________________________________________________
+inline bool StPicoHFLambdaCMaker::isApproxHybridTOFhadron(StPicoTrack const * const trk, int pidFlag) const {
+  // TOF beta cut without corrections implemented to save time. 1.2 times beta cut is used.
+
+  float const TOFbetaCut = mHFCuts->getTOFDeltaOneOverBetaMax(pidFlag);
+  mHFCuts->setCutTOFDeltaOneOverBeta(1.2*TOFbetaCut, pidFlag);
+  bool const isTOFhadron = mHFCuts->isHybridTOFHadron(trk, mHFCuts->getTofBetaBase(trk), pidFlag);
+  mHFCuts->setCutTOFDeltaOneOverBeta(TOFbetaCut, pidFlag);
+  return isTOFhadron;
 }
 
 // _________________________________________________________
@@ -565,7 +584,8 @@ bool StPicoHFLambdaCMaker::isHadron(StPicoTrack const * const trk, int pidFlag) 
 
   // double eta = trk->gMom(mPrimVtx,mBField).pseudoRapidity();  
   // return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag) && abs(eta) < 1.);
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag));
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag)
+	  && isApproxHybridTOFhadron(trk, pidFlag));
 }
   
 // _________________________________________________________

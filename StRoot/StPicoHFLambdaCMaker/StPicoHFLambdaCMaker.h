@@ -84,7 +84,7 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
   void setRefMutCorr(StRefMultCorr* gRefMultCorr) { mRefmultCorrUtil = gRefMultCorr; }
   StRefMultCorr* getRefMultCorr() { return mRefmultCorrUtil; }
 
- protected:
+protected:
   virtual bool isHadron(StPicoTrack const*, int pidFlag) const;
   virtual bool isPion(StPicoTrack const*) const;
   virtual bool isKaon(StPicoTrack const*) const;
@@ -93,6 +93,7 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
 private:
   int createCandidates();
   int analyzeCandidates();
+  int fillSingleParticleHistos();
 
   // -- private members --------------------------
 
@@ -107,6 +108,7 @@ private:
   int mEventNumber;
 
   inline float getBetaInvDiff(float mom, float beta, float mass);
+  inline bool isApproxHybridTOFhadron(StPicoTrack const * const, int pidFlag) const;
 
   ClassDef(StPicoHFLambdaCMaker, 1)
 };
