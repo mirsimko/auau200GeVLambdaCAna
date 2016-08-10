@@ -582,6 +582,9 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     return -1;
   }
 
+  TH2D *etaPhiHist = static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sEtaPhi", partName.data()) ));
+  TH2D *phiPtHist = static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sPhiPt", partName.data()) ));
+  TH2D *nSigmaHist = static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sNSigmaPt", partName.data()) ));
   
   for(unsigned short idxPart = 0; idxPart < partIdxVector->size(); ++idxPart)
   {
@@ -589,8 +592,8 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
 
     float const pt = trk->gPt();
     StThreeVectorF const gMom = trk->gMom(mPrimVtx, mBField);
-    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sEtaPhi", partName.data()) ))->Fill(pt, gMom.pseudoRapidity());
-    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sPhiPt", partName.data()) ))->Fill(pt, gMom.phi());
+    etaPhiHist->Fill(pt, gMom.pseudoRapidity());
+    phiPtHist->Fill(pt, gMom.phi());
 
     float nSigma;
     switch (pidFlag)
@@ -605,7 +608,7 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
       nSigma = trk->nSigmaPion();
       break;
     }
-    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sNSigmaPt", partName.data()) ))->Fill(pt, nSigma);
+    nSigmaHist->Fill(pt, nSigma);
   }
 }
 // _________________________________________________________
