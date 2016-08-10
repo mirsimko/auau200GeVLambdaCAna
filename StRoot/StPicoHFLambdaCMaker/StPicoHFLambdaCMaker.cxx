@@ -6,6 +6,9 @@
 #include "TClonesArray.h"
 #include "TTime.h"
 #include "TMath.h"
+#include "TH1D.h"
+#include "TH2D.h"
+#include "TList.h"
 
 #include "StThreeVectorF.hh"
 #include "StLorentzVectorF.hh"
@@ -70,7 +73,7 @@ int StPicoHFLambdaCMaker::InitHF() {
     // Single particle tracks control hists
     mOutList->Add(new TList);
     mSinglePartList = static_cast<TList*>( mOutList->Last());
-    mSinglePartList->SetOwner(kTrue);
+    mSinglePartList->SetOwner(true);
     mSinglePartList->SetName("HFSinglePartHists");
 
     // create single particle hists
@@ -559,7 +562,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 
 int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
   std::string partName;
-  std::vector<int>* partIdxVector;
+  std::vector<unsigned short>* partIdxVector;
   switch ( pidFlag )
   {
   case StHFCuts::kProton: 
@@ -584,9 +587,9 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
   {
     StPicoTrack *const trk = mPicoDst->track((*partIdxVector)[idxPart]);
 
-    float const pt = trk->pT();
+    float const pt = trk->gPt();
     StThreeVectorF const gMom = trk->gMom(mPrimVtx, mBField);
-    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sEtaPhi", partName.data()) ))->Fill(pt, gMom.eta());
+    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sEtaPhi", partName.data()) ))->Fill(pt, gMom.pseudoRapidity());
     static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sPhiPt", partName.data()) ))->Fill(pt, gMom.phi());
 
     float nSigma;
@@ -602,8 +605,8 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
       nSigma = trk->nSigmaPion();
       break;
     }
+    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sNSigmaPt", partName.data()) ))->Fill(pt, nSigma);
   }
-  static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sNSigmaPt", partName.data()) ))->Fill(pt, nSigma);
 }
 // _________________________________________________________
 
