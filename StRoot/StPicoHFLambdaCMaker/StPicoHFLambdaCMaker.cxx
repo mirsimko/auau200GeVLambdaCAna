@@ -32,7 +32,7 @@ ClassImp(StPicoHFLambdaCMaker)
 StPicoHFLambdaCMaker::StPicoHFLambdaCMaker(char const* name, StPicoDstMaker* picoMaker, char const* outputBaseFileName,  
 					   char const* inputHFListHFtree = "") :
   StPicoHFMaker(name, picoMaker, outputBaseFileName, inputHFListHFtree),
-  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mRefmultCorrUtil(NULL) {
+  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mRefmultCorrUtil(NULL), mSinglePartList(NULL) {
   // constructor
 }
 
@@ -67,19 +67,26 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "maxVertexDist:"
 				     "centrality"
 	  			     );
-    mOutList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
+    // Single particle tracks control hists
+    mOutList->Add(new TList);
+    mSinglePartList = static_cast<TList*>( mOutList->Last());
+    mSinglePartList->SetOwner(kTrue);
+    mSinglePartList->SetName("HFSinglePartHists");
 
-    mOutList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-    mOutList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-    mOutList->Add(new TH2D("KEtaPhi","K Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+    // create single particle hists
+    mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
 
-    mOutList->Add(new TH2D("piPhiPt", "pi phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-    mOutList->Add(new TH2D("pPhiPt", "p phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-    mOutList->Add(new TH2D("KPhiPt", "K phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+    mSinglePartList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+    mSinglePartList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+    mSinglePartList->Add(new TH2D("KEtaPhi","K Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
 
-    mOutList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
-    mOutList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
-    mOutList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
+    mSinglePartList->Add(new TH2D("piPhiPt", "pi phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+    mSinglePartList->Add(new TH2D("pPhiPt", "p phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+    mSinglePartList->Add(new TH2D("KPhiPt", "K phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+
+    mSinglePartList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
+    mSinglePartList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
+    mSinglePartList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
   }
   mRunNumber = 0;
   
@@ -109,7 +116,7 @@ int StPicoHFLambdaCMaker::MakeHF() {
 
   // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::MakeHF\"" << endm;
 
-  fillSingleParticleHistos();
+  fillControlHistos();
 
   if (isMakerMode() == StPicoHFMaker::kWrite) {
     createCandidates();
@@ -550,7 +557,57 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 }
 // _________________________________________________________
 
-int StPicoHFLambdaCMaker::fillSingleParticleHistos() {
+int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
+  std::string partName;
+  std::vector<int>* partIdxVector;
+  switch ( pidFlag )
+  {
+  case StHFCuts::kProton: 
+    partName = "p";
+    partIdxVector = &mIdxPicoProtons;
+    break;
+  case StHFCuts::kKaon:
+    partName = "K";
+    partIdxVector = &mIdxPicoKaons;
+    break;
+  case StHFCuts::kPion:
+    partName = "pi";
+    partIdxVector = &mIdxPicoPions;
+    break;
+  default:
+    std::cerr << "StPicoHFLambdaCMaker::fillSingleParticleHistos: wrong particle code." << endl;
+    return -1;
+  }
+
+  
+  for(unsigned short idxPart = 0; idxPart < partIdxVector->size(); ++idxPart)
+  {
+    StPicoTrack *const trk = mPicoDst->track((*partIdxVector)[idxPart]);
+
+    float const pt = trk->pT();
+    StThreeVectorF const gMom = trk->gMom(mPrimVtx, mBField);
+    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sEtaPhi", partName.data()) ))->Fill(pt, gMom.eta());
+    static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sPhiPt", partName.data()) ))->Fill(pt, gMom.phi());
+
+    float nSigma;
+    switch (pidFlag)
+    {
+    case StHFCuts::kProton:
+      nSigma = trk->nSigmaProton();
+      break;
+    case StHFCuts::kKaon:
+      nSigma = trk->nSigmaKaon();
+      break;
+    case StHFCuts::kPion:
+      nSigma = trk->nSigmaPion();
+      break;
+    }
+  }
+  static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sNSigmaPt", partName.data()) ))->Fill(pt, nSigma);
+}
+// _________________________________________________________
+
+int StPicoHFLambdaCMaker::fillControlHistos() {
   // fill control plots for single particles
 
   // getting centrality
@@ -571,6 +628,11 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos() {
 
   mRefmultCorrUtil->initEvent(mPicoDst->event()->refMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
   int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
+  static_cast<TH1D*>(mSinglePartList->FindObject("centrality"))->Fill(centrality);
+
+  fillSingleParticleHistos(StHFCuts::kProton);
+  fillSingleParticleHistos(StHFCuts::kPion);
+  fillSingleParticleHistos(StHFCuts::kKaon);
 }
 
 // _________________________________________________________

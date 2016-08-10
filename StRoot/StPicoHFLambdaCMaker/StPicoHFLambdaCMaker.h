@@ -93,7 +93,8 @@ protected:
 private:
   int createCandidates();
   int analyzeCandidates();
-  int fillSingleParticleHistos();
+  int fillControlHistos();
+  int fillSingleParticleHistos(int pidFlag);
 
   // -- private members --------------------------
 
@@ -101,6 +102,7 @@ private:
 
   TNtuple*  mNtupleSecondary;
   TNtuple*  mNtupleTertiary;
+  TList*    mSinglePartList;
 
   StRefMultCorr* mRefmultCorrUtil ;
 
