@@ -5,6 +5,7 @@
 #include "TNtuple.h"
 #include "TClonesArray.h"
 #include "TTime.h"
+#include "TMath.h"
 
 #include "StThreeVectorF.hh"
 #include "StLorentzVectorF.hh"
@@ -66,6 +67,19 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "maxVertexDist:"
 				     "centrality"
 	  			     );
+    mOutList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
+
+    mOutList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+    mOutList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+    mOutList->Add(new TH2D("KEtaPhi","K Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+
+    mOutList->Add(new TH2D("piPhiPt", "pi phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+    mOutList->Add(new TH2D("pPhiPt", "p phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+    mOutList->Add(new TH2D("KPhiPt", "K phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+
+    mOutList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
+    mOutList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
+    mOutList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
   }
   mRunNumber = 0;
   
@@ -509,23 +523,6 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float const KPhi = kaon->gMom(mPrimVtx, mBField).phi();
       float const piPhi = pion->gMom(mPrimVtx, mBField).phi();
 
-      // getting centrality
-      int const currentRun = mPicoHFEvent->runId();
-
-      if(currentRun != mRunNumber)
-      {
-	// init a new run
-	mRunNumber = currentRun;
-
-	mRefmultCorrUtil->init(mRunNumber);
-	mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
-	mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
-	for(Int_t i=0;i<6;i++){
-	  mRefmultCorrUtil->get(i, 0);
-	}
-      }
-
-      mRefmultCorrUtil->initEvent(mPicoDst->event()->refMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
       int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
 
       float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
@@ -556,7 +553,24 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 int StPicoHFLambdaCMaker::fillSingleParticleHistos() {
   // fill control plots for single particles
 
-   
+  // getting centrality
+  int const currentRun = mPicoHFEvent->runId();
+
+  if(currentRun != mRunNumber)
+  {
+    // init a new run
+    mRunNumber = currentRun;
+
+    mRefmultCorrUtil->init(mRunNumber);
+    mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
+    mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
+    for(Int_t i=0;i<6;i++){
+      mRefmultCorrUtil->get(i, 0);
+    }
+  }
+
+  mRefmultCorrUtil->initEvent(mPicoDst->event()->refMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
+  int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
 }
 
 // _________________________________________________________
