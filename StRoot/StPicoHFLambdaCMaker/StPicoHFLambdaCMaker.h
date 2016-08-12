@@ -83,6 +83,7 @@ class StPicoHFLambdaCMaker : public StPicoHFMaker
 
   void setRefMutCorr(StRefMultCorr* gRefMultCorr) { mRefmultCorrUtil = gRefMultCorr; }
   StRefMultCorr* getRefMultCorr() { return mRefmultCorrUtil; }
+  void fillSingleParticleHists(bool shouldWe = true) { mFillParticleHistos = shouldWe; }
 
 protected:
   virtual bool isHadron(StPicoTrack const*, int pidFlag) const;
@@ -90,11 +91,13 @@ protected:
   virtual bool isKaon(StPicoTrack const*) const;
   virtual bool isProton(StPicoTrack const*) const;
 
+
 private:
   int createCandidates();
   int analyzeCandidates();
   int fillControlHistos();
   int fillSingleParticleHistos(int pidFlag);
+  void calculateCentrality();
 
   // -- private members --------------------------
 
@@ -105,6 +108,8 @@ private:
   TList*    mSinglePartList;
 
   StRefMultCorr* mRefmultCorrUtil ;
+
+  bool mFillParticleHistos;
 
   int mRunNumber;
   int mEventNumber;

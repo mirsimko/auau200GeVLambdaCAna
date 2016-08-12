@@ -35,7 +35,8 @@ ClassImp(StPicoHFLambdaCMaker)
 StPicoHFLambdaCMaker::StPicoHFLambdaCMaker(char const* name, StPicoDstMaker* picoMaker, char const* outputBaseFileName,  
 					   char const* inputHFListHFtree = "") :
   StPicoHFMaker(name, picoMaker, outputBaseFileName, inputHFListHFtree),
-  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mRefmultCorrUtil(NULL), mSinglePartList(NULL) {
+  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mRefmultCorrUtil(NULL),
+  mSinglePartList(NULL), mFillParticleHistos(true) {
   // constructor
 }
 
@@ -119,7 +120,10 @@ int StPicoHFLambdaCMaker::MakeHF() {
 
   // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::MakeHF\"" << endm;
 
-  fillControlHistos();
+  calculateCentrality();
+
+  if(mFillParticleHistos)
+    fillControlHistos();
 
   if (isMakerMode() == StPicoHFMaker::kWrite) {
     createCandidates();
@@ -582,9 +586,9 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     return -1;
   }
 
-  TH2D *etaPhiHist = static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sEtaPhi", partName.data()) ));
-  TH2D *phiPtHist = static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sPhiPt", partName.data()) ));
-  TH2D *nSigmaHist = static_cast<TH2D*>(mSinglePartList->FindObject(Form("%sNSigmaPt", partName.data()) ));
+  TH2D *etaPhiHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sEtaPhi", partName.data()) ));
+  TH2D *phiPtHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sPhiPt", partName.data()) ));
+  TH2D *nSigmaHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sNSigmaPt", partName.data()) ));
   
   for(unsigned short idxPart = 0; idxPart < partIdxVector->size(); ++idxPart)
   {
@@ -592,7 +596,7 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
 
     float const pt = trk->gPt();
     StThreeVectorF const gMom = trk->gMom(mPrimVtx, mBField);
-    etaPhiHist->Fill(pt, gMom.pseudoRapidity());
+    etaPhiHist->Fill(gMom.phi(), gMom.pseudoRapidity());
     phiPtHist->Fill(pt, gMom.phi());
 
     float nSigma;
@@ -613,9 +617,8 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
 }
 // _________________________________________________________
 
-int StPicoHFLambdaCMaker::fillControlHistos() {
-  // fill control plots for single particles
-
+void StPicoHFLambdaCMaker::calculateCentrality()
+{
   // getting centrality
   int const currentRun = mPicoHFEvent->runId();
 
@@ -632,7 +635,13 @@ int StPicoHFLambdaCMaker::fillControlHistos() {
     }
   }
 
-  mRefmultCorrUtil->initEvent(mPicoDst->event()->refMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
+  mRefmultCorrUtil->initEvent(mPicoDst->event()->grefMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
+}
+// _________________________________________________________
+
+int StPicoHFLambdaCMaker::fillControlHistos() {
+  // fill control plots for single particles
+
   int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
   static_cast<TH1D*>(mSinglePartList->FindObject("centrality"))->Fill(centrality);
 
