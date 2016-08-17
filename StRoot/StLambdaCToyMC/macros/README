@@ -1,12 +1,14 @@
 # /* *********************************************************************
+#  *  This is a deprecated version for crosschecking
+# /* *********************************************************************
 #  *  ROOT macro - Toy Monte Carlo Simulation for D0 decay
 #  *  Includes Momentum Resolution, DCA, hft ration, TPC efficiency ...
 #  *
 #  *  Authors:
 #  *            Guannan Xie (guannanxie@lbl.gov)
-#  *            **Mustafa Mustafa (mmustafa@lbl.gov)
+#  *            Mustafa Mustafa (mmustafa@lbl.gov)
 #  *            Hao Qiu (hqiu@lbl.gov)
-#  *		Miroslav Simko (msimko@bnl.gov)
+#  *		**Miroslav Simko (msimko@bnl.gov)
 #  *
 #  *  ** Code Maintainer
 #  *

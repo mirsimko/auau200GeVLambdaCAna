@@ -71,29 +71,29 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "maxVertexDist:"
 				     "centrality"
 	  			     );
-    // Single particle tracks control hists
-    mOutList->Add(new TList);
-    mSinglePartList = static_cast<TList*>( mOutList->Last());
-    mSinglePartList->SetOwner(true);
-    mSinglePartList->SetName("HFSinglePartHists");
-
-    // create single particle hists
-    mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
-
-    mSinglePartList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-    mSinglePartList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-    mSinglePartList->Add(new TH2D("KEtaPhi","K Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-
-    mSinglePartList->Add(new TH2D("piPhiPt", "pi phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-    mSinglePartList->Add(new TH2D("pPhiPt", "p phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-    mSinglePartList->Add(new TH2D("KPhiPt", "K phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-
-    mSinglePartList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
-    mSinglePartList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
-    mSinglePartList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
   }
+  // Single particle tracks control hists
+  mOutList->Add(new TList);
+  mSinglePartList = static_cast<TList*>( mOutList->Last());
+  mSinglePartList->SetOwner(true);
+  mSinglePartList->SetName("HFSinglePartHists");
+
+  // create single particle hists
+  mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
+
+  mSinglePartList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+  mSinglePartList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+  mSinglePartList->Add(new TH2D("KEtaPhi","K Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+
+  mSinglePartList->Add(new TH2D("piPhiPt", "pi phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+  mSinglePartList->Add(new TH2D("pPhiPt", "p phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+  mSinglePartList->Add(new TH2D("KPhiPt", "K phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+
+  mSinglePartList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
+  mSinglePartList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
+  mSinglePartList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
   mRunNumber = 0;
-  
+
   return kStOK;
 }
 
