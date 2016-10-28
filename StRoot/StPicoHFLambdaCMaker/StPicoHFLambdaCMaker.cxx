@@ -61,7 +61,6 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "m:pt:eta:phi:"
 	  			     "cosPntAngle:dLength:"
 	  			     "p1Dca:p2Dca:p3Dca:"
-	  			     "cosThetaStar:"
 	  			     "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
 	  			     "mLambda1520:mDelta:mKstar:"
 	  			     "pNSigma:KNSigma:piNSigma:"
@@ -181,17 +180,17 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  // ----------------------------
 
 	  // -- check if proton is still good proton
-	  if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex())) )
+	  if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex()) , lambdaC.decayVertex()))
 	    continue;
 	  
 	  // -- check if both pions are still good pions
 	  StPicoTrack const *pion1 = mPicoDst->track(k0Short->particle1Idx());	  
 	  StPicoTrack const *pion2 = mPicoDst->track(k0Short->particle2Idx());	  
 	  
-	  if ( ! mHFCuts->isHybridTOFPion(pion1, mHFCuts->getTofBeta(pion1, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
-								     k0Short->lorentzVector(), k0Short->decayVertex())) ||
+	  if ( ! mHFCuts->isHybridTOFPion(pion1, mHFCuts->getTofBeta(pion1, lambdaC.lorentzVector(), k0Short->decayVertex(), 
+								     k0Short->lorentzVector(), k0Short->decayVertex()), k0Short->decayVertex()) ||
 	       ! mHFCuts->isHybridTOFPion(pion2, mHFCuts->getTofBeta(pion2, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
-								     k0Short->lorentzVector(), k0Short->decayVertex())) )
+								     k0Short->lorentzVector(), k0Short->decayVertex()), k0Short->decayVertex()) )
 	    continue;
 
 	  mPicoHFEvent->addHFSecondaryVertexPair(&lambdaC);
@@ -237,7 +236,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  // ----------------------------
 
 	  // -- check if pion is still good pion
-	  if ( ! mHFCuts->isHybridTOFPion(pion, mHFCuts->getTofBeta(pion, lambdaC.lorentzVector(), lambdaC.decayVertex())) )
+	  if ( ! mHFCuts->isHybridTOFPion(pion, mHFCuts->getTofBeta(pion, lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) )
 	    continue;
 
 	  // -- check if both lambda daughthers (proton + pi-) are still good 
@@ -245,9 +244,9 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  StPicoTrack const *pion2   = mPicoDst->track(lambda->particle2Idx());	  
 
 	  if ( ! mHFCuts->isHybridTOFProton(proton1, mHFCuts->getTofBeta(proton1, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
-									 lambda->lorentzVector(), lambda->decayVertex())) ||
+									 lambda->lorentzVector(), lambda->decayVertex()), lambda->decayVertex()) ||
 	       ! mHFCuts->isHybridTOFPion(pion2, mHFCuts->getTofBeta(pion2, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
-								     lambda->lorentzVector(), lambda->decayVertex())) )
+								     lambda->lorentzVector(), lambda->decayVertex()), lambda->decayVertex()) )
 	    continue;
 
 	  mPicoHFEvent->addHFSecondaryVertexPair(&lambdaC);
@@ -266,6 +265,11 @@ int StPicoHFLambdaCMaker::createCandidates() {
 
   // -- Decay channel proton pi+ K-
   else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
+
+    if (mIdxPicoPions.size() == 0 || mIdxPicoKaons.size() == 0)
+    {
+      return kStOK;
+    }
 
     for (unsigned short idxProton = 0; idxProton < mIdxPicoProtons.size(); ++idxProton) {
       StPicoTrack const *proton = mPicoDst->track(mIdxPicoProtons[idxProton]);
@@ -300,11 +304,10 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  // ----------------------------
 
 	  // -- check if all particles are still good
-	  if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex())) ||
-	       ! mHFCuts->isHybridTOFKaon(  kaon,   mHFCuts->getTofBeta(kaon,   lambdaC.lorentzVector(), lambdaC.decayVertex())) ||
-	       ! mHFCuts->isHybridTOFPion(  pion,   mHFCuts->getTofBeta(pion,   lambdaC.lorentzVector(), lambdaC.decayVertex())) )
+	  if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) ||
+	       ! mHFCuts->isHybridTOFKaon(  kaon,   mHFCuts->getTofBeta(kaon,   lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) ||
+	       ! mHFCuts->isHybridTOFPion(  pion,   mHFCuts->getTofBeta(pion,   lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) )
 	    continue;
-
 	  mPicoHFEvent->addHFSecondaryVertexTriplet(&lambdaC);
 
 	} // for (unsigned short idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
@@ -362,10 +365,12 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* pion2  = mPicoDst->track(k0Short->particle2Idx());
 
       if ( ! mHFCuts->isHybridTOFHadron(pion1, mHFCuts->getTofBeta(pion1, lambdaC->lorentzVector(), lambdaC->decayVertex(),
-								   k0Short->lorentzVector(), k0Short->decayVertex()), StPicoCutsBase::kPion) ||
+								   k0Short->lorentzVector(), k0Short->decayVertex()), StPicoCutsBase::kPion, k0Short->decayVertex()) 
+	   ||
 	   ! mHFCuts->isHybridTOFHadron(pion2, mHFCuts->getTofBeta(pion2, lambdaC->lorentzVector(), lambdaC->decayVertex(),
-								   k0Short->lorentzVector(), k0Short->decayVertex()), StPicoCutsBase::kPion) ||
-	   ! mHFCuts->isHybridTOFHadron(proton, mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kProton) )
+								   k0Short->lorentzVector(), k0Short->decayVertex()), StPicoCutsBase::kPion, k0Short->decayVertex()) 
+	   ||
+	   ! mHFCuts->isHybridTOFHadron(proton, mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kProton, lambdaC->decayVertex()))
 	continue;
 
       if (!mHFCuts->isGoodTertiaryVertexPair(k0Short)) 
@@ -431,10 +436,10 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* pion2  = mPicoDst->track(lambda->particle2Idx());
 
       if ( ! mHFCuts->isHybridTOFHadron(proton, mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex(),
-								   lambda->lorentzVector(), lambda->decayVertex()), StPicoCutsBase::kProton) ||
+								   lambda->lorentzVector(), lambda->decayVertex()), StPicoCutsBase::kProton, lambda->decayVertex()) ||
 	   ! mHFCuts->isHybridTOFHadron(pion2, mHFCuts->getTofBeta(pion2, lambdaC->lorentzVector(), lambdaC->decayVertex(),
-								   lambda->lorentzVector(), lambda->decayVertex()), StPicoCutsBase::kPion) ||
-	   ! mHFCuts->isHybridTOFHadron(pion1, mHFCuts->getTofBeta(pion1, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kPion) )
+								   lambda->lorentzVector(), lambda->decayVertex()), StPicoCutsBase::kPion, lambda->decayVertex()) ||
+	   ! mHFCuts->isHybridTOFHadron(pion1, mHFCuts->getTofBeta(pion1, lambdaC->lorentzVector(), lambdaC->decayVertex()), StPicoCutsBase::kPion, lambdaC->decayVertex()) )
 	continue;
       
       if (!mHFCuts->isGoodTertiaryVertexPair(lambda)) 
@@ -478,14 +483,16 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float const kaonBeta = mHFCuts->getTofBeta(kaon, lambdaC->lorentzVector(), lambdaC->decayVertex());
       float const protonBeta = mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex());
 
-      if ( ! mHFCuts->isHybridTOFHadron(pion, pionBeta, StPicoCutsBase::kPion) ||
-	   ! mHFCuts->isHybridTOFHadron(kaon, kaonBeta, StPicoCutsBase::kKaon) ||
-	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton) )
+      StThreeVectorF const vtx = lambdaC->decayVertex();
+
+      if ( ! mHFCuts->isHybridTOFHadron(pion, pionBeta, StPicoCutsBase::kPion, vtx) ||
+	   ! mHFCuts->isHybridTOFHadron(kaon, kaonBeta, StPicoCutsBase::kKaon, vtx) ||
+	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton, vtx) )
 	continue;
 
-      float const betaInvDiffPion = getBetaInvDiff(pion->gMom(mPrimVtx, mBField).mag(), pionBeta, mHFCuts->getHypotheticalMass(StHFCuts::kPion));
-      float const betaInvDiffKaon = getBetaInvDiff(kaon->gMom(mPrimVtx, mBField).mag(), kaonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
-      float const betaInvDiffProton = getBetaInvDiff(proton->gMom(mPrimVtx, mBField).mag(), protonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kProton));
+      float const betaInvDiffPion = getBetaInvDiff(pion->gMom(vtx, mBField).mag(), pionBeta, mHFCuts->getHypotheticalMass(StHFCuts::kPion));
+      float const betaInvDiffKaon = getBetaInvDiff(kaon->gMom(vtx, mBField).mag(), kaonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
+      float const betaInvDiffProton = getBetaInvDiff(proton->gMom(vtx, mBField).mag(), protonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kProton));
             
       // JMT - recalculate topological cuts with updated secondary vertex
       
@@ -544,7 +551,6 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
 			    static_cast<Float_t>( TMath::Cos( static_cast<Double_t>(lambdaC->pointingAngle()) ) ), lambdaC->decayLength(), 
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
-			    lambdaC->cosThetaStar(),
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
 			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
@@ -652,7 +658,7 @@ int StPicoHFLambdaCMaker::fillControlHistos() {
 
 // _________________________________________________________
 inline float StPicoHFLambdaCMaker::getBetaInvDiff(float mom, float beta, float mass) {
-  if(beta != beta) // if beta is NaN
+  if(beta <= 0 || beta != beta) // if beta is NaN or less than 0
     return std::numeric_limits<float>::quiet_NaN();
 
   float const theoreticalBetaInv = sqrt( mass*mass + mom*mom )/mom;
@@ -665,7 +671,7 @@ inline bool StPicoHFLambdaCMaker::isApproxHybridTOFhadron(StPicoTrack const * co
 
   float const TOFbetaCut = mHFCuts->getTOFDeltaOneOverBetaMax(pidFlag);
   mHFCuts->setCutTOFDeltaOneOverBeta(1.2*TOFbetaCut, pidFlag);
-  bool const isTOFhadron = mHFCuts->isHybridTOFHadron(trk, mHFCuts->getTofBetaBase(trk), pidFlag);
+  bool const isTOFhadron = mHFCuts->isHybridTOFHadron(trk, mHFCuts->getTofBetaBase(trk), pidFlag, mPrimVtx);
   mHFCuts->setCutTOFDeltaOneOverBeta(TOFbetaCut, pidFlag);
   return isTOFhadron;
 }

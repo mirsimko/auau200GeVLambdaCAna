@@ -53,7 +53,8 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 # set input=${baseFolder}/lists/${tree}/${tree}_all.list
 # set input=${baseFolder}/treeLists/${tree}_allTrees.list
 # set input=${baseFolder}/picoLists/picoList_all.list
-set input=${baseFolder}/prodListAug15.list
+# set input=${baseFolder}/prodListAug15.list
+set input=${baseFolder}/20160817.picoDst.Miro.list
 # set input=${baseFolder}/divideList/listAll0.list
 #set input=/global/homes/j/jthaeder/analysis/200GeV/lambdaC/lists/LambdaC.kProtonK0short.picoHFtree/LambdaC.kProtonK0short.picoHFtree_missing.list
 
@@ -61,7 +62,7 @@ set input=${baseFolder}/prodListAug15.list
 #    0 - kAnalyze, 
 #    1 - kWrite
 #    2 - kRead
-set makerMode=1
+set makerMode=0
 
 # -- set root macro
 set rootMacro=runPicoHFLambdaCMaker.C
