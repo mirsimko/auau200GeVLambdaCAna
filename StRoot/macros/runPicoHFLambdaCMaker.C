@@ -45,6 +45,7 @@
 
 #include "macros/loadSharedHFLibraries.C"
 
+#include <limits>
 #include <iostream>
 #include <ctime>
 #include <cstdio>
@@ -71,7 +72,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
-  Int_t nEvents = 10;
+  Int_t nEvents = 1e9;
 
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
@@ -347,15 +348,15 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       hfCuts->setCutEtaMax(1.,StPicoCutsBase::kProton);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kProton);        // minimum 50um
       hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kProton);
-      hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kProton);
-      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kProton); // we do not cut on TOF
+      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kProton);
+      hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kProton); // we do not cut on TOF
 
       hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
       hfCuts->setCutEtaMax(1.,StPicoCutsBase::kKaon);
       hfCuts->setCutDcaMin(0.005, StPicoCutsBase::kKaon);          // minimum 50um
       hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kKaon);
-      hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kKaon);
-      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kKaon); // we do not cut on TOF
+      // hfCuts->setCutTOFDeltaOneOverBeta(0.04, StPicoCutsBase::kKaon);
+      hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kKaon); // we do not cut on TOF
 
       // -- LambdaC
       float LCdcaDaughtersMax = 0.01;   // maximum 300um 
@@ -368,38 +369,40 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
     }
     else if (makerMode == StPicoHFMaker::kRead || makerMode == StPicoHFMaker::kAnalyze) {
-      hfCuts->setCutPrimaryDCAtoVtxMax(1.0);    // DCA to check for TOF usage
+      hfCuts->setCutPrimaryDCAtoVtxMax(std::numeric_limits<float>::max());    // DCA to check for TOF usage
 
-      hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kPion);
+      hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kPion);
       hfCuts->setCutEtaMax(1.,StPicoCutsBase::kPion);
-      hfCuts->setCutDcaMin(0.0050, StPicoCutsBase::kPion);          // minimum 50um
+      hfCuts->setCutDcaMin(0.0065, StPicoCutsBase::kPion);          // minimum 50um
       hfCuts->setCutTPCNSigma(3., StPicoCutsBase::kPion);
       hfCuts->setCutTOFDeltaOneOverBeta(0.03, StPicoCutsBase::kPion);
-      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // TOF is not used for pions
+      // hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // TOF is not used for pions
 
-      hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kProton);
+      hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kProton);
       hfCuts->setCutEtaMax(1.,StPicoCutsBase::kProton);
-      hfCuts->setCutDcaMin(0.0050, StPicoCutsBase::kProton);        // minimum 50um
-      hfCuts->setCutTPCNSigma(3, StPicoCutsBase::kProton);
+      hfCuts->setCutDcaMin(0.0075, StPicoCutsBase::kProton);        // minimum 50um
+      hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kProton);
       hfCuts->setCutTOFDeltaOneOverBeta(0.03, StPicoCutsBase::kProton);
-      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kProton);
+      // hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kProton);
 
-      hfCuts->setCutPtRange(0.3, 999., StPicoCutsBase::kKaon);
+      hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kKaon);
       hfCuts->setCutEtaMax(1.,StPicoCutsBase::kKaon);
-      hfCuts->setCutDcaMin(0.0050, StPicoCutsBase::kKaon);          // minimum 50um
+      hfCuts->setCutDcaMin(0.0096, StPicoCutsBase::kKaon);          // minimum 50um
       hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kKaon);
       hfCuts->setCutTOFDeltaOneOverBeta(0.03, StPicoCutsBase::kKaon);
-      hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kKaon);
+      // hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kKaon);
 
       // -- LambdaC
-      float LCdcaDaughtersMax = 0.01;   // maximum 300um
-      float LCdecayLengthMin  = 0.005;  // minimum  60um
+      float LCdcaDaughtersMax = 0.005;   // maximum 300um
+      float LCdecayLengthMin  = 0.0234;  // minimum  60um
       float LCdecayLengthMax  = 9999.;
-      float LCcosThetaMin     = 0.95;   // minimum
-      float LCminMass         = 1.6;
-      float LCmaxMass         = 2.6;
+      float LCcosThetaMin     = 0.995;   // minimum
+      float LCminMass         = 2.1;
+      float LCmaxMass         = 2.5;
+      float LCdcaToPv         = 0.01;
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax,
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
+      hfCuts->setCutSecondaryTripletDcaToPvMax(LCdcaToPv);
     }
   }
   // making sure that StRefMultCorr is initiated (it is only used for the p,K,pi channel when analyzing candidates)

@@ -112,10 +112,11 @@ private:
   bool mFillParticleHistos;
 
   int mRunNumber;
-  int mEventNumber;
+  long nProcessed;
+  long nTriplets;
 
   inline float getBetaInvDiff(float mom, float beta, float mass);
-  inline bool isApproxHybridTOFhadron(StPicoTrack const * const, int pidFlag) const;
+  inline bool isApproxHybridTOFHadron(StPicoTrack const * const, int pidFlag) const;
 
   ClassDef(StPicoHFLambdaCMaker, 1)
 };

@@ -23,6 +23,7 @@
 #include "StPicoHFMaker/StPicoHFEvent.h"
 #include "StPicoHFMaker/StHFCuts.h"
 #include "StPicoHFMaker/StHFPair.h"
+#include "StPicoHFMaker/StHFClosePair.h"
 #include "StPicoHFMaker/StHFTriplet.h"
 
 #include "StPicoHFLambdaCMaker.h"
@@ -35,8 +36,8 @@ ClassImp(StPicoHFLambdaCMaker)
 StPicoHFLambdaCMaker::StPicoHFLambdaCMaker(char const* name, StPicoDstMaker* picoMaker, char const* outputBaseFileName,  
 					   char const* inputHFListHFtree = "") :
   StPicoHFMaker(name, picoMaker, outputBaseFileName, inputHFListHFtree),
-  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mRefmultCorrUtil(NULL),
-  mSinglePartList(NULL), mFillParticleHistos(true) {
+  mDecayChannel(kPionKaonProton), mNtupleSecondary(NULL), mNtupleTertiary(NULL), mSinglePartList(NULL),
+  mRefmultCorrUtil(NULL), mFillParticleHistos(true) {
   // constructor
 }
 
@@ -63,13 +64,15 @@ int StPicoHFLambdaCMaker::InitHF() {
 	  			     "p1Dca:p2Dca:p3Dca:"
 	  			     "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
 	  			     "mLambda1520:mDelta:mKstar:"
-	  			     "pNSigma:KNSigma:piNSigma:"
-	  			     "pTOFinvBetaDiff:KTOFinvBetaDiff:piTOFinvBetaDiff:"
-				     "pEta:KEta:piEta:"
-				     "pPhi:KPhi:piPhi:"
+	  			     "KNSigma:pNSigma:piNSigma:"
+	  			     "KTOFinvBetaDiff:pTOFinvBetaDiff:piTOFinvBetaDiff:"
+				     "KEta:pEta:piEta:"
+				     "KPhi:pPhi:piPhi:"
 	  			     "maxVertexDist:"
 				     "centrality"
 	  			     );
+    nTriplets = 0;
+    nProcessed = 0;
   }
   // Single particle tracks control hists
   mOutList->Add(new TList);
@@ -98,12 +101,17 @@ int StPicoHFLambdaCMaker::InitHF() {
 
 // _________________________________________________________
 int StPicoHFLambdaCMaker::FinishHF() {
-  
   if (isMakerMode() != StPicoHFMaker::kWrite) {
     mNtupleSecondary->Write();
     
     if (isDecayMode() == StPicoHFEvent::kTwoAndTwoParticleDecay)
       mNtupleTertiary->Write();
+
+    if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton)
+    {
+      cout << nProcessed << " triplets processed" << endl;
+      cout << "Number of triplets " << nTriplets << endl;
+    }
   }
   
   return kStOK;
@@ -277,26 +285,44 @@ int StPicoHFLambdaCMaker::createCandidates() {
       for (unsigned short idxKaon = 0; idxKaon < mIdxPicoKaons.size(); ++idxKaon) {
 	StPicoTrack const *kaon = mPicoDst->track(mIdxPicoKaons[idxKaon]);
 
-	if (mIdxPicoKaons[idxKaon] == mIdxPicoProtons[idxProton]) 
+	if (proton == kaon)
 	  continue;
 
-	StHFPair tmpProtonKaon(kaon, proton, 
-			       mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
-			       mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mPrimVtx, mBField);
-	if (!mHFCuts->isClosePair(tmpProtonKaon)) 
+	StHFClosePair tmpKaonProton(kaon, proton,
+				    mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton),
+				    mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton],
+				    mPrimVtx, mBField);
+
+	if (!mHFCuts->isClosePair(tmpKaonProton))
 	  continue;
-	
+
 	for (unsigned short idxPion = 0; idxPion < mIdxPicoPions.size(); ++idxPion) {
 	  StPicoTrack const *pion = mPicoDst->track(mIdxPicoPions[idxPion]);
-	  
+
+	// StHFPair tmpKaonPion(kaon, pion,
+	// 			  mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+	// 			  mIdxPicoKaons[ idxKaon ], mIdxPicoPions[ idxPion ], 
+	// 			  mPrimVtx, mBField);
+        //
+	// if(!mHFCuts->isClosePair(tmpKaonPion))
+	//   continue;
+	//   
+	// if (tmpKaonPion.particle1Idx() > mIdxPicoKaons.size() || tmpKaonPion.particle2Idx() > mIdxPicoPions.size())
+	//   continue;
+        //
 	  if (mIdxPicoProtons[idxProton] == mIdxPicoPions[idxPion] || mIdxPicoKaons[idxKaon] == mIdxPicoPions[idxPion]) 
 	    continue;
 
-	  StHFTriplet lambdaC(kaon, proton, pion, 
-			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
-			      mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
-			      mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
-			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion], mPrimVtx, mBField);
+	  // StHFTriplet lambdaC(&tmpKaonProton, pion,
+			      // mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+			      // mIdxPicoPions[idxPion], mPrimVtx, mBField);
+	  // StHFTriplet lambdaC(&tmpKaonPion, proton,
+		   	      // mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
+		   	      // mIdxPicoProtons[idxProton], mPrimVtx, mBField);
+	  StHFTriplet lambdaC(kaon, proton, pion,
+			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion],
+			      mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	    continue;
 
@@ -304,9 +330,13 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  // ----------------------------
 
 	  // -- check if all particles are still good
-	  if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) ||
-	       ! mHFCuts->isHybridTOFKaon(  kaon,   mHFCuts->getTofBeta(kaon,   lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) ||
-	       ! mHFCuts->isHybridTOFPion(  pion,   mHFCuts->getTofBeta(pion,   lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) )
+	  // if ( ! mHFCuts->isHybridTOFProton(proton, mHFCuts->getTofBeta(proton, lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) ||
+	  //      ! mHFCuts->isHybridTOFKaon(  kaon,   mHFCuts->getTofBeta(kaon,   lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) ||
+	  //      ! mHFCuts->isHybridTOFPion(  pion,   mHFCuts->getTofBeta(pion,   lambdaC.lorentzVector(), lambdaC.decayVertex()), lambdaC.decayVertex()) )
+	  //   continue;
+	  if ( ! mHFCuts->isTOFProton(proton) ||
+	       ! mHFCuts->isTOFKaon(kaon)     ||
+	       ! mHFCuts->isHybridTOFPion(pion) )
 	    continue;
 	  mPicoHFEvent->addHFSecondaryVertexTriplet(&lambdaC);
 
@@ -472,23 +502,32 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
     // -----------------------------------------------
     TClonesArray const * aLambdaC = mPicoHFEvent->aHFSecondaryVertices();
     
-    for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
+    for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) { 
       StHFTriplet const* lambdaC = static_cast<StHFTriplet*>(aLambdaC->At(idxLambdaC));
 
-      StPicoTrack const* proton = mPicoDst->track(lambdaC->particle1Idx());
-      StPicoTrack const* kaon   = mPicoDst->track(lambdaC->particle2Idx());
-      StPicoTrack const* pion   = mPicoDst->track(lambdaC->particle3Idx());
+      // if (mPicoHFEvent->eventId() != 164112)
+	// continue;
+      // if(idxLambdaC != 43)
+	// continue;
+      // cout << idxLambdaC << endl;
 
-      float const pionBeta = mHFCuts->getTofBeta(pion, lambdaC->lorentzVector(), lambdaC->decayVertex());
-      float const kaonBeta = mHFCuts->getTofBeta(kaon, lambdaC->lorentzVector(), lambdaC->decayVertex());
-      float const protonBeta = mHFCuts->getTofBeta(proton, lambdaC->lorentzVector(), lambdaC->decayVertex());
+      ++nProcessed;
+
+      if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
+	continue;
+
+      StPicoTrack const* kaon   = mPicoDst->track(lambdaC->particle1Idx());
+      StPicoTrack const* proton = mPicoDst->track(lambdaC->particle2Idx());
+      StPicoTrack const* pion   = mPicoDst->track(lambdaC->particle3Idx());
+     
+      if(!isKaon(kaon) || !isProton(proton) || !isPion(pion))
+	continue;
+
+      float const pionBeta = mHFCuts->getTofBeta(pion);
+      float const kaonBeta = mHFCuts->getTofBeta(kaon);
+      float const protonBeta = mHFCuts->getTofBeta(proton);
 
       StThreeVectorF const vtx = lambdaC->decayVertex();
-
-      if ( ! mHFCuts->isHybridTOFHadron(pion, pionBeta, StPicoCutsBase::kPion, vtx) ||
-	   ! mHFCuts->isHybridTOFHadron(kaon, kaonBeta, StPicoCutsBase::kKaon, vtx) ||
-	   ! mHFCuts->isHybridTOFHadron(proton, protonBeta, StPicoCutsBase::kProton, vtx) )
-	continue;
 
       float const betaInvDiffPion = getBetaInvDiff(pion->gMom(vtx, mBField).mag(), pionBeta, mHFCuts->getHypotheticalMass(StHFCuts::kPion));
       float const betaInvDiffKaon = getBetaInvDiff(kaon->gMom(vtx, mBField).mag(), kaonBeta, mHFCuts->getHypotheticalMass(StHFCuts::kKaon));
@@ -496,10 +535,6 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
             
       // JMT - recalculate topological cuts with updated secondary vertex
       
-      if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
-	continue;
-     
-
       StHFPair KstarPair(pion, kaon,
 	  mHFCuts->getHypotheticalMass(StHFCuts::kPion),
 	  mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
@@ -546,27 +581,29 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 
       int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
 
-      float aSecondary[] = {proton->gPt(), kaon->gPt(), pion->gPt(), 
+      float aSecondary[] = {kaon->gPt(), proton->gPt(), pion->gPt(), 
 			    isCorrectSign,
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
 			    static_cast<Float_t>( TMath::Cos( static_cast<Double_t>(lambdaC->pointingAngle()) ) ), lambdaC->decayLength(), 
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
-			    proton->nSigmaKaon(), kaon->nSigmaProton(), pion->nSigmaPion(),
-			    betaInvDiffProton, betaInvDiffKaon, betaInvDiffPion,
-			    pEta, KEta, piEta, 
-			    pPhi, KPhi, piPhi, 
+			    kaon->nSigmaKaon(), proton->nSigmaProton(), pion->nSigmaPion(),
+			    betaInvDiffKaon, betaInvDiffProton, betaInvDiffPion,
+			    KEta, pEta, piEta, 
+			    KPhi, pPhi, piPhi, 
 			    maxVdist,
-			    centrality
+			    static_cast<Float_t>(centrality)
 			    };
 
+      cout << "triplet in event number " << mPicoHFEvent->eventId() << endl;
+      ++nTriplets;
       mNtupleSecondary->Fill(aSecondary);
       
     } // for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) {
   } // else  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton) {
 
- return kStOK;
+  return kStOK;
 }
 // _________________________________________________________
 
@@ -666,11 +703,11 @@ inline float StPicoHFLambdaCMaker::getBetaInvDiff(float mom, float beta, float m
 }
 
 // _________________________________________________________
-inline bool StPicoHFLambdaCMaker::isApproxHybridTOFhadron(StPicoTrack const * const trk, int pidFlag) const {
+inline bool StPicoHFLambdaCMaker::isApproxHybridTOFHadron(StPicoTrack const * const trk, int pidFlag) const {
   // TOF beta cut without corrections implemented to save time. 1.2 times beta cut is used.
 
   float const TOFbetaCut = mHFCuts->getTOFDeltaOneOverBetaMax(pidFlag);
-  mHFCuts->setCutTOFDeltaOneOverBeta(1.2*TOFbetaCut, pidFlag);
+  mHFCuts->setCutTOFDeltaOneOverBeta(1.6*TOFbetaCut, pidFlag);
   bool const isTOFhadron = mHFCuts->isHybridTOFHadron(trk, mHFCuts->getTofBetaBase(trk), pidFlag, mPrimVtx);
   mHFCuts->setCutTOFDeltaOneOverBeta(TOFbetaCut, pidFlag);
   return isTOFhadron;
@@ -683,8 +720,20 @@ bool StPicoHFLambdaCMaker::isHadron(StPicoTrack const * const trk, int pidFlag) 
 
   // double eta = trk->gMom(mPrimVtx,mBField).pseudoRapidity();  
   // return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag) && abs(eta) < 1.);
-  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) && mHFCuts->isTPCHadron(trk, pidFlag)
-	  && isApproxHybridTOFhadron(trk, pidFlag));
+  bool isGoodTOF = true;
+  if (mDecayChannel == StPicoHFLambdaCMaker::kPionKaonProton)
+  {
+    if(pidFlag == StHFCuts::kPion)
+      isGoodTOF = mHFCuts->isHybridTOFHadron(trk, mHFCuts->getTofBeta(trk), pidFlag, mPrimVtx);
+    else
+      isGoodTOF = mHFCuts->isTOFHadron(trk, mHFCuts->getTofBeta(trk), pidFlag, mPrimVtx);
+  }
+  else
+    isGoodTOF = isApproxHybridTOFHadron(trk, pidFlag);
+
+  return (mHFCuts->isGoodTrack(trk) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag) 
+	  && mHFCuts->isTPCHadron(trk, pidFlag)
+	  && isGoodTOF);
 }
   
 // _________________________________________________________
