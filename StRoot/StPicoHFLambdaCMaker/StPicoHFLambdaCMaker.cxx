@@ -61,6 +61,7 @@ int StPicoHFLambdaCMaker::InitHF() {
 				     "charges:"
 	  			     "m:pt:eta:phi:"
 	  			     "cosPntAngle:dLength:"
+				     "DCAtoPV:"
 	  			     "p1Dca:p2Dca:p3Dca:"
 	  			     "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
 	  			     "mLambda1520:mDelta:mKstar:"
@@ -585,6 +586,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    isCorrectSign,
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
 			    static_cast<Float_t>( TMath::Cos( static_cast<Double_t>(lambdaC->pointingAngle()) ) ), lambdaC->decayLength(), 
+			    static_cast<Float_t>( std::sin(lambdaC->pointingAngle())*lambdaC->decayLength() ),
 			    lambdaC->particle1Dca(), lambdaC->particle2Dca(), lambdaC->particle3Dca(),
 			    lambdaC->dcaDaughters12(), lambdaC->dcaDaughters23(), lambdaC->dcaDaughters31(),
 			    LambdaPair.m(), DeltaPair.m(), KstarPair.m(),
