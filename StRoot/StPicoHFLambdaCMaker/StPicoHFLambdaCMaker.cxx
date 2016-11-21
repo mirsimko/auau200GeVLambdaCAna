@@ -70,7 +70,7 @@ int StPicoHFLambdaCMaker::InitHF() {
 				     "KEta:pEta:piEta:"
 				     "KPhi:pPhi:piPhi:"
 	  			     "maxVertexDist:"
-				     "centrality"
+				     "centrality:centralityCorrection"
 	  			     );
     nTriplets = 0;
     nProcessed = 0;
@@ -83,6 +83,7 @@ int StPicoHFLambdaCMaker::InitHF() {
 
   // create single particle hists
   mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
+  mSinglePartList->Add(new TH1D("centralityCorrection","centrality corrected", 10, -1.5, 8.5));
 
   mSinglePartList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
   mSinglePartList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
@@ -157,7 +158,7 @@ int StPicoHFLambdaCMaker::createCandidates() {
   // create candidate pairs/ triplet and fill them in arrays (in StPicoHFEvent)
 
   // LOG_INFO << "Starting \"StPicoHFLambdaCMaker::createCandidates\"" << endm;
-  // LOG_INFO << " N pions    : " << mIdxPicoPions.size()	            << endm;
+  // LOG_INFO << " N pions    : " << mIdxPicoPions.size()              << endm;
   // LOG_INFO << " N kaons    : " << mIdxPicoKaons.size()              << endm;
   // LOG_INFO << " N protons  : " << mIdxPicoProtons.size()            << endm;
   
@@ -249,8 +250,8 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	    continue;
 
 	  // -- check if both lambda daughthers (proton + pi-) are still good 
-	  StPicoTrack const *proton1 = mPicoDst->track(lambda->particle1Idx());	  
-	  StPicoTrack const *pion2   = mPicoDst->track(lambda->particle2Idx());	  
+	  StPicoTrack const *proton1 = mPicoDst->track(lambda->particle1Idx());
+	  StPicoTrack const *pion2   = mPicoDst->track(lambda->particle2Idx());
 
 	  if ( ! mHFCuts->isHybridTOFProton(proton1, mHFCuts->getTofBeta(proton1, lambdaC.lorentzVector(), lambdaC.decayVertex(), 
 									 lambda->lorentzVector(), lambda->decayVertex()), lambda->decayVertex()) ||
@@ -570,20 +571,28 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       float maxVdist =  vertexDist1 > vertexDist2 ? vertexDist1 : vertexDist2;
       maxVdist = maxVdist > vertexDist3 ? maxVdist : vertexDist3;
 
+      // sing bits the correct combinations are 3(011b Lambda_c^+) and 4(100b Lambda_c^-)
+      int signBits = kaon->charge() > 0;
+      signBits <<=1;
+      signBits += (proton->charge() > 0);
+      signBits <<=1;
+      signBits += (pion->charge() > 0);
+
       float isCorrectSign = (kaon->charge() != pion->charge() && pion->charge() == proton->charge()) ? 1. : -1.;
 
-      float const pEta = proton->gMom(mPrimVtx, mBField).pseudoRapidity();
       float const KEta = kaon->gMom(mPrimVtx, mBField).pseudoRapidity();
+      float const pEta = proton->gMom(mPrimVtx, mBField).pseudoRapidity();
       float const piEta = pion->gMom(mPrimVtx, mBField).pseudoRapidity();
            
-      float const pPhi = proton->gMom(mPrimVtx, mBField).phi();
       float const KPhi = kaon->gMom(mPrimVtx, mBField).phi();
+      float const pPhi = proton->gMom(mPrimVtx, mBField).phi();
       float const piPhi = pion->gMom(mPrimVtx, mBField).phi();
 
       int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
+      float const centralityCorrection = mRefmultCorrUtil->getWeight();
 
       float aSecondary[] = {kaon->gPt(), proton->gPt(), pion->gPt(), 
-			    isCorrectSign,
+			    static_cast<Float_t>(signBits),
 			    lambdaC->m(), lambdaC->pt(), lambdaC->eta(), lambdaC->phi(), 
 			    static_cast<Float_t>( TMath::Cos( static_cast<Double_t>(lambdaC->pointingAngle()) ) ), lambdaC->decayLength(), 
 			    static_cast<Float_t>( std::sin(lambdaC->pointingAngle())*lambdaC->decayLength() ),
@@ -595,7 +604,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 			    KEta, pEta, piEta, 
 			    KPhi, pPhi, piPhi, 
 			    maxVdist,
-			    static_cast<Float_t>(centrality)
+			    static_cast<Float_t>(centrality), centralityCorrection
 			    };
 
       cout << "triplet in event number " << mPicoHFEvent->eventId() << endl;
@@ -688,7 +697,9 @@ int StPicoHFLambdaCMaker::fillControlHistos() {
   // fill control plots for single particles
 
   int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
+  float const centralityWeight = mRefmultCorrUtil->getWeight();
   static_cast<TH1D*>(mSinglePartList->FindObject("centrality"))->Fill(centrality);
+  static_cast<TH1D*>(mSinglePartList->FindObject("centralityCorrection"))->Fill(centrality, centralityWeight);
 
   fillSingleParticleHistos(StHFCuts::kProton);
   fillSingleParticleHistos(StHFCuts::kPion);
