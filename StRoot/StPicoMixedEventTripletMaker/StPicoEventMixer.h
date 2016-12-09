@@ -47,12 +47,14 @@ class StPicoEventMixer {
   bool isCloseTrack(StPicoTrack const& trk, StThreeVectorF const& pVtx);
   bool isTpcPion(StPicoTrack const * const);
   bool isTpcKaon(StPicoTrack const * const);
-  bool isGoodPair(StMixerPair const& pair);
-  int getD0PtIndex(StMixerPair const& pair) const;
+  bool isTpcProton(StPicoTrack const * const);
+  bool isGoodTriplet(StMixerPair const& pair);
+  int getLcPtIndex(StMixerPair const& pair) const;
   void finish();
  private:
   bool isMixerPion(StMixerTrack const&);
   bool isMixerKaon(StMixerTrack const&);
+  bool isMixerProton(StMixerTrack const&);
   
   std::vector <StMixerEvent*> mEvents; 
   StMixerHists* mHists;
