@@ -36,7 +36,7 @@ class StMixerHists;
 
 class StPicoEventMixer {
  public: 
-  enum bitNumber : unsigned int { kPionTPCbit, kPionTOFbit, kKaonTPCbit, kKaonTOFbit, kProtonTPCbit, kProtonTOFbit};
+  enum bitNumber { kPionTPCbit, kPionTOFbit, kKaonTPCbit, kKaonTOFbit, kProtonTPCbit, kProtonTOFbit};
 
   StPicoEventMixer(char* category);
   ~StPicoEventMixer();
@@ -50,6 +50,7 @@ class StPicoEventMixer {
   bool isTpcPion(StPicoTrack const * const);
   bool isTpcKaon(StPicoTrack const * const);
   bool isTpcProton(StPicoTrack const * const);
+  bool isTPCHadron(StPicoTrack const * const, int pidFlag);
   bool isGoodTriplet(StMixerPair const& pair);
   int getLcPtIndex(StMixerPair const& pair) const;
   void finish();

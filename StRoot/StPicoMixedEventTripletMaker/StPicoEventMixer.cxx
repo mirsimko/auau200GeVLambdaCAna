@@ -144,32 +144,37 @@ bool StPicoEventMixer::isMixerProton(StMixerTrack const& track) {
 //-----------------------------------------------------------
 bool StPicoEventMixer::isGoodEvent(StPicoDst const * const picoDst)
 {
-    StPicoEvent* picoEvent = picoDst->event();
-    return (mHFCuts->isGoodEvent(picoEvent));
+    return (mHFCuts->isGoodEvent(picoDst));
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isTpcPion(StPicoTrack const * const trk)
 {
-    return( fabs(trk->nSigmaPion())<mxeCuts::nSigmaPion );
+    return( isTPCHadron(trk, StPicoCutsBase::kPion));
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isTpcKaon(StPicoTrack const * const trk)
 {
-    return( fabs(trk->nSigmaKaon())<mxeCuts::nSigmaKaon );
+    return( isTPCHadron(trk, StPicoCutsBase::kKaon));
+}
+//-----------------------------------------------------------
+bool StPicoEventMixer::isTpcProton(StPicoTrack const * const trk)
+{
+    return( isTPCHadron(trk, StPicoCutsBase::kProton));
+}
+//-----------------------------------------------------------
+bool StPicoEventMixer::isTPCHadron(StPicoTrack const * const trk, int pidFlag)
+{
+    return( mHFCuts->isTPCHadron(trk, pidFlag));
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isGoodTrack(StPicoTrack const * const trk)
 {
-    return ((!mxeCuts::mRequireHft || trk->isHFTTrack()) &&
-            trk->nHitsFit() >= mxeCuts::nHitsFit && trk->gPt() > mxeCuts::minPt);
+    return (mHFCuts->isGoodTrack(trk));
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isCloseTrack(StPicoTrack const& trk, StThreeVectorF const& pVtx)
 {
-    StPhysicalHelixD helix = trk.dcaGeometry().helix();
-    helix.moveOrigin(helix.pathLength(pVtx));
-    if( (helix.origin()-pVtx).mag() > mxeCuts::dca2pVtx ) return false;
-    return true;
+  return mHFCuts->isCloseTrack(trk, pVtx);
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isGoodPair(StMixerPair const& pair)
@@ -193,9 +198,5 @@ int StPicoEventMixer::getD0PtIndex(StMixerPair const& pair) const
 //-----------------------------------------------------------
 bool StPicoEventMixer::isGoodTrigger(StPicoEvent const * const mPicoEvent) const 
 {
-  for(int ii = 0; ii<mxeCuts::nTrig; ++ii){
-    if( mPicoEvent->isTrigger(mxeCuts::mTriggerId[ii]) )
-      return true;
-  }
-  return false;
+  return HFCuts->isGoodTrigger();
 }
