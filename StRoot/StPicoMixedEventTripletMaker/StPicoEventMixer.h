@@ -36,6 +36,8 @@ class StMixerHists;
 
 class StPicoEventMixer {
  public: 
+  enum bitNumber : unsigned int { kPionTPCbit, kPionTOFbit, kKaonTPCbit, kKaonTOFbit, kProtonTPCbit, kProtonTOFbit};
+
   StPicoEventMixer(char* category);
   ~StPicoEventMixer();
   bool addPicoEvent(StPicoDst const* picoDst);
@@ -58,6 +60,7 @@ class StPicoEventMixer {
   
   std::vector <StMixerEvent*> mEvents; 
   StMixerHists* mHists;
+  StPicoHFCuts *mHFCuts;
   unsigned short int mEventsBuffer; 
   unsigned short int filledBuffer;
   float dca1, dca2, dcaDaughters, theta_hs, decayL_hs;

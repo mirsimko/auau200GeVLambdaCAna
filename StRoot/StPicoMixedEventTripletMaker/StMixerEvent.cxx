@@ -8,7 +8,7 @@ StMixerEvent::StMixerEvent() :  mVtx(StThreeVectorF()),
 }
 StMixerEvent::StMixerEvent(StMixerEvent *t) : mVtx(t->mVtx), mBField(t->mBField),
 					      mTracks(t->mTracks),
-					      mEventKaons(t->mEventKaons), mEventPions(t->mEventPions)
+					      mEventKaons(t->mEventKaons), mEventPions(t->mEventPions), mEventProtons(t->mEventProtons)
 {
 }
 StMixerEvent::StMixerEvent(StThreeVectorF vtx, float b) :  mVtx(StThreeVectorF()),
@@ -29,4 +29,8 @@ void StMixerEvent::addPion(int arrayId)
 void StMixerEvent::addKaon(int arrayId)
 {
   mEventKaons.push_back(arrayId);
+}
+void StMixerEvent::addProton(int arrayId)
+{
+  mEventProtons.push_back(arrayId);
 }

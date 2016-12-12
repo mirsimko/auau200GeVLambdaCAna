@@ -42,8 +42,10 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
     StMixerEvent* event = new StMixerEvent(pVertex, picoDst->event()->bField());
     bool isTpcPi = false;
     bool isTofPi = false;
-    bool isTpcK = false;
-    bool isTofK = false;
+    bool isTpcP  = false;
+    bool isTofP  = false;
+    bool isTpcK  = false;
+    bool isTofK  = false;
     //Event.setNoTracks( nTracks );
     for( int iTrk = 0; iTrk < nTracks; ++iTrk) {
         StPicoTrack const* trk = picoDst->track(iTrk);
@@ -116,27 +118,34 @@ void StPicoEventMixer::mixEvents() {
 bool StPicoEventMixer::isMixerPion(StMixerTrack const& track) {
     short info = track.getTrackInfo();
     //TPC pion
-    if( (info & 2) >> 1 != 1) return false;
+    if( (info & (1 << kPionTPCbit)) >> kPionTPCbit != 1) return false;
     //TOF pion
-    if( (info & 4) >> 2 != 1) return false;
+    if( (info & (1 << kPionTOFbit)) >> kPionTOFbit != 1) return false;
     return true;
 }
 // _________________________________________________________
 bool StPicoEventMixer::isMixerKaon(StMixerTrack const& track) {
     short info = track.getTrackInfo();
     //TPC Kaon
-    if( (info & 8) >> 3 != 1) return false;
+    if( (info & (1 << kKaonTPCbit)) >> kKaonTPCbit != 1) return false;
     //TOF Kaon
-    if( (info & 16) >> 4 != 1) return false;
+    if( (info & (1 << kKaonTOFbit)) >> kKaonTOFbit != 1) return false;
+    return true;
+}
+//-----------------------------------------------------------
+bool StPicoEventMixer::isMixerProton(StMixerTrack const& track) {
+    short info = track.getTrackInfo();
+    //TPC Proton
+    if( (info & (1 << kProtonTPCbit)) >> kProtonTPCbit != 1) return false;
+    //TOF Proton
+    if( (info & (1 << kProtonTOFbit)) >> kProtonTOFbit != 1) return false;
     return true;
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isGoodEvent(StPicoDst const * const picoDst)
 {
     StPicoEvent* picoEvent = picoDst->event();
-    return (isGoodTrigger(picoEvent) &&
-            fabs(picoEvent->primaryVertex().z()) < mxeCuts::maxVz &&
-            fabs(picoEvent->primaryVertex().z() - picoEvent->vzVpd()) < mxeCuts::vzVpdVz);
+    return (mHFCuts->isGoodEvent(picoEvent));
 }
 //-----------------------------------------------------------
 bool StPicoEventMixer::isTpcPion(StPicoTrack const * const trk)
