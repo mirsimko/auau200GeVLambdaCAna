@@ -31,7 +31,7 @@ class StPicoTrack;
 class StPicoDst;
 class StMixerTrack;
 class StMixerEvent;
-class StMixerPair;
+class StMixerTriplet;
 class StMixerHists;
 
 class StPicoEventMixer {
@@ -51,8 +51,8 @@ class StPicoEventMixer {
   bool isTpcKaon(StPicoTrack const * const);
   bool isTpcProton(StPicoTrack const * const);
   bool isTPCHadron(StPicoTrack const * const, int pidFlag);
-  bool isGoodTriplet(StMixerPair const& pair);
-  int getLcPtIndex(StMixerPair const& pair) const;
+  bool isGoodTriplet(StMixerTriplet const& triplet);
+  int getLcPtIndex(StMixerTriplet const& pair) const;
   void finish();
  private:
   bool isMixerPion(StMixerTrack const&);

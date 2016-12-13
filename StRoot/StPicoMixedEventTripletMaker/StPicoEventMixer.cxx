@@ -10,7 +10,7 @@
 
 #include "StPicoMixedEventMaker.h"
 #include "StMixerEvent.h"
-#include "StMixerPair.h"
+#include "StMixerTriplet.h"
 #include "StMixerHists.h"
 
 //-----------------------------------------------------------
@@ -61,12 +61,17 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
 	    saveTrack = true;
             event->addKaon(event->getNoTracks());
         }
+	if(isTpcProton(trk)) {
+	    isTpcP = true;
+	    saveTrack = true;
+	    event->addProton(event->getNoTracks());
+	}
 	if(saveTrack == true){
 	  StMixerTrack mTrack(pVertex, picoDst->event()->bField(), *trk, isTpcPi, isTofPi, isTpcK, isTofK);
 	  event->addTrack(mTrack);
 	}
     }
-    if ( event->getNoPions() > 0 ||  event->getNoKaons() > 0) {
+    if ( event->getNoPions() > 0 ||  event->getNoKaons() > 0 || event->getNoProtons() > 0) {
         mEvents.push_back(event);
         filledBuffer+=1;
     }
@@ -83,7 +88,7 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
 void StPicoEventMixer::mixEvents() {
     size_t const nEvent = mEvents.size();
     int const nTracksEvt1 = mEvents.at(0)->getNoPions();
-    //Template for D0 studies
+    //Template
     for( size_t iEvt2 = 0; iEvt2 < nEvent; iEvt2++) {
         int const nTracksEvt2 = mEvents.at(iEvt2)->getNoKaons();
         if( iEvt2 == 0 )
