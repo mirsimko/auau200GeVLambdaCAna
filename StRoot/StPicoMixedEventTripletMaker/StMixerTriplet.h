@@ -32,7 +32,7 @@ class StMixerTriplet : public StHFTriplet
  public:
   StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, StMixerTrack const& particle3,
 	   float p1MassHypo, float p2MassHypo, float p3MassHypo,
-	   StThreeVectorF const& vtx1, StThreeVectorF const& vtx2,
+	   StThreeVectorF const& vtx1, StThreeVectorF const& vtx2, StThreeVectorF const& vtx3,
 	   float bField);
 
   ~StMixerTriplet() {;}

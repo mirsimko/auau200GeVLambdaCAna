@@ -12,7 +12,7 @@ ClassImp(StMixerTriplet)
 // _________________________________________________________
 StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, StMixerTrack const& particle3,
 	       float p1MassHypo, float p2MassHypo, float p3MassHypo,
-	       StThreeVectorF const& vtx1, StThreeVectorF const& vtx2,
+	       StThreeVectorF const& vtx1, StThreeVectorF const& vtx2, StThreeVectorF const& vtx3,
 	       float bField) : mLorentzVector(StLorentzVectorF()), mDecayVertex(StThreeVectorF()),
   mPointingAngle(std::numeric_limits<float>::quiet_NaN()), mDecayLength(std::numeric_limits<float>::quiet_NaN()),
   mParticle1Dca(std::numeric_limits<float>::quiet_NaN()), mParticle2Dca(std::numeric_limits<float>::quiet_NaN()), mParticle3Dca(std::numeric_limits<float>::quiet_NaN()),
@@ -25,10 +25,11 @@ StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, St
   //      pair means particle1-particle2  pair
 
   StThreeVectorF dVtx12 = vtx1 - vtx2;
+  StThreeVectorF dVtx13 = vtx1 - vtx3;
 
   StPhysicalHelixD p1Helix(particle1.gMom(), particle1.origin(),bField*kilogauss, particle1.charge());
   StPhysicalHelixD p2Helix(particle2.gMom(), particle2.origin() + dVtx12, bField*kilogauss,  particle2.charge());
-  StPhysicalHelixD p3Helix(particle3.gMom(), particle3.origin(), bField*kilogauss, particle3.charge());
+  StPhysicalHelixD p3Helix(particle3.gMom(), particle3.origin() + dVtx13, bField*kilogauss, particle3.charge());
 
   // -- move origins of helices to the primary vertex origin
   p1Helix.moveOrigin(p1Helix.pathLength(vtx1));
