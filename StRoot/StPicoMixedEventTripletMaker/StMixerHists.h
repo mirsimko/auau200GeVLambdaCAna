@@ -19,7 +19,7 @@
 #include "StarClassLibrary/StThreeVectorF.hh"
 #include "TH2F.h"
 
-#include "StMixerPair.h"
+#include "StMixerTriplet.h"
 
 class StMixerHists
 {
@@ -29,8 +29,8 @@ class StMixerHists
 
   void fillSameEvt(const StThreeVectorF& vtx);
   void fillMixedEvt(const StThreeVectorF& vtx);
-  void fillSameEvtPair(StMixerPair const* const, int charge);
-  void fillMixedEvtPair(StMixerPair const* const, int charge);
+  void fillSameEvtTriplet(StMixerTriplet const* const, int charge);
+  void fillMixedEvtTriplet(StMixerTriplet const* const, int charge);
   void closeFile();
  private:
   TH2F* mSE_Vtx;
@@ -51,20 +51,20 @@ inline void StMixerHists::fillMixedEvt(const StThreeVectorF& vtx)
   mME_Vtx->Fill(vtx.x(), vtx.y());
   return;
 }
-inline void StMixerHists::fillSameEvtPair(StMixerPair const* const pair, int charge)
+inline void StMixerHists::fillSameEvtTriplet(StMixerTriplet const* const triplet, int charge)
 {
-  if(charge == 0 )
-    mSE_US-> Fill(pair->pt(),pair->m());
+  if(charge == 5 || charge == 8 ) // binary b011 for LC+ or b100 for LC-
+    mSE_US-> Fill(triplet->pt(),triplet->m());
   else
-    mSE_LS-> Fill(pair->pt(),pair->m());
+    mSE_LS-> Fill(triplet->pt(),triplet->m());
   return;
 }
-inline void StMixerHists::fillMixedEvtPair(StMixerPair const* const pair, int charge)
+inline void StMixerHists::fillMixedEvtTriplet(StMixerTriplet const* const triplet, int charge)
 {
-  if(charge == 0 )
-    mME_US-> Fill(pair->pt(),pair->m());
+  if(charge == 5 || charge == 8 ) // binary b011 for LC+ or b100 for LC-
+    mME_US-> Fill(triplet->pt(),triplet->m());
   else
-    mME_LS-> Fill(pair->pt(),pair->m());
+    mME_LS-> Fill(triplet->pt(),triplet->m());
   return;
 }
 #endif

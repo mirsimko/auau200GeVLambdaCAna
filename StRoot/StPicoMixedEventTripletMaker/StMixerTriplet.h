@@ -22,6 +22,7 @@
 #include "TObject.h"
 #include "StarClassLibrary/StLorentzVectorF.hh"
 #include "StarClassLibrary/StThreeVectorF.hh"
+#include "StMixerTrack.h"
 #include "StPicoHFMaker/StHFTriplet.h"
 
 class StMixerTrack;
@@ -30,10 +31,10 @@ class StHFTriplet;
 class StMixerTriplet : public StHFTriplet
 {
  public:
-  StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, StMixerTrack const& particle3,
-	   float p1MassHypo, float p2MassHypo, float p3MassHypo,
-	   StThreeVectorF const& vtx1, StThreeVectorF const& vtx2, StThreeVectorF const& vtx3,
-	   float bField);
+  StMixerTriplet(StMixerTrack const &  particle1, StMixerTrack const & particle2, StMixerTrack const & particle3,
+		 float p1MassHypo, float p2MassHypo, float p3MassHypo,
+		 StThreeVectorF const & vtx1, StThreeVectorF const & vtx2, StThreeVectorF const & vtx3,
+		 float bField);
 
   ~StMixerTriplet() {;}
   

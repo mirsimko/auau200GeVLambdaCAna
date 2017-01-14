@@ -5,19 +5,21 @@
 #include "StarClassLibrary/SystemOfUnits.h"
 
 #include "StMixerTriplet.h"
+#include "StPicoHFMaker/StHFTriplet.h"
 #include "StMixerTrack.h"
 
 ClassImp(StMixerTriplet)
 
 // _________________________________________________________
-StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, StMixerTrack const& particle3,
-	       float p1MassHypo, float p2MassHypo, float p3MassHypo,
-	       StThreeVectorF const& vtx1, StThreeVectorF const& vtx2, StThreeVectorF const& vtx3,
-	       float bField) : mLorentzVector(StLorentzVectorF()), mDecayVertex(StThreeVectorF()),
-  mPointingAngle(std::numeric_limits<float>::quiet_NaN()), mDecayLength(std::numeric_limits<float>::quiet_NaN()),
-  mParticle1Dca(std::numeric_limits<float>::quiet_NaN()), mParticle2Dca(std::numeric_limits<float>::quiet_NaN()), mParticle3Dca(std::numeric_limits<float>::quiet_NaN()),
-  mParticle1Mom(StThreeVectorF()), mParticle2Mom(StThreeVectorF()), mParticle3Mom(StThreeVectorF()), 
-  mDcaDaughters12(std::numeric_limits<float>::max()), mDcaDaughters23(std::numeric_limits<float>::max()), mDcaDaughters31(std::numeric_limits<float>::max()) {
+StMixerTriplet::StMixerTriplet(const StMixerTrack &  particle1, const StMixerTrack & particle2, const StMixerTrack & particle3,
+			       float p1MassHypo, float p2MassHypo, float p3MassHypo,
+			       const StThreeVectorF & vtx1, const StThreeVectorF & vtx2, const StThreeVectorF & vtx3,
+			       float bField) :
+  StHFTriplet(),
+  mParticle1Mom(StThreeVectorF()),
+  mParticle2Mom(StThreeVectorF()),
+  mParticle3Mom(StThreeVectorF())
+{
   // -- Create pair out of 2 tracks
   //     prefixes code:
   //      p1 means particle 1
@@ -59,7 +61,7 @@ StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, St
 
   // -- calculate DCA of particle1 to particle2 at their DCA
   mDcaDaughters12 = (p1AtDcaToP2 - p2AtDcaToP1).mag();
-  mDcaDaughters23 = (p1AtDcaToP3 - p2AtDcaToP2).mag();
+  mDcaDaughters23 = (p2AtDcaToP3 - p3AtDcaToP2).mag();
   mDcaDaughters31 = (p3AtDcaToP1 - p1AtDcaToP3).mag();
 
   // -- calculate decay vertex (secondary)
@@ -91,5 +93,3 @@ StMixerTriplet(StMixerTrack const&  particle1, StMixerTrack const& particle2, St
   mParticle2Dca = (p2Helix.origin() - vtx1).mag();
   mParticle3Dca = (p3Helix.origin() - vtx1).mag();
 }
-
-

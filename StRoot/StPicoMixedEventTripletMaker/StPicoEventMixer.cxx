@@ -88,7 +88,7 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
 void StPicoEventMixer::mixEvents() {
     size_t const nEvent = mEvents.size();
     int const nTracksEvt1 = mEvents.at(0)->getNoPions();
-    //Template
+    // Go through the event buffer
     for( size_t iEvt2 = 0; iEvt2 < nEvent; ++iEvt2) {
       int const nTracksEvt2 = mEvents.at(iEvt2)->getNoKaons();
       for (size_t iEvt3 = 0; iEvt3 < nEvent; ++iEvt3) {
@@ -104,24 +104,34 @@ void StPicoEventMixer::mixEvents() {
 	    mHists->fillMixedEvt(mEvents.at(0)->vertex());
 	}
 
-	// evts loops
+	// evts trk loops
 	for(int iTrk3 = 0; iTrk3 < nTracksEvt3; ++iTrk3) {
-	  for( int iTrk2 = 0; iTrk2 < nTracksEvt2; iTrk2++) {
-	    for( int iTrk1 = 0; iTrk1 < nTracksEvt1; iTrk1++) {
-	      if(iEvt2 == 0 ){
-		if(mEvents.at(0)->pionId(iTrk1) == mEvents.at(iEvt2)->kaonId(iTrk2) )
+	  StMixerTrack const proton = mEvents.at(iEvt3)->protonAt(iTrk3);
+	  for( int iTrk2 = 0; iTrk2 < nTracksEvt2; ++iTrk2) {
+	    StMixerTrack const kaon = mEvents.at(iEvt2)->kaonAt(iTrk2);
+	    for( int iTrk1 = 0; iTrk1 < nTracksEvt1; ++iTrk1) {
+	      StMixerTrack const pion = mEvents.at(0)->pionAt(iTrk1);
+	      if(iEvt2 == 0 && iEvt3 == 0) {
+		if(mEvents.at(0)->pionId(iTrk1) == mEvents.at(iEvt2)->kaonId(iTrk2) || mEvents.at(0)->pionId(iTrk1) == mEvents.at(iEvt3)->protonId(iTrk3))
 		  continue;
 	      }
-	      StMixerTriplet triplet(mEvents.at(0)->pionAt(iTrk1), mEvents.at(iEvt2)->kaonAt(iTrk2),
-			       mxeCuts::pidMass[mxeCuts::kPion], mxeCuts::pidMass[mxeCuts::kKaon],
-			       mEvents.at(0)->vertex(), mEvents.at(iEvt2)->vertex(), mEvents.at(iEvt3)->vertex(),
-			       mEvents.at(0)->field() );
+	      StMixerTriplet triplet(pion, kaon, proton,
+				     mHFCuts->GetHypotheticalMass(mHFCuts::kPion), 
+				     mHFCuts->GetHypotheticalMass(mHFCuts::kKaon), 
+				     mHFCuts->GetHypotheticalMass(mHFCuts::kProton), 
+				     mEvents.at(0)->vertex(), mEvents.at(iEvt2)->vertex(), mEvents.at(iEvt3)->vertex(),
+				     mEvents.at(0)->field() );
 	      if(!mHFCuts->isGoodTriplet(&triplet) ) continue;
-	      int charge = mEvents.at(0)->pionAt(iTrk1).charge() +  mEvents.at(iEvt2)->kaonAt(iTrk2).charge();
+	      int signBits = kaon->charge() > 0;
+	      signBits <<=1;
+	      signBits += (proton->charge() > 0);
+	      signBits <<=1;
+	      signBits += (pion->charge() > 0);
+
 	      if(iEvt2 == 0 && iEvt2 == 0)
-		mHists->fillSameEvtPair(&pair, charge );
+		mHists->fillSameEvtTriplet(&triplet, signBits );
 	      else
-		mHists->fillMixedEvtPair(&pair, charge);
+		mHists->fillMixedEvtTriplet(&triplet, signBits);
 	    } //first event track loop 
 	  } //second event track loop
 	} // the third event track loop
