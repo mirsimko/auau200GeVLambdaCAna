@@ -12,6 +12,7 @@
 #include "StMixerEvent.h"
 #include "StMixerTriplet.h"
 #include "StMixerHists.h"
+#include "StPicoHFMaker/StHFCuts.h"
 
 //-----------------------------------------------------------
 StPicoEventMixer::StPicoEventMixer(char* category):
@@ -92,7 +93,7 @@ void StPicoEventMixer::mixEvents() {
     for( size_t iEvt2 = 0; iEvt2 < nEvent; ++iEvt2) {
       int const nTracksEvt2 = mEvents.at(iEvt2)->getNoKaons();
       for (size_t iEvt3 = 0; iEvt3 < nEvent; ++iEvt3) {
-	int const nTracksEvt3 = mEvents.at(iEvt3)->getNoProtons()
+	int const nTracksEvt3 = mEvents.at(iEvt3)->getNoProtons();
 
 	if( iEvt2 == 0  && iEvt3 == 0)
 	  mHists->fillSameEvt(mEvents.at(0)->vertex());

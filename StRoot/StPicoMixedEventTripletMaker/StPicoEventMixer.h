@@ -23,6 +23,7 @@
 
 #include "StarClassLibrary/StThreeVectorF.hh"
 #include "StMixerCuts.h"
+#include "StPicoHFMaker/StHFCuts.h"
 
 class TTree;
 class TH2F;
@@ -61,7 +62,7 @@ class StPicoEventMixer {
   
   std::vector <StMixerEvent*> mEvents; 
   StMixerHists* mHists;
-  StPicoHFCuts *mHFCuts;
+  StHFCuts *mHFCuts;
   unsigned short int mEventsBuffer; 
   unsigned short int filledBuffer;
   float dca1, dca2, dcaDaughters, theta_hs, decayL_hs;
