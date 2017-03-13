@@ -684,9 +684,6 @@ void StPicoHFLambdaCMaker::calculateCentrality()
     mRefmultCorrUtil->init(mRunNumber);
     mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
     mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
-    for(Int_t i=0;i<6;i++){
-      mRefmultCorrUtil->get(i, 0);
-    }
   }
 
   mRefmultCorrUtil->initEvent(mPicoDst->event()->grefMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
