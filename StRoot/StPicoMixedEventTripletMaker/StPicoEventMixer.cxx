@@ -116,9 +116,9 @@ for( size_t iEvt2 = 0; iEvt2 < nEvent; ++iEvt2) {
 	      continue;
 	  }
 	  StMixerTriplet triplet(pion, kaon, proton,
-				 mHFCuts->GetHypotheticalMass(StHFCuts::kPion), 
-				 mHFCuts->GetHypotheticalMass(StHFCuts::kKaon), 
-				 mHFCuts->GetHypotheticalMass(StHFCuts::kProton), 
+				 mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
+				 mHFCuts->getHypotheticalMass(StHFCuts::kKaon), 
+				 mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
 				 mEvents.at(0)->vertex(), mEvents.at(iEvt2)->vertex(), mEvents.at(iEvt3)->vertex(),
 				 mEvents.at(0)->field() );
 	  if(!mHFCuts->isGoodSecondaryVertexTriplet(&triplet) ) continue;
@@ -199,11 +199,6 @@ bool StPicoEventMixer::isGoodTrack(StPicoTrack const * const trk)
 return (mHFCuts->isGoodTrack(trk));
 }
 //-----------------------------------------------------------
-bool StPicoEventMixer::isCloseTrack(StPicoTrack const& trk, StThreeVectorF const& pVtx)
-{
-return mHFCuts->isCloseTrack(trk, pVtx);
-}
-//-----------------------------------------------------------
 bool StPicoEventMixer::isGoodTriplet(StMixerTriplet const& triplet)
 {
 // int ptIndex = getLcPtIndex(triplet);
@@ -217,5 +212,5 @@ int StPicoEventMixer::getLcPtIndex(StMixerTriplet const& triplet) const
 //-----------------------------------------------------------
 bool StPicoEventMixer::isGoodTrigger(StPicoEvent const * const mPicoEvent) const 
 {
-  return mHFCuts->isGoodTrigger();
+  return mHFCuts->isGoodTrigger(mPicoEvent);
 }

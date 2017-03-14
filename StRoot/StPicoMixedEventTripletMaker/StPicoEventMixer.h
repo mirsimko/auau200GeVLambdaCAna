@@ -47,7 +47,6 @@ class StPicoEventMixer {
   bool isGoodEvent(StPicoDst const * const picoDst);
   bool isGoodTrigger(StPicoEvent const * const) const;
   bool isGoodTrack(StPicoTrack const * const trk);
-  bool isCloseTrack(StPicoTrack const& trk, StThreeVectorF const& pVtx);
   bool isTpcPion(StPicoTrack const * const);
   bool isTpcKaon(StPicoTrack const * const);
   bool isTpcProton(StPicoTrack const * const);
