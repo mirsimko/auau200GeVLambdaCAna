@@ -7,6 +7,12 @@
  *  - three particles, using
  *      StMixerTriplet(StPicoTrack const * particle1, StPicoTrack const * particle2, ...
  *
+ *  Make sure that this does not happen (no virtual destructiors in the base class):
+ *  StMixerTriplet *triplet = new StMixerTriplet(...);
+ *  StHFTriplet *tr = triplet;
+ *  delete tr;
+ *
+ *
  * **************************************************
  *
  *  Initial Authors: 
