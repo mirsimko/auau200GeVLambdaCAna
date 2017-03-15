@@ -37,6 +37,7 @@
 #include "StPicoMixedEventMaker/StPicoMixedEventMaker.h"
 #include "StMemStat.h"
 
+#include "StPicoHFLambdaCMaker/StLambdaCCuts.h"
 #else
 class StChain;
 #endif
@@ -102,10 +103,25 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
 
   // ---------------------------------------------------
   // -- Set Base cuts for HF analysis
+  StHFCuts* hfCuts = new StHFCuts("lambdaCBaseCuts");
 
   // -- File name of bad run list
-  //hfCuts->setBadRunListFileName(badRunListFileName);
+  hfCuts->setBadRunListFileName(badRunListFileName);
+  picoHFLambdaCMaker->setHFBaseCuts(hfCuts);
 
+  hfCuts->setBadRunListFileName(badRunListFileName);
+
+  hfCuts->addTriggerId(450050);    // vpdmb-5-p-nobsmd-hlt 
+  hfCuts->addTriggerId(450060);    // vpdmb-5-p-nobsmd-hlt 
+  hfCuts->addTriggerId(450005);    // vpdmb-5-p-nobsmd 
+  hfCuts->addTriggerId(450015);    // vpdmb-5-p-nobsmd 
+  hfCuts->addTriggerId(450025);    // vpdmb-5-p-nobsmd 
+
+  setEventCuts(hfCuts);
+  threePartDecayRead::setLambdaCCuts(hfCuts);
+
+  // ---------------------------------------------------
+  // main program running
   chain->Init();
   cout << "chain->Init();" << endl;
 

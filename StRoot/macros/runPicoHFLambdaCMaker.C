@@ -160,18 +160,13 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   // -- File name of bad run list
   hfCuts->setBadRunListFileName(badRunListFileName);
 
-  hfCuts->setCutVzMax(6.);
-  hfCuts->setCutVzVpdVzMax(3.);
-
   hfCuts->addTriggerId(450050);    // vpdmb-5-p-nobsmd-hlt 
   hfCuts->addTriggerId(450060);    // vpdmb-5-p-nobsmd-hlt 
   hfCuts->addTriggerId(450005);    // vpdmb-5-p-nobsmd 
   hfCuts->addTriggerId(450015);    // vpdmb-5-p-nobsmd 
   hfCuts->addTriggerId(450025);    // vpdmb-5-p-nobsmd 
 
-  hfCuts->setCutNHitsFitMin(20); 
-  hfCuts->setCutRequireHFT(true);
-  hfCuts->setCutNHitsFitnHitsMax(0.52);
+  setEventCuts(hfCuts);
 
   // >>>>>>>>>>>>>>>>>>>>>>------------------------------<<<<<<<<<<<<<<<<<<<<<<
   // -- Lc -> p + Ks0 , Ks0 -> pi+ + pi-
@@ -369,7 +364,8 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
     }
     else if (makerMode == StPicoHFMaker::kRead || makerMode == StPicoHFMaker::kAnalyze) {
-      threePartDecay::setLambdaCCuts(hfCuts);
+      // moved to a sepparate header file
+      threePartDecayRead::setLambdaCCuts(hfCuts);
     }
   }
   // making sure that StRefMultCorr is initiated (it is only used for the p,K,pi channel when analyzing candidates)

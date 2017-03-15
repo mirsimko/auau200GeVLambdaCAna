@@ -3,8 +3,28 @@
 
 #include "StPicoHFMaker/StHFCuts.h"
 #include <iostream>
+#include <limits>
 
-namespace threePartDecay
+//___________________________________________________________________
+void setEventCuts(StHFCuts * hfCuts)
+{
+  if(!hfCuts)
+  {
+    using namespace std;
+    cerr << "setEventCuts(...): no StHFCuts; exitting..." << endl;
+    return;
+  }
+
+  hfCuts->setCutVzMax(6.);
+  hfCuts->setCutVzVpdVzMax(3.);
+
+  hfCuts->setCutNHitsFitMin(20); 
+  hfCuts->setCutRequireHFT(true);
+  hfCuts->setCutNHitsFitnHitsMax(0.52);
+}
+//___________________________________________________________________
+
+namespace threePartDecayRead
 {
   void setLambdaCCuts(StHFCuts * hfCuts)
   {
@@ -39,13 +59,13 @@ namespace threePartDecay
     // hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kKaon);
 
     // -- LambdaC
-    float LCdcaDaughtersMax = 0.005;   // maximum 300um
-    float LCdecayLengthMin  = 0.0234;  // minimum  60um
-    float LCdecayLengthMax  = 9999.;
-    float LCcosThetaMin     = 0.995;   // minimum
-    float LCminMass         = 2.1;
-    float LCmaxMass         = 2.5;
-    float LCdcaToPv         = 0.01;
+    const float LCdcaDaughtersMax = 0.005;   // maximum 300um
+    const float LCdecayLengthMin  = 0.0234;  // minimum  60um
+    const float LCdecayLengthMax  = 9999.;
+    const float LCcosThetaMin     = 0.995;   // minimum
+    const float LCminMass         = 2.1;
+    const float LCmaxMass         = 2.5;
+    const float LCdcaToPv         = 0.01;
       
     hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax,
 				   LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
@@ -53,4 +73,5 @@ namespace threePartDecay
 
   }
 }
+//___________________________________________________________________
 #endif
