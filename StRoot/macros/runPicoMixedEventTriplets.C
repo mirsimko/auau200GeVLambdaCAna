@@ -53,7 +53,7 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
   StMemStat mem;
-  string SL_version = "SL15c";
+  string SL_version = "SL16d";
   string env_SL = getenv ("STAR");
   if (env_SL.find(SL_version)==string::npos) {
       cout<<"Environment Star Library does not match the requested library in runPicoMixedEventMaker.C. Exiting..."<<endl;
@@ -68,14 +68,11 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
 
-  gSystem->Load("StBTofUtil");
-  gSystem->Load("StPicoDstMaker");
-  gSystem->Load("StPicoPrescales");
-  gSystem->Load("StPicoCutsBase");
-  gSystem->Load("StPicoHFMaker");
-  gSystem->Load("StRefMultCorr");
-  gSystem->Load("StPicoMixedEventMaker");
-  
+#ifdef __CINT__
+  gROOT->LoadMacro("loadSharedHFLibraries.C");
+  loadSharedHFLibraries();
+#endif
+
   
   chain = new StChain();
 
@@ -93,8 +90,12 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
   cout<<"here"<<endl;
   grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
   grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
-  for(Int_t i=0;i<6;i++){
-    cout << i << " " << grefmultCorrUtil->get(i, 0) << endl;
+
+  // test refMultCorr
+  if(!picoHFLambdaCMaker->getRefMultCorr())
+  {
+    cerr << "RefMultCorr not initiated ... terminating" << endl;
+    return;
   }
 
   StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, outputFile, sInputListHF);
