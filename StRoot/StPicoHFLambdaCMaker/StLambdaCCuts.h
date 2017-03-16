@@ -1,6 +1,13 @@
 #ifndef _STLAMBDACCUTS_H_
 #define _STLAMBDACCUTS_H_
 
+/***************************************************************
+ * This is a header file with cuts constants for the Lambda_c analysis
+ * Cuts are given dirrectly to the StHFCuts class
+ *
+ * Author:    Miroslav Simko  (simko@ujf.cas.cz)
+ ***************************************************************/
+
 #include "StPicoHFMaker/StHFCuts.h"
 #include <iostream>
 #include <limits>
@@ -74,7 +81,7 @@ namespace StLambdaCCuts
       hfCuts->setCutSecondaryTripletDcaToPvMax(LCdcaToPv);
 
     }
-  }
+  } // namespace threePartDecayRead
   //___________________________________________________________________
 }
 #endif
