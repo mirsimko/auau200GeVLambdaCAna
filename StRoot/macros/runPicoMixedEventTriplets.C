@@ -109,7 +109,6 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
   hfCuts->setBadRunListFileName(badRunListFileName);
   picoHFLambdaCMaker->setHFBaseCuts(hfCuts);
 
-  hfCuts->setBadRunListFileName(badRunListFileName);
 
   hfCuts->addTriggerId(450050);    // vpdmb-5-p-nobsmd-hlt 
   hfCuts->addTriggerId(450060);    // vpdmb-5-p-nobsmd-hlt 
@@ -117,8 +116,8 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
   hfCuts->addTriggerId(450015);    // vpdmb-5-p-nobsmd 
   hfCuts->addTriggerId(450025);    // vpdmb-5-p-nobsmd 
 
-  setEventCuts(hfCuts);
-  threePartDecayRead::setLambdaCCuts(hfCuts);
+  StLambdaCCuts::setEventCuts(hfCuts);
+  StLambdaCCuts::threePartDecayRead::setLambdaCCuts(hfCuts);
 
   // ---------------------------------------------------
   // main program running

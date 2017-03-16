@@ -166,7 +166,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   hfCuts->addTriggerId(450015);    // vpdmb-5-p-nobsmd 
   hfCuts->addTriggerId(450025);    // vpdmb-5-p-nobsmd 
 
-  setEventCuts(hfCuts);
+  StLambdaCCuts::setEventCuts(hfCuts);
 
   // >>>>>>>>>>>>>>>>>>>>>>------------------------------<<<<<<<<<<<<<<<<<<<<<<
   // -- Lc -> p + Ks0 , Ks0 -> pi+ + pi-
@@ -365,7 +365,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     }
     else if (makerMode == StPicoHFMaker::kRead || makerMode == StPicoHFMaker::kAnalyze) {
       // moved to a sepparate header file
-      threePartDecayRead::setLambdaCCuts(hfCuts);
+      StLambdaCCuts::threePartDecayRead::setLambdaCCuts(hfCuts);
     }
   }
   // making sure that StRefMultCorr is initiated (it is only used for the p,K,pi channel when analyzing candidates)
