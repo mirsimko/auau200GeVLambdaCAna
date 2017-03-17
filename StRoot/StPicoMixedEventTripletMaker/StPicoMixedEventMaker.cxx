@@ -19,10 +19,11 @@
 ClassImp(StPicoMixedEventMaker)
 
 // _________________________________________________________
-StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* picoMaker, StRefMultCorr* grefmultCorrUtil,
+StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* picoMaker, StRefMultCorr* grefmultCorrUtil, StHFCuts* hfCuts,
         char const* outputBaseFileName,  char const* inputHFListHFtree = "") :
     StMaker(name), mPicoDst(NULL), mPicoDstMaker(picoMaker),  mPicoEvent(NULL),
     mGRefMultCorrUtil(grefmultCorrUtil),
+    mHFCuts(hfCuts),
     mOuputFileBaseName(outputBaseFileName), mInputFileName(inputHFListHFtree),
     mEventCounter(0), mTree(NULL), mOutputFileTree(NULL) {
 
