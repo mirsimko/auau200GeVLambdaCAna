@@ -33,6 +33,7 @@
 #include "StRoot/StRefMultCorr/StRefMultCorr.h"
 #include "StRoot/StRefMultCorr/CentralityMaker.h"
 #include "StPicoHFMaker/StPicoHFEvent.h"
+#include "StPicoHFMaker/StHFCuts.h"
 
 #include "StPicoMixedEventTripletMaker/StPicoMixedEventMaker.h"
 #include "StMemStat.h"
@@ -47,6 +48,7 @@ class StChain;
 class StPicoDstMaker;
 class StPicoMixedEventMaker;
 class StRefMultCorr;
+class StHFCuts;
 StChain *chain;
 
 void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", 
@@ -92,7 +94,9 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
   grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
 
-  StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, outputFile, sInputListHF);
+  StHFCuts* hfCuts = new StHFCuts("lambdaCBaseCuts");
+
+  StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, hfCuts, outputFile, sInputListHF);
   // test refMultCorr
   if(!picoMixedEventMaker->getRefMultCorr())
   {
@@ -101,15 +105,11 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   }
 
 
-  // ---------------------------------------------------
-  // -- Set Base cuts for HF analysis
-  StHFCuts* hfCuts = new StHFCuts("lambdaCBaseCuts");
-
   // -- File name of bad run list
   hfCuts->setBadRunListFileName(badRunListFileName);
-  picoMixedEventMaker->setHFBaseCuts(hfCuts);
 
-
+  // ---------------------------------------------------
+  // -- Set Base cuts for HF analysis
   hfCuts->addTriggerId(450050);    // vpdmb-5-p-nobsmd-hlt 
   hfCuts->addTriggerId(450060);    // vpdmb-5-p-nobsmd-hlt 
   hfCuts->addTriggerId(450005);    // vpdmb-5-p-nobsmd 
