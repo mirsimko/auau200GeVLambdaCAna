@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------
 StPicoEventMixer::StPicoEventMixer(char* category):
-mEvents(),mHists(NULL), mEventsBuffer(0), filledBuffer(0)
+mEvents(),mHists(NULL), mEventsBuffer(0), filledBuffer(0), mHFCuts(NULL)
 {
 setEventBuffer(3);
 mHists = new StMixerHists(category);
