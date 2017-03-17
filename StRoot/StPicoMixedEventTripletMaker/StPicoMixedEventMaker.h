@@ -32,6 +32,7 @@ class StPicoDstMaker;
 class StPicoEvent;
 class StPicoTrack;
 class StRefMultCorr;
+class StHFCuts;
 
 class StPicoEventMixer;
 
