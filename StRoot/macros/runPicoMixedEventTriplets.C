@@ -34,7 +34,7 @@
 #include "StRoot/StRefMultCorr/CentralityMaker.h"
 #include "StPicoHFMaker/StPicoHFEvent.h"
 
-#include "StPicoMixedEventMaker/StPicoMixedEventMaker.h"
+#include "StPicoMixedEventTripletMaker/StPicoMixedEventMaker.h"
 #include "StMemStat.h"
 
 #include "StPicoHFLambdaCMaker/StLambdaCCuts.h"
@@ -49,8 +49,8 @@ class StPicoMixedEventMaker;
 class StRefMultCorr;
 StChain *chain;
 
-void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", 
-			 const Char_t *badRunListFileName = "picoList_bad_MB.list") { 
+void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t *outputFile="outputBaseName", 
+			       const Char_t *badRunListFileName = "picoList_bad_MB.list") { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
   StMemStat mem;
@@ -92,14 +92,14 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
   grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
   grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
 
+  StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, outputFile, sInputListHF);
   // test refMultCorr
-  if(!picoHFLambdaCMaker->getRefMultCorr())
+  if(!picoMixedEventMaker->getRefMultCorr())
   {
     cerr << "RefMultCorr not initiated ... terminating" << endl;
     return;
   }
 
-  StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, outputFile, sInputListHF);
 
   // ---------------------------------------------------
   // -- Set Base cuts for HF analysis
@@ -107,7 +107,7 @@ void runPicoMixedEvent(const Char_t *inputFile="test.list", const Char_t *output
 
   // -- File name of bad run list
   hfCuts->setBadRunListFileName(badRunListFileName);
-  picoHFLambdaCMaker->setHFBaseCuts(hfCuts);
+  picoMixedEventMaker->setHFBaseCuts(hfCuts);
 
 
   hfCuts->addTriggerId(450050);    // vpdmb-5-p-nobsmd-hlt 

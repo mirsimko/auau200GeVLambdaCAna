@@ -54,6 +54,8 @@ class StPicoEventMixer {
   bool isGoodTriplet(StMixerTriplet const& triplet);
   int getLcPtIndex(StMixerTriplet const& pair) const;
   void finish();
+  void setHFCuts(StHFCuts * hfCuts) { mHFCuts = hfCuts; }
+  StHFCuts * getHFCuts() { return mHFCuts; }
  private:
   bool isMixerPion(StMixerTrack const&);
   bool isMixerKaon(StMixerTrack const&);
