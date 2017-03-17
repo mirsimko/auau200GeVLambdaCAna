@@ -58,6 +58,7 @@ Int_t StPicoMixedEventMaker::Init() {
       for(int iCentrality = 0 ; iCentrality < 9 ; ++iCentrality){
 	mPicoEventMixer[iVz][iCentrality] = new StPicoEventMixer(Form("Cent_%i_Vz_%i",iCentrality,iVz));
 	mPicoEventMixer[iVz][iCentrality]->setEventBuffer(10);
+	mPicoEventMixer[iVz][iCentrality]->setRef
       }
     }
     mGRefMultCorrUtil = new StRefMultCorr("grefmult");

@@ -38,14 +38,14 @@ class StPicoEventMixer;
 class StPicoMixedEventMaker : public StMaker 
 {
   public:
-  StPicoMixedEventMaker(char const* name, StPicoDstMaker* picoMaker, StRefMultCorr* grefmultCorrUtil,
+  StPicoMixedEventMaker(char const* name, StPicoDstMaker* picoMaker, StRefMultCorr* grefmultCorrUtil, StHFCuts* hfCuts,
 			char const* outputBaseFileName,  
 			char const* inputHFListHFtree);
-    virtual ~StPicoMixedEventMaker();
-    virtual Int_t Init();
-    virtual Int_t Make();
-    virtual Int_t Finish();
-    virtual void  Clear(Option_t* opt="");
+    ~StPicoMixedEventMaker();
+    Int_t Init();
+    Int_t Make();
+    Int_t Finish();
+    void  Clear(Option_t* opt="");
 
     Int_t SetCategories();
 
@@ -54,7 +54,8 @@ class StPicoMixedEventMaker : public StMaker
     StPicoDst*      mPicoDst;
     StPicoDstMaker* mPicoDstMaker;      
     StPicoEvent*    mPicoEvent;         
-    StRefMultCorr* mGRefMultCorrUtil;
+    StRefMultCorr*  mGRefMultCorrUtil;
+    StHFCuts*	    mHFCuts;
 
     StPicoEventMixer* mPicoEventMixer[10][9];
 
