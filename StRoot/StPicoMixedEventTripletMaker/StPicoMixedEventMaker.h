@@ -50,6 +50,8 @@ class StPicoMixedEventMaker : public StMaker
 
     Int_t SetCategories();
 
+    StRefMultCorr* getRefMultCorr() { return mGRefMultCorrUtil; }
+
  private:
     int categorize(StPicoDst const*);
     StPicoDst*      mPicoDst;
