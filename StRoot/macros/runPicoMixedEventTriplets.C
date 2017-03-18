@@ -65,7 +65,7 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   // ========================================================================================
   //   Testing 
   // ========================================================================================
-  Int_t nEvents = 10000000;
+  Int_t nEvents = 1000;
   //Int_t nEvents = 1000;
 	
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");

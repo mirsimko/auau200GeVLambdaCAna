@@ -25,6 +25,7 @@
 #    0 - kPionKaonProton
 #    1 - kProtonK0short
 #    2 - kLambdaPion
+#    3 - Mixed Event
 set decayChannel=0
 
 if ( $decayChannel == 0 ) then
@@ -33,6 +34,8 @@ else if ( $decayChannel == 1 ) then
     set tree=LambdaC.kProtonK0short.picoHFtree
 else if ( $decayChannel == 2 ) then
     set tree=LambdaC.kLambdaPion.picoHFtree
+else if ( $decayChannel == 3 ) then
+    set tree=LambdaC.MixedEvent.picoHFtree
 endif
 
 # ###############################################
@@ -62,10 +65,19 @@ set input=${baseFolder}/picoLists/picoList_all.list
 #    0 - kAnalyze, 
 #    1 - kWrite
 #    2 - kRead
+#    3 - Mixed Event
 set makerMode=0
 
 # -- set root macro
-set rootMacro=runPicoHFLambdaCMaker.C
+if ( $decayChannel == 3 && $makerMode == 3 ) then
+  set rootMacro=runPicoMixedEventTriplets.C
+else if ( $decayChannel == 3 || $makerMode == 3 ) then
+  echo Invalid decay channel or maker mode. Exiting ....
+  exit 1
+else
+  set rootMacro=runPicoHFLambdaCMaker.C
+endif
+
 
 # -- set filename for bad run list
 set badRunListFileName="picoList_bad_MB.list"
