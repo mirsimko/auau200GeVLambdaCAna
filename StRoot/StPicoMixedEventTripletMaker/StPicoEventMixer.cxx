@@ -50,6 +50,10 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
   //Event.setNoTracks( nTracks );
   for( int iTrk = 0; iTrk < nTracks; ++iTrk) {
     StPicoTrack const* trk = picoDst->track(iTrk);
+
+    if(!mHFCuts->isGoodTrack(trk))
+      continue;
+
     const float beta = mHFCuts->GetTOFBeta(trk);
 
     bool saveTrack = false;
@@ -92,7 +96,7 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
 //-----------------------------------------------------------
 void StPicoEventMixer::mixEvents() {
   size_t const nEvent = mEvents.size();
-  int const nTracksEvt1 = mEvents.at(0)->getNoPions();
+  int const nTracksEvt1 = mEvents.at(0)->getNoProtons();
   if(nTracksEvt1 == 0)
   {
     --filledBuffer;
@@ -101,7 +105,7 @@ void StPicoEventMixer::mixEvents() {
   // Go through the event buffer
   for( size_t iEvt2 = 0; iEvt2 < nEvent - 1; ++iEvt2) {
     int const nTracksEvt2 = mEvents.at(iEvt2)->getNoKaons();
-    for (size_t iEvt3 = iEvt2; iEvt3 < iEvt2+1; ++iEvt3) {
+    for (size_t iEvt3 = 0; iEvt3 < nEvent - 1; ++iEvt3) {
       if( iEvt2 == 0  && iEvt3 == 0)
 	mHists->fillSameEvt(mEvents.at(0)->vertex());
       else
@@ -111,13 +115,20 @@ void StPicoEventMixer::mixEvents() {
 	else
 	  mHists->fillMixedEvt(mEvents.at(0)->vertex());
       }
-      int const nTracksEvt3 = mEvents.at(iEvt3)->getNoProtons();
+      int const nTracksEvt3 = mEvents.at(iEvt3)->getNoPions();
 
       // evts trk loops
       for(int iTrk3 = 0; iTrk3 < nTracksEvt3; ++iTrk3) {
 	StMixerTrack const proton = mEvents.at(iEvt3)->protonAt(iTrk3);
 	for( int iTrk2 = 0; iTrk2 < nTracksEvt2; ++iTrk2) {
 	  StMixerTrack const kaon = mEvents.at(iEvt2)->kaonAt(iTrk2);
+
+	  StMixerClosePair pair(proton, kaon,
+				mHFCuts->getHypotheticalMass(StHFCuts::kProton),
+				mHFCuts->getHypotheticalMass(StHFCuts::kKaon),
+				mEvents.at(iEvt3)->vertex(), mEvents.at(iEvt2)->vertex(),
+				mEvents.at(0)->field() );
+
 	  for( int iTrk1 = 0; iTrk1 < nTracksEvt1; ++iTrk1) {
 	    StMixerTrack const pion = mEvents.at(0)->pionAt(iTrk1);
 
@@ -127,12 +138,11 @@ void StPicoEventMixer::mixEvents() {
 	      }
 	    }
 
-	    StMixerTriplet triplet(pion, kaon, proton,
+	    StMixerTriplet triplet(pair, pion,
 				   mHFCuts->getHypotheticalMass(StHFCuts::kPion), 
-				   mHFCuts->getHypotheticalMass(StHFCuts::kKaon), 
-				   mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
-				   mEvents.at(0)->vertex(), mEvents.at(iEvt2)->vertex(), mEvents.at(iEvt3)->vertex(),
+				   mEvents.at(0)->vertex(),
 				   mEvents.at(0)->field() );
+
 	    if(!mHFCuts->isGoodSecondaryVertexTriplet(&triplet) ) 
 	      continue;
 	    int signBits = kaon.charge() > 0;

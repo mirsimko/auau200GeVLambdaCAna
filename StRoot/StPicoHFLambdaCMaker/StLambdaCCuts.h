@@ -3,7 +3,7 @@
 
 /***************************************************************
  * This is a header file with cuts constants for the Lambda_c analysis
- * Cuts are given dirrectly to the StHFCuts class
+ * Cuts are given dirrectly to the StHFCuts class via non-member functiuons
  *
  * Author:    Miroslav Simko  (simko@ujf.cas.cz)
  ***************************************************************/
