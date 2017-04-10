@@ -15,9 +15,9 @@ StMixerClosePair::StMixerClosePair(const StMixerTrack &  particle1, const StMixe
 			       float p1MassHypo, float p2MassHypo,
 			       const StThreeVectorF & vtx1, const StThreeVectorF & vtx2,
 			       float bField) :
-  StHFClosePair(),
-  mParticle1Mom(StThreeVectorF()),
-  mParticle2Mom(StThreeVectorF())
+  StHFClosePair()
+  // mParticle1Mom(StThreeVectorF()),
+  // mParticle2Mom(StThreeVectorF())
 {
   // -- Create pair out of 2 tracks
   //     prefixes code:
@@ -28,8 +28,8 @@ StMixerClosePair::StMixerClosePair(const StMixerTrack &  particle1, const StMixe
   if (vtx1 == vtx2) // for the same event
   {
     // see if the particles are the same
-    if(!particle1 || !particle2 || particle1->id() == particle2->id()) {
-
+    if( particle1.gMom() == particle2.gMom()) { 
+      // if they have exactly the same momentum, it means that they are the same tracks
       return;
     }
   }
@@ -43,5 +43,5 @@ StMixerClosePair::StMixerClosePair(const StMixerTrack &  particle1, const StMixe
     return;
   }
 
-  calculateTopology(p1Helix, p2Helix, p1MassHypo, p2MassHypo, 0,0, vtx1, bField, true);
+  calculateTopology(p1Helix, p2Helix, p1MassHypo, p2MassHypo, particle1.charge(), particle2.charge(), 0,0, vtx1, bField, true);
 }

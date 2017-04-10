@@ -12,11 +12,11 @@
 ClassImp(StMixerTriplet)
 
 // _________________________________________________________
-StMixerTriplet::StMixerTriplet(const StMixerClosePair &  pair, const StMixerTrack & particle3,
+StMixerTriplet::StMixerTriplet(StMixerClosePair &  pair, const StMixerTrack & particle3,
 			       float p3MassHypo,
 			       const StThreeVectorF & vtx1, const StThreeVectorF & vtx3,
 			       float bField) :
-  StHFTriplet(),
+  StHFTriplet()
 {
   // -- Create pair out of 2 tracks
   //     prefixes code:

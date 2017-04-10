@@ -8,8 +8,10 @@
  * **************************************************
  *
  *  Initial Authors:  
- *         ** Michael Lomnitz (mrlomnitz@lbl.gov)
+ *            Michael Lomnitz (mrlomnitz@lbl.gov)
  *            Mustafa Mustafa (mmustafa@lbl.gov)
+ *  Other authors:
+ *         ** Miroslav Simko  (msimko@bnl.gov)
  *
  *  ** Code Maintainer
  *
@@ -39,7 +41,6 @@ class StMixerHists
   TH2F* mSE_US;
   TH2F* mME_LS;
   TH2F* mME_US;
-  
 };
 inline void StMixerHists::fillSameEvt(const StThreeVectorF& vtx)
 {

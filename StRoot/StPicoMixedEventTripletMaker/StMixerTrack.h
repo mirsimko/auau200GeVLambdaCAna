@@ -12,8 +12,9 @@
  * **************************************************
  *
  *  Initial Authors:  
- *         ** Michael Lomnitz (mrlomnitz@lbl.gov)
+ *            Michael Lomnitz (mrlomnitz@lbl.gov)
  *            Mustafa Mustafa (mmustafa@lbl.gov)
+ *         ** Miroslav Simko  (msimko@bnl.gov)
  *
  *  ** Code Maintainer
  *

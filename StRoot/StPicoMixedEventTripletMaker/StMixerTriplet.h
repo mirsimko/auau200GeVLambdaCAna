@@ -30,9 +30,11 @@
 #include "StarClassLibrary/StThreeVectorF.hh"
 #include "StMixerTrack.h"
 #include "StPicoHFMaker/StHFTriplet.h"
+#include "StMixerClosePair.h"
 
 class StMixerTrack;
 class StHFTriplet;
+class StMixerClosePair;
 
 class StMixerTriplet : public StHFTriplet
 {
@@ -45,7 +47,7 @@ class StMixerTriplet : public StHFTriplet
   ~StMixerTriplet() {;}
 
  private:
-  StMixerTriplet(StMixerTriplet const &);
+  StMixerTriplet(const StMixerTriplet &);
   StMixerTriplet& operator=(StMixerTriplet const &);
   ClassDef(StMixerTriplet,1)
 };

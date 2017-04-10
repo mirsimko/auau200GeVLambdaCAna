@@ -65,7 +65,7 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   // ========================================================================================
   //   Testing 
   // ========================================================================================
-  Int_t nEvents = 1000;
+  Int_t nEvents = 1e5;
   //Int_t nEvents = 1000;
 	
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
@@ -97,6 +97,7 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   StHFCuts* hfCuts = new StHFCuts("lambdaCBaseCuts");
 
   StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, hfCuts, outputFile, sInputListHF);
+  picoMixedEventMaker->setBufferSize(5); // store 5 events
   // test refMultCorr
   if(!picoMixedEventMaker->getRefMultCorr())
   {

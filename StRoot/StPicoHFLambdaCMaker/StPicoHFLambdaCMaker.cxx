@@ -515,7 +515,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 
       ++nProcessed;
 
-      if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
+      if (!mHFCuts->isGoodSecondaryVertexTriplet(*lambdaC)) 
 	continue;
 
       StPicoTrack const* kaon   = mPicoDst->track(lambdaC->particle1Idx());

@@ -19,6 +19,7 @@
 
 ClassImp(StPicoMixedEventMaker)
 
+
 // _________________________________________________________
 StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* picoMaker, StRefMultCorr* grefmultCorrUtil, StHFCuts* hfCuts,
         char const* outputBaseFileName,  char const* inputHFListHFtree = "") :
@@ -26,15 +27,13 @@ StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* p
     mGRefMultCorrUtil(grefmultCorrUtil),
     mHFCuts(hfCuts),
     mOuputFileBaseName(outputBaseFileName), mInputFileName(inputHFListHFtree),
-    mEventCounter(0), mTree(NULL), mOutputFileTree(NULL) {
+    mEventCounter(0), mBufferSize(defaultBufferSize), mTree(NULL), mOutputFileTree(NULL) {
 
   TH1::AddDirectory(false);
     // -- create OutputTree
     mOutputFileTree = new TFile(Form("%s.picoMEtree.root", mOuputFileBaseName.Data()), "RECREATE");
     mOutputFileTree->SetCompressionLevel(1);
     mOutputFileTree->cd();
-    int BufSize = (int)pow(2., 16.);
-    int Split = 1;
 }
 
 // _________________________________________________________
@@ -59,7 +58,7 @@ Int_t StPicoMixedEventMaker::Init() {
     for(int iVz =0 ; iVz < 10 ; ++iVz){
       for(int iCentrality = 0 ; iCentrality < 9 ; ++iCentrality){
 	mPicoEventMixer[iVz][iCentrality] = new StPicoEventMixer(Form("Cent_%i_Vz_%i",iCentrality,iVz));
-	mPicoEventMixer[iVz][iCentrality]->setEventBuffer(10);
+	mPicoEventMixer[iVz][iCentrality]->setEventBuffer(mBufferSize);
 	mPicoEventMixer[iVz][iCentrality]->setHFCuts(mHFCuts);
       }
     }

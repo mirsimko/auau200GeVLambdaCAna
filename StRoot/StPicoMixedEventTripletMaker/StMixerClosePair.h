@@ -35,7 +35,7 @@ class StMixerClosePair : public StHFClosePair
  public:
   StMixerClosePair(StMixerTrack const &  particle1, StMixerTrack const & particle2,
 		   float p1MassHypo, float p2MassHypo,
-		   StThreeVectorF const & vtx1, StThreeVectorF const & vtx2,
+		   const StThreeVectorF & vtx1, const StThreeVectorF & vtx2,
 		   float bField);
 
   ~StMixerClosePair() {;}

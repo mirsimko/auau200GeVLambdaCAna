@@ -49,10 +49,13 @@ class StPicoMixedEventMaker : public StMaker
     void  Clear(Option_t* opt="");
 
     Int_t SetCategories();
+    void setBufferSize(int size) { mBufferSize = size; }
 
     StRefMultCorr* getRefMultCorr() { return mGRefMultCorrUtil; }
 
  private:
+    enum  sizeConst { defaultBufferSize = 5 };
+
     int categorize(StPicoDst const*);
     StPicoDst*      mPicoDst;
     StPicoDstMaker* mPicoDstMaker;      
@@ -66,6 +69,7 @@ class StPicoMixedEventMaker : public StMaker
     TString         mInputFileName;     
 
     int             mEventCounter;
+    int		    mBufferSize;
 
     bool loadEventPlaneCorr(int const runId);
                                         
