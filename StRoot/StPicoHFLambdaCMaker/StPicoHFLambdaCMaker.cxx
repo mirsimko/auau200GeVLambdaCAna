@@ -96,6 +96,8 @@ int StPicoHFLambdaCMaker::InitHF() {
   mSinglePartList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
   mSinglePartList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
   mSinglePartList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
+
+  mSinglePartList->Add(new TH1D("refMult", "corrected refferernce multiplicity", 100, 0, 800));
   mRunNumber = 0;
 
   return kStOK;
@@ -682,8 +684,6 @@ void StPicoHFLambdaCMaker::calculateCentrality()
     mRunNumber = currentRun;
 
     mRefmultCorrUtil->init(mRunNumber);
-    mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
-    mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
   }
 
   mRefmultCorrUtil->initEvent(mPicoDst->event()->grefMult(), mPrimVtx.z(), mPicoDst->event()->ZDCx()) ;
@@ -695,8 +695,10 @@ int StPicoHFLambdaCMaker::fillControlHistos() {
 
   int const centrality = mRefmultCorrUtil->getCentralityBin9() ;
   float const centralityWeight = mRefmultCorrUtil->getWeight();
+  float const refMultCorr = mRefmultCorrUtil->getRefMultCorr();
   static_cast<TH1D*>(mSinglePartList->FindObject("centrality"))->Fill(centrality);
   static_cast<TH1D*>(mSinglePartList->FindObject("centralityCorrection"))->Fill(centrality, centralityWeight);
+  static_cast<TH1D*>(mSinglePartList->FindObject("refMult"))->Fill(refMultCorr);
 
   fillSingleParticleHistos(StHFCuts::kProton);
   fillSingleParticleHistos(StHFCuts::kPion);

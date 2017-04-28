@@ -24,8 +24,10 @@
  */
 
 class TTree;
+class TNtuple;
 class TFile;
 class TChain;
+class TList;
 
 class StPicoDst;
 class StPicoDstMaker;
@@ -53,9 +55,8 @@ class StPicoMixedEventMaker : public StMaker
 
     StRefMultCorr* getRefMultCorr() { return mGRefMultCorrUtil; }
 
+    enum  mixerConst { defaultBufferSize = 5, fillSingleTrackHistos = 1}; // enum trick to setting class-speciffic constants
  private:
-    enum  sizeConst { defaultBufferSize = 5 };
-
     int categorize(StPicoDst const*);
     StPicoDst*      mPicoDst;
     StPicoDstMaker* mPicoDstMaker;      
@@ -73,8 +74,11 @@ class StPicoMixedEventMaker : public StMaker
 
     bool loadEventPlaneCorr(int const runId);
                                         
-    TTree*          mTree;
+    TNtuple*        mSETuple;
+    TNtuple*        mMETuple;
     TFile*          mOutputFileTree; 
+
+    TList* mSingePartHists;
 
     ClassDef(StPicoMixedEventMaker, 0)
 };

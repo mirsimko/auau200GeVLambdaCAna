@@ -75,6 +75,9 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
   
   Int_t nEvents = 1e9;
 
+  if (nEvents < 1e8)
+    cout << "Warning: the number of events is set to " << nEvents << endl;
+
 #ifdef __CINT__
   gROOT->LoadMacro("loadSharedHFLibraries.C");
   loadSharedHFLibraries();
@@ -147,7 +150,9 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
 
   // set refmultCorr ... required for the centrality data
-  StRefMultCorr* grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr() ;
+  StRefMultCorr* grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr_P16id();
+  mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
+  mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
   picoHFLambdaCMaker->setRefMutCorr(grefmultCorrUtil);
   if(!picoHFLambdaCMaker->getRefMultCorr())
   {

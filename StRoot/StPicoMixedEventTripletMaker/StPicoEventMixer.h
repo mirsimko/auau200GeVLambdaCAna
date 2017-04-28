@@ -11,8 +11,10 @@
  * **************************************************
  * 
  * Initial Authors:
- *       ** Michael Lomnitz (mrlomnitz@lbl.gov)
+ *          Michael Lomnitz (mrlomnitz@lbl.gov)
  *          Mustafa Mustafa   (mmustafa@lbl.gov)
+ *  Other authors:
+ *       ** Miroslav Simko  (msimko@bnl.gov)
  *
  *  ** Code maintainer 
  *
@@ -20,6 +22,8 @@
  */
 
 #include <vector>
+#include "TNtuple.h"
+#include "TList.h"
 
 #include "StarClassLibrary/StThreeVectorF.hh"
 #include "StMixerCuts.h"
@@ -43,7 +47,20 @@ class StPicoEventMixer {
   ~StPicoEventMixer();
   bool addPicoEvent(StPicoDst const* picoDst);
   void setEventBuffer(int buffer);
+  void setSameEvtNtuple(TNtuple *tuple)  { mSETuple = tuple; }
+  void setMixedEvtNtuple(TNtuple *tuple) { mMETuple = tuple; }
+  void setSinglePartHistsList(TList *list) { mSingleParticleList = list; }
   void mixEvents();
+  void finish();
+  void setHFCuts(StHFCuts * hfCuts) { mHFCuts = hfCuts; }
+  StHFCuts * getHFCuts() { return mHFCuts; }
+  void setFillSinglePartHists(bool yesOrNo) { fillSinglePartHists = yesOrNo; }
+  bool isFillingSinglePartHists() { return fillSinglePartHists; }
+
+ private:
+  bool isMixerPion(StMixerTrack const&);
+  bool isMixerKaon(StMixerTrack const&);
+  bool isMixerProton(StMixerTrack const&);
   bool isGoodEvent(StPicoDst const * const picoDst);
   bool isGoodTrigger(StPicoEvent const * const) const;
   bool isGoodTrack(StPicoTrack const * const trk);
@@ -53,13 +70,9 @@ class StPicoEventMixer {
   bool isTPCHadron(StPicoTrack const * const, int pidFlag);
   bool isGoodTriplet(StMixerTriplet const& triplet);
   int getLcPtIndex(StMixerTriplet const& pair) const;
-  void finish();
-  void setHFCuts(StHFCuts * hfCuts) { mHFCuts = hfCuts; }
-  StHFCuts * getHFCuts() { return mHFCuts; }
- private:
-  bool isMixerPion(StMixerTrack const&);
-  bool isMixerKaon(StMixerTrack const&);
-  bool isMixerProton(StMixerTrack const&);
+
+  void fillCentralities(StMixerEvent* evt, bool isSameEvt);
+  void fillTracks(StMixerEvent* evt, bool isSameEvt, int PidFlag);
   
   std::vector <StMixerEvent*> mEvents; 
   StMixerHists* mHists;
@@ -68,6 +81,12 @@ class StPicoEventMixer {
   unsigned short int filledBuffer;
   float dca1, dca2, dcaDaughters, theta_hs, decayL_hs;
   float pt_hs, mass_hs, eta_hs, phi_hs;
+
+  TNtuple *mSETuple;
+  TNtuple *mMETuple;
+  TList *mSingleParticleList;
+
+  bool fillSinglePartHists;
 };
 
 inline void StPicoEventMixer::setEventBuffer(int buffer){ mEventsBuffer = buffer;}

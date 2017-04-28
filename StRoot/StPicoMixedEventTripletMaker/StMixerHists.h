@@ -23,6 +23,9 @@
 
 #include "StMixerTriplet.h"
 
+#include <iostream>
+using namespace std;
+
 class StMixerHists
 {
  public:
@@ -45,27 +48,29 @@ class StMixerHists
 inline void StMixerHists::fillSameEvt(const StThreeVectorF& vtx)
 {
   mSE_Vtx->Fill(vtx.x(), vtx.y());
-  return;
 }
 inline void StMixerHists::fillMixedEvt(const StThreeVectorF& vtx)
 {
   mME_Vtx->Fill(vtx.x(), vtx.y());
-  return;
 }
 inline void StMixerHists::fillSameEvtTriplet(StMixerTriplet const* const triplet, int charge)
 {
-  if(charge == 5 || charge == 8 ) // binary b011 for LC+ or b100 for LC-
+  if(charge == 3 || charge == 4 ) // binary b011 for LC+ or b100 for LC-
+  {
     mSE_US-> Fill(triplet->pt(),triplet->m());
+  }
   else
+  {
     mSE_LS-> Fill(triplet->pt(),triplet->m());
-  return;
+  }
+  cout << "SE triplet" << endl;
 }
 inline void StMixerHists::fillMixedEvtTriplet(StMixerTriplet const* const triplet, int charge)
 {
-  if(charge == 5 || charge == 8 ) // binary b011 for LC+ or b100 for LC-
+  if(charge == 3 || charge == 4 ) // binary b011 for LC+ or b100 for LC-
     mME_US-> Fill(triplet->pt(),triplet->m());
   else
     mME_LS-> Fill(triplet->pt(),triplet->m());
-  return;
+  cout << "ME triplet" << endl;
 }
 #endif

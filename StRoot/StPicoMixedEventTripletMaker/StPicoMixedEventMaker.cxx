@@ -1,8 +1,10 @@
 #include "TTree.h"
+#include "TNtuple.h"
 #include "TFile.h"
 #include "TChain.h"
 #include "TH1.h"
-
+#include "TList.h"
+#include "TString.h" // needed for the Form(...)
 
 #include "StarClassLibrary/StThreeVectorF.hh"
 #include "StPicoDstMaker/StPicoDst.h"
@@ -16,6 +18,7 @@
 #include "StPicoHFMaker/StHFCuts.h"
 
 #include <vector>
+#include <string>
 
 ClassImp(StPicoMixedEventMaker)
 
@@ -23,17 +26,83 @@ ClassImp(StPicoMixedEventMaker)
 // _________________________________________________________
 StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* picoMaker, StRefMultCorr* grefmultCorrUtil, StHFCuts* hfCuts,
         char const* outputBaseFileName,  char const* inputHFListHFtree = "") :
-    StMaker(name), mPicoDst(NULL), mPicoDstMaker(picoMaker),  mPicoEvent(NULL),
+    StMaker(name), 
+    mPicoDst(NULL), 
+    mPicoDstMaker(picoMaker),  
+    mPicoEvent(NULL),
     mGRefMultCorrUtil(grefmultCorrUtil),
     mHFCuts(hfCuts),
-    mOuputFileBaseName(outputBaseFileName), mInputFileName(inputHFListHFtree),
-    mEventCounter(0), mBufferSize(defaultBufferSize), mTree(NULL), mOutputFileTree(NULL) {
+    mOuputFileBaseName(outputBaseFileName), 
+    mInputFileName(inputHFListHFtree),
+    mEventCounter(0), 
+    mBufferSize(defaultBufferSize), 
+    mSETuple(NULL), 
+    mMETuple(NULL), 
+    mOutputFileTree(NULL),
+    mSingePartHists(NULL)
+{
 
   TH1::AddDirectory(false);
-    // -- create OutputTree
-    mOutputFileTree = new TFile(Form("%s.picoMEtree.root", mOuputFileBaseName.Data()), "RECREATE");
-    mOutputFileTree->SetCompressionLevel(1);
-    mOutputFileTree->cd();
+  // -- create OutputTree
+  mOutputFileTree = new TFile(Form("%s.picoMEtree.root", mOuputFileBaseName.Data()), "RECREATE");
+  mOutputFileTree->SetCompressionLevel(1);
+  mOutputFileTree->cd();
+
+  const string varList = "p1pt:p2pt:p3pt:"
+			 "charges:"
+			 "m:pt:eta:phi:"
+			 "cosPntAngle:dLength:"
+			 "DCAtoPV:"
+			 "p1Dca:p2Dca:p3Dca:"
+			 "dcaDaughters12:dcaDaughters23:dcaDaughters31:"
+			 "KNSigma:pNSigma:piNSigma:"
+			 "KTOFinvBetaDiff:pTOFinvBetaDiff:piTOFinvBetaDiff:"
+			 "KEta:pEta:piEta:"
+			 "KPhi:pPhi:piPhi:"
+			 "maxVertexDist:"
+			 "centrality:centralityCorrection";
+
+  mSETuple = new TNtuple("sameEvent", "SameEvent", varList.data() );
+  mMETuple = new TNtuple("mixedEvent", "MixedEvent", varList.data() );
+
+  mSingePartHists = new TList();
+
+  mSingePartHists->SetOwner(true);
+  mSingePartHists->SetName("HFSinglePartHists");
+
+  // create single particle hists
+  const std::string evtNames[2] = {"SE", "ME"};
+  const std::string partNames[3] = {"pi", "p", "K"};
+
+  for (int i = 0; i < 2; ++i)
+  {
+    mSingePartHists->Add(new TH1D(Form("centrality%s", evtNames[i].data()),Form("centrality%s", evtNames[i].data()), 10, -1.5, 8.5));
+    mSingePartHists->Add(new TH1D(Form("centralityCorrection%s", evtNames[i].data()),Form("centrality corrected %s", evtNames[i].data()), 10, -1.5, 8.5));
+    mSingePartHists->Add(new TH1D(Form("refMult%s", evtNames[i].data()), Form("corrected refferernce multiplicity %s", evtNames[i].data()), 100, 0, 800));
+
+    for (int iPart = 0; iPart < 3; ++iPart)
+    {
+      // eta phi
+      mSingePartHists->Add(new TH2D(Form("%sEtaPhi%s",partNames[ iPart ].data(), evtNames[i].data()),
+				    Form("%s Eta phi distribution %s",partNames[ iPart ].data(), evtNames[i].data()), 
+				    100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
+
+      // phi vs pT
+      mSingePartHists->Add(new TH2D(Form("%sPhiPt%s",partNames[ iPart ].data(), evtNames[i].data()), 
+				    Form("%s phi vs pT %s",partNames[ iPart ].data(), evtNames[i].data()), 
+				    100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+
+      // NSigma vs pT
+      mSingePartHists->Add(new TH2D(Form("%sNSigmaPt%s",partNames[ iPart ].data(), evtNames[i].data()),
+				    Form("%s nSigma vs pT %s",partNames[ iPart ].data(), evtNames[i].data()), 
+				    100, 0, 10, 50, -4, 4));
+
+      // DCA
+      mSingePartHists->Add(new TH1D(Form("%sDCA%s",partNames[ iPart ].data(), evtNames[i].data()),
+				    Form("%s DCA %s",partNames[ iPart ].data(), evtNames[i].data()), 
+				    50, 0, 10));
+    }
+  }
 }
 
 // _________________________________________________________
@@ -60,6 +129,10 @@ Int_t StPicoMixedEventMaker::Init() {
 	mPicoEventMixer[iVz][iCentrality] = new StPicoEventMixer(Form("Cent_%i_Vz_%i",iCentrality,iVz));
 	mPicoEventMixer[iVz][iCentrality]->setEventBuffer(mBufferSize);
 	mPicoEventMixer[iVz][iCentrality]->setHFCuts(mHFCuts);
+	mPicoEventMixer[iVz][iCentrality]->setSameEvtNtuple(mSETuple);
+	mPicoEventMixer[iVz][iCentrality]->setMixedEvtNtuple(mMETuple);
+	mPicoEventMixer[iVz][iCentrality]->setSinglePartHistsList(mSingePartHists);
+	mPicoEventMixer[iVz][iCentrality]->setFillSinglePartHists(fillSingleTrackHistos);
       }
     }
     mGRefMultCorrUtil = new StRefMultCorr("grefmult");
@@ -83,6 +156,7 @@ Int_t StPicoMixedEventMaker::Finish() {
 	//delete mPicoEventMixer[iVz][iCentrality];
       }
     }
+    mSingePartHists->Write();
     return kStOK;
 }
 // _________________________________________________________
@@ -106,6 +180,8 @@ Int_t StPicoMixedEventMaker::Make() {
         LOG_WARN << " No mGRefMultCorrUtil! Skip! " << endl;
         return kStWarn;
     }
+    if (!mHFCuts->isGoodEvent(picoDst))
+      return kStOk;
     StThreeVectorF const pVtx = picoDst->event()->primaryVertex();
     if( fabs(pVtx.z()) >=6.0 )
       return kStOk;

@@ -67,6 +67,9 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   // ========================================================================================
   Int_t nEvents = 1e5;
   //Int_t nEvents = 1000;
+  if (nEvents < 1e8)
+    cout << "Warning: the number of events is set to " << nEvents << endl;
+
 	
   gROOT->LoadMacro("$STAR/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
   loadSharedLibraries();
@@ -89,7 +92,7 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
 
   // ========================================================================================
   StPicoDstMaker* picoDstMaker = new StPicoDstMaker(0, sInputFile, "picoDstMaker");
-  StRefMultCorr* grefmultCorrUtil  = CentralityMaker::instance()->getgRefMultCorr();
+  StRefMultCorr* grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr_P16id();
   cout<<"here"<<endl;
   grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
   grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");

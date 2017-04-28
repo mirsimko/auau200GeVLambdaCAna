@@ -1,7 +1,9 @@
 #include <limits>
 
+#include "TNtuple.h"
 #include "TTree.h"
 #include "TH2F.h"
+#include "TList.h"
 
 #include "StPicoEventMixer.h"
 #include "StPicoDstMaker/StPicoEvent.h"
@@ -19,10 +21,14 @@
 //-----------------------------------------------------------
 StPicoEventMixer::StPicoEventMixer(char* category):
   mEvents(),
-  mHists(NULL), 
+  mHists(NULL),
   mHFCuts(NULL),
-  mEventsBuffer(5), 
-  filledBuffer(0)
+  mEventsBuffer(StPicoMixedEventMaker::defaultBufferSize),
+  filledBuffer(0),
+  mSETuple(NULL),
+  mMETuple(NULL),
+  mSingleParticleList(NULL),
+  fillSingleTrackHistos(false)
 {
   mHists = new StMixerHists(category);
 }
@@ -62,19 +68,22 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
     const float beta = mHFCuts->getTofBeta(trk);
 
     bool saveTrack = false;
-    if( isTpcPion(trk) && mHFCuts->isHybridTOFPion(trk, beta, pVertex)) {
+    int pidFlag = StPicoCutsBase::kPion;
+    if( isTpcPion(trk) && mHFCuts->isHybridTOFPion(trk, beta, pVertex) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag)) {
       isTpcPi = true;
       isTofPi = true;
-      event->addPion(event->getNoTracks());
       saveTrack = true;
+      event->addPion(event->getNoTracks());
     }
-    if(isTpcKaon(trk) && mHFCuts->isTOFKaon(trk, beta, pVertex)) {
+    pidFlag = StPicoCutsBase::kKaon;
+    if(isTpcKaon(trk) && mHFCuts->isTOFKaon(trk, beta, pVertex) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag)) {
       isTpcK = true;
       isTofK = true;
       saveTrack = true;
       event->addKaon(event->getNoTracks());
     }
-    if(isTpcProton(trk) && mHFCuts->isTOFProton(trk, beta, pVertex)) {
+    pidFlag = StPicoCutsBase::kProton;
+    if(isTpcProton(trk) && mHFCuts->isTOFProton(trk, beta, pVertex) && mHFCuts->cutMinDcaToPrimVertex(trk, pidFlag)) {
       isTpcP = true;
       isTofP = true;
       saveTrack = true;
@@ -85,14 +94,14 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
       event->addTrack(mTrack);
     }
   }
-  if ( event->getNoPions() > 0 ||  event->getNoKaons() > 0 || event->getNoProtons() > 0) {
-    mEvents.push_back(event);
-    filledBuffer+=1;
-  }
-  else {
-    delete event;
-    return false;
-  }
+  // if ( event->getNoPions() > 0 ||  event->getNoKaons() > 0 || event->getNoProtons() > 0) {
+  mEvents.push_back(event);
+  filledBuffer+=1;
+  // }
+  // else {
+  //   delete event;
+  //   return false;
+  // }
   //Returns true if need to do mixing, false if buffer has space still
   if ( filledBuffer == mEventsBuffer - 1 )
     return true;
@@ -101,8 +110,14 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
 //-----------------------------------------------------------
 void StPicoEventMixer::mixEvents() {
   size_t const nEvent = mEvents.size();
+  if(StPicoMixedEventMaker::fillSingleTrackHistos)
+  {
+  }
+
   int const nTracksEvt1 = mEvents.at(0)->getNoProtons();
-  if(nTracksEvt1 == 0)
+  // Check if there are protons in the first evt for saving time (cannot be done if 
+  // we want to save the single particle ctrl plots)
+  if(!StPicoMixedEventMaker::fillSingleTrackHistos && nTracksEvt1 == 0)
   {
     --filledBuffer;
     return;
@@ -148,7 +163,7 @@ void StPicoEventMixer::mixEvents() {
 	  for( int iTrk3 = 0; iTrk3 < nTracksEvt3; ++iTrk3) {
 	    StMixerTrack const pion = mEvents.at(iEvt3)->pionAt(iTrk3);
 
-	    // check if any of te tracks are the same
+	    // check if any of the tracks are the same
 	    if(iEvt2 == 0 && iEvt3 == 0) {
 	      StMixerEvent * event = mEvents.at(0);
 	      if(event->pionId(iTrk3) == event->kaonId(iTrk2) || event->pionId(iTrk3) == event->protonId(iTrk1) || event->kaonId(iTrk2) == event->protonId(iTrk1)) {
@@ -171,6 +186,10 @@ void StPicoEventMixer::mixEvents() {
 	    signBits <<=1;
 	    signBits += (pion.charge() > 0);
 
+	    cout << "charge = " << signBits << endl;
+	    // Fill the NTuples here
+	    // tbd
+
 	    if(iEvt2 == 0 && iEvt2 == 0)
 	      mHists->fillSameEvtTriplet(&triplet, signBits );
 	    else
@@ -183,6 +202,16 @@ void StPicoEventMixer::mixEvents() {
   --filledBuffer;
   delete mEvents.at(0);
   mEvents.erase(mEvents.begin());
+}
+// _________________________________________________________
+void StPicoEventMixer::fillCentralities(StMixerEvent* evt, bool isSameEvt)
+{
+  // tbd
+}
+// _________________________________________________________
+void StPicoEventMixer::fillTracks(StMixerEvent* evt, bool isSameEvt int pidFlag)
+{
+  // tbd
 }
 // _________________________________________________________
 bool StPicoEventMixer::isMixerPion(StMixerTrack const& track) {
