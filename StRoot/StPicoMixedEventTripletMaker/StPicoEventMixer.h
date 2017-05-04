@@ -71,7 +71,6 @@ class StPicoEventMixer {
   bool isGoodTriplet(StMixerTriplet const& triplet);
   int getLcPtIndex(StMixerTriplet const& pair) const;
 
-  void fillCentralities(StMixerEvent* evt, bool isSameEvt);
   void fillTracks(StMixerEvent* evt, bool isSameEvt, int PidFlag);
   
   std::vector <StMixerEvent*> mEvents; 
@@ -86,7 +85,9 @@ class StPicoEventMixer {
   TNtuple *mMETuple;
   TList *mSingleParticleList;
 
-  bool fillSinglePartHists;
+  void fillSinglePartHists(bool isMixedEvt);
+  void fillCentralities(bool isMixedEvt);
+
 };
 
 inline void StPicoEventMixer::setEventBuffer(int buffer){ mEventsBuffer = buffer;}

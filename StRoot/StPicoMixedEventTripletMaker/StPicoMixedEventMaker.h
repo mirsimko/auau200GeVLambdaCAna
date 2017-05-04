@@ -58,6 +58,7 @@ class StPicoMixedEventMaker : public StMaker
     enum  mixerConst { defaultBufferSize = 5, fillSingleTrackHistos = 1}; // enum trick to setting class-speciffic constants
  private:
     int categorize(StPicoDst const*);
+    void fillCentralities();
     StPicoDst*      mPicoDst;
     StPicoDstMaker* mPicoDstMaker;      
     StPicoEvent*    mPicoEvent;         

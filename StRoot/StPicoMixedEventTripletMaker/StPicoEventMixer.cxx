@@ -204,9 +204,14 @@ void StPicoEventMixer::mixEvents() {
   mEvents.erase(mEvents.begin());
 }
 // _________________________________________________________
-void StPicoEventMixer::fillCentralities(StMixerEvent* evt, bool isSameEvt)
+void StPicoEventMixer::fillCentralities()
 {
-  // tbd
+  int const centrality = mGRefMultCorrUtil->getCentralityBin9() ;
+  float const centralityWeight = mGRefMultCorrUtil->getWeight();
+  float const refMultCorr = mGRefMultCorrUtil->getRefMultCorr();
+  static_cast<TH1D*>(mSingePartHists->FindObject("centrality"))->Fill(centrality);
+  static_cast<TH1D*>(mSingePartHists->FindObject("centralityCorrection"))->Fill(centrality, centralityWeight);
+  static_cast<TH1D*>(mSingePartHists->FindObject("refMult"))->Fill(refMultCorr);
 }
 // _________________________________________________________
 void StPicoEventMixer::fillTracks(StMixerEvent* evt, bool isSameEvt int pidFlag)
