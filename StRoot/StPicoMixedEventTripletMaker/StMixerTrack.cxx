@@ -10,20 +10,24 @@ StMixerTrack::StMixerTrack() :
 {
 }
 StMixerTrack::StMixerTrack(StThreeVectorF const & pVtx, float B,StPicoTrack const& picoTrack, bool isTpcPi, bool isTofPi, bool isTpcK, bool isTofK, bool isTpcP, bool isTofP) :
-    mOrigin(picoTrack.helix().origin()), 
+    mOrigin(), 
     mMom(picoTrack.gMom(pVtx,B)), 
     mTrackInfo(0)
 {
-    if( picoTrack.charge() == 1 ) mTrackInfo = mTrackInfo | 1;
-    //Pi
-    if( isTpcPi == true ) mTrackInfo = mTrackInfo | (1 << 1);
-    if( isTofPi == true ) mTrackInfo = mTrackInfo | (1 << 2);
-    //K
-    if( isTpcK == true ) mTrackInfo = mTrackInfo | (1 << 3);
-    if( isTofK == true ) mTrackInfo = mTrackInfo | (1 << 4);
-    //p
-    if( isTpcP == true ) mTrackInfo = mTrackInfo | (1 << 5);
-    if( isTofP == true ) mTrackInfo = mTrackInfo | (1 << 6);
+  StPhysicalHelix helix = picoTrack.helix();
+  helix.moveOrigin(helix.pathLength(pVtx));
+  mOrigin = helix.origin();
+
+  if( picoTrack.charge() == 1 ) mTrackInfo = mTrackInfo | 1;
+  //Pi
+  if( isTpcPi == true ) mTrackInfo = mTrackInfo | (1 << 1);
+  if( isTofPi == true ) mTrackInfo = mTrackInfo | (1 << 2);
+  //K
+  if( isTpcK == true ) mTrackInfo = mTrackInfo | (1 << 3);
+  if( isTofK == true ) mTrackInfo = mTrackInfo | (1 << 4);
+  //p
+  if( isTpcP == true ) mTrackInfo = mTrackInfo | (1 << 5);
+  if( isTofP == true ) mTrackInfo = mTrackInfo | (1 << 6);
 
 }
 StMixerTrack::StMixerTrack(StMixerTrack const * t) : 

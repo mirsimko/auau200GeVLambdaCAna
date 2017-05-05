@@ -38,6 +38,7 @@ class StMixerTrack;
 class StMixerEvent;
 class StMixerTriplet;
 class StMixerHists;
+class StRefMultCorr;
 
 class StPicoEventMixer {
  public: 
@@ -49,13 +50,14 @@ class StPicoEventMixer {
   void setEventBuffer(int buffer);
   void setSameEvtNtuple(TNtuple *tuple)  { mSETuple = tuple; }
   void setMixedEvtNtuple(TNtuple *tuple) { mMETuple = tuple; }
-  void setSinglePartHistsList(TList *list) { mSingleParticleList = list; }
   void mixEvents();
   void finish();
   void setHFCuts(StHFCuts * hfCuts) { mHFCuts = hfCuts; }
   StHFCuts * getHFCuts() { return mHFCuts; }
+
   void setFillSinglePartHists(bool yesOrNo) { fillSinglePartHists = yesOrNo; }
   bool isFillingSinglePartHists() { return fillSinglePartHists; }
+  void setSinglePartHistsList(TList *list) { mSingleParticleList = list; } 
 
  private:
   bool isMixerPion(StMixerTrack const&);
@@ -85,9 +87,7 @@ class StPicoEventMixer {
   TNtuple *mMETuple;
   TList *mSingleParticleList;
 
-  void fillSinglePartHists(bool isMixedEvt);
-  void fillCentralities(bool isMixedEvt);
-
+  bool fillSinglePartHists;
 };
 
 inline void StPicoEventMixer::setEventBuffer(int buffer){ mEventsBuffer = buffer;}

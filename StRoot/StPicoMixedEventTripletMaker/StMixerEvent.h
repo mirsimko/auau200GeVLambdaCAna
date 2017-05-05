@@ -52,6 +52,8 @@ class StMixerEvent{
   StMixerTrack protonAt(int const); 
   StThreeVectorF const & vertex() const;
   double const field() const;
+  void setWeight(float weight) { mWeightFromCentrality = weight; }
+  float weight() { return mWeightFromCentrality; }
  private:
   StThreeVectorF mVtx;
   float mBField;
@@ -59,6 +61,7 @@ class StMixerEvent{
   std::vector <int  > mEventKaons;
   std::vector <int  > mEventPions;
   std::vector <int  > mEventProtons;
+  float mWeightFromCentrality;
 };
 inline void StMixerEvent::setPos( float const vx, float const vy, float const vz){
   mVtx = StThreeVectorF(vx, vy, vz);

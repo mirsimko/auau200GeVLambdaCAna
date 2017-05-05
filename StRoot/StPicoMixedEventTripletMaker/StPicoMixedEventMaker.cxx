@@ -3,6 +3,7 @@
 #include "TFile.h"
 #include "TChain.h"
 #include "TH1.h"
+#include "TH2.h"
 #include "TList.h"
 #include "TString.h" // needed for the Form(...)
 
@@ -91,11 +92,6 @@ StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* p
       mSingePartHists->Add(new TH2D(Form("%sPhiPt%s",partNames[ iPart ].data(), evtNames[i].data()), 
 				    Form("%s phi vs pT %s",partNames[ iPart ].data(), evtNames[i].data()), 
 				    100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-
-      // NSigma vs pT
-      mSingePartHists->Add(new TH2D(Form("%sNSigmaPt%s",partNames[ iPart ].data(), evtNames[i].data()),
-				    Form("%s nSigma vs pT %s",partNames[ iPart ].data(), evtNames[i].data()), 
-				    100, 0, 10, 50, -4, 4));
 
       // DCA
       mSingePartHists->Add(new TH1D(Form("%sDCA%s",partNames[ iPart ].data(), evtNames[i].data()),
