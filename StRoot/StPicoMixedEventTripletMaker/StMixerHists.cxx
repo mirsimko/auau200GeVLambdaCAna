@@ -7,10 +7,10 @@ StMixerHists::StMixerHists(char* fileBaseName):
   mSE_Vtx = new TH2F(Form("%s_seVtx",fileBaseName),"Vertex pos;vertex x;vertex y",250,-2.5,2.5,250,-2.5,2.5);
   mME_Vtx = new TH2F(Form("%s_meVtx",fileBaseName),"Vertex pos;vertex x;vertex y",250,-2.5,2.5,250,-2.5,2.5);
 
-  mSE_LS = new TH2F(Form("%s_se_ls_mass",fileBaseName),"Same Event good sign triplet Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{p}}(GeV/c^{2})",150,0,15,250,0,2.5);
-  mSE_US = new TH2F(Form("%s_se_us_mass",fileBaseName),"Same Event wrong sign triplet Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{}p}(GeV/c^{2})",150,0,15,250,0,2.5);
-  mME_LS = new TH2F(Form("%s_me_ls_mass",fileBaseName),"Mixed Event good sign Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{}p}(GeV/c^{2})",150,0,15,250,0,2.5);
-  mME_US = new TH2F(Form("%s_me_us_mass",fileBaseName),"Mixed Event wrong sign triplet Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{}p}(GeV/c^{2})",150,0,15,250,0,2.5);
+  mSE_LS = new TH2F(Form("%s_se_ls_mass",fileBaseName),"Same Event wrong sign triplet Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{p}}(GeV/c^{2})",150,0,15,250,0,2.5);
+  mSE_US = new TH2F(Form("%s_se_us_mass",fileBaseName),"Same Event correct sign triplet Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{}p}(GeV/c^{2})",150,0,15,250,0,2.5);
+  mME_LS = new TH2F(Form("%s_me_ls_mass",fileBaseName),"Mixed Event wrong sign Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{}p}(GeV/c^{2})",150,0,15,250,0,2.5);
+  mME_US = new TH2F(Form("%s_me_us_mass",fileBaseName),"Mixed Event correct sign triplet Invariant mass(K#pi^{}p);p_{T}(K#pi^{}p)(GeV/c),Mass_{K#pi^{}p}(GeV/c^{2})",150,0,15,250,0,2.5);
 }
 StMixerHists::~StMixerHists()
 {

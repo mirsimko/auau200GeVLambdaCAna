@@ -106,7 +106,7 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
   //   return false;
   // }
   //Returns true if need to do mixing, false if buffer has space still
-  if ( filledBuffer == mEventsBuffer - 1 )
+  if ( filledBuffer == mEventsBuffer)
     return true;
   return false;
 }
