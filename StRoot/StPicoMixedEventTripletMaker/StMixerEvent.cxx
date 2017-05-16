@@ -1,6 +1,7 @@
 #include <limits>
 
 #include "StMixerEvent.h"
+#include "StPicoDstMaker/StPicoEvent.h"
 
 StMixerEvent::StMixerEvent() :  mVtx(StThreeVectorF()),
     mBField(std::numeric_limits<float>::quiet_NaN()),
@@ -36,4 +37,9 @@ void StMixerEvent::addKaon(int arrayId)
 void StMixerEvent::addProton(int arrayId)
 {
   mEventProtons.push_back(arrayId);
+}
+void StMixerEvent::addPicoEvent(StPicoEvent const & event)
+{
+  mEventId = event.eventId();
+  mRunId = event.runId();
 }

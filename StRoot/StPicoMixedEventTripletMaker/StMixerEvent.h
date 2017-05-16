@@ -27,6 +27,7 @@
  */
 
 class StMixerTrack;
+class StPicoEvent;
 
 class StMixerEvent{
  public:
@@ -54,6 +55,11 @@ class StMixerEvent{
   double const field() const;
   void setWeight(float weight) { mWeightFromCentrality = weight; }
   float weight() { return mWeightFromCentrality; }
+
+  int eventId() { return mEventId; }
+  int runId() { return mRunId; }
+  void addPicoEvent(StPicoEvent const & event);
+
  private:
   StThreeVectorF mVtx;
   float mBField;
@@ -62,6 +68,9 @@ class StMixerEvent{
   std::vector <int  > mEventPions;
   std::vector <int  > mEventProtons;
   float mWeightFromCentrality;
+
+  int mEventId;
+  int mRunId;
 };
 inline void StMixerEvent::setPos( float const vx, float const vy, float const vz){
   mVtx = StThreeVectorF(vx, vy, vz);

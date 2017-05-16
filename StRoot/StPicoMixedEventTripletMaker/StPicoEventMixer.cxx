@@ -55,6 +55,9 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
   int nTracks = picoDst->numberOfTracks();
   StThreeVectorF pVertex = picoDst->event()->primaryVertex();
   StMixerEvent* event = new StMixerEvent(pVertex, picoDst->event()->bField());
+
+  event->addPicoEvent(*(picoDst->event()));
+
   bool isTpcPi = false;
   bool isTofPi = false;
   bool isTpcP  = false;
@@ -212,6 +215,7 @@ void StPicoEventMixer::mixEvents() {
 
 	    if(iEvt2 == 0 && iEvt2 == 0)
 	    {
+	      cout << "Evt " << mEvents.at(0)->eventId() << endl;
 	      mHists->fillSameEvtTriplet(&triplet, signBits ,mEvents.at(0)->weight());
 	    }
 	    else
