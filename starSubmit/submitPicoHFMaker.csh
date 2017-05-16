@@ -26,7 +26,7 @@
 #    1 - kProtonK0short
 #    2 - kLambdaPion
 #    3 - Mixed Event
-set decayChannel=0
+set decayChannel=3
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
@@ -55,7 +55,7 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
 # set input=${baseFolder}/lists/${tree}/${tree}_all.list
 # set input=${baseFolder}/treeLists/${tree}_allTrees.list
-set input=${baseFolder}/picoLists/picoList_all.list
+set input=${baseFolder}/picoList_all_cleaned.list
 # set input=${baseFolder}/prodListAug15.list
 # set input=${baseFolder}/20160817.picoDst.Miro.list
 # set input=${baseFolder}/divideList/listAll0.list
@@ -66,12 +66,12 @@ set input=${baseFolder}/picoLists/picoList_all.list
 #    1 - kWrite
 #    2 - kRead
 #    3 - Mixed Event
-set makerMode=0
+set makerMode=3
 
 # -- set root macro
 if ( $decayChannel == 3 && $makerMode == 3 ) then
   set rootMacro=runPicoMixedEventTriplets.C
-else if ( $decayChannel == 3 || $makerMode == 3 ) then
+else if ( $decayChannel == 3 || $makerMode == 3 ) then # one of them is 3, but the other one is not
   echo Invalid decay channel or maker mode. Exiting ....
   exit 1
 else

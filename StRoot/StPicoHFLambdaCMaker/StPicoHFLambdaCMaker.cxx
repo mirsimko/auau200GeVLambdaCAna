@@ -13,6 +13,7 @@
 #include "StThreeVectorF.hh"
 #include "StLorentzVectorF.hh"
 #include "phys_constants.h"
+#include "StPhysicalHelixD.hh"
 
 #include "StPicoDstMaker/StPicoDst.h"
 #include "StPicoDstMaker/StPicoDstMaker.h"
@@ -81,6 +82,7 @@ int StPicoHFLambdaCMaker::InitHF() {
   mSinglePartList->SetOwner(true);
   mSinglePartList->SetName("HFSinglePartHists");
 
+  std::string partNames[3] = {"pi", "p", "K"};
   // create single particle hists
   mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
   mSinglePartList->Add(new TH1D("centralityCorrection","centrality corrected", 10, -1.5, 8.5));
@@ -98,6 +100,27 @@ int StPicoHFLambdaCMaker::InitHF() {
   mSinglePartList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
 
   mSinglePartList->Add(new TH1D("refMult", "corrected refferernce multiplicity", 100, 0, 800));
+
+  for (int iPart = 0; iPart < 3; ++iPart)
+  {
+    mSinglePartList->Add(new TH1D((partNames[iPart] + static_cast<std::string>("DCA")).data(),
+				  (partNames[iPart] + static_cast<std::string>(" DCA")).data(), 
+				  200, 0, 0.02));
+
+    mSinglePartList->Add(new TH1D((partNames[iPart] + static_cast<std::string>("tracks")).data(),
+				  (static_cast<std::string>("Number of ") + partNames[iPart] + static_cast<std::string>(" tracks")).data(), 
+				  100, -0.5, 99.5));
+  }
+
+  // loop over all histograms to set Sumw2
+  TH1* hist = static_cast<TH1*>(mSinglePartList->First());
+  hist->Sumw2();
+  while(hist != static_cast<TH1*>(mSinglePartList->Last()))
+  {
+    hist = static_cast<TH1*>(mSinglePartList->After(hist));
+    hist->Sumw2();
+  }
+
   mRunNumber = 0;
 
   return kStOK;
@@ -580,8 +603,6 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       signBits <<=1;
       signBits += (pion->charge() > 0);
 
-      float isCorrectSign = (kaon->charge() != pion->charge() && pion->charge() == proton->charge()) ? 1. : -1.;
-
       float const KEta = kaon->gMom(mPrimVtx, mBField).pseudoRapidity();
       float const pEta = proton->gMom(mPrimVtx, mBField).pseudoRapidity();
       float const piEta = pion->gMom(mPrimVtx, mBField).pseudoRapidity();
@@ -620,7 +641,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
 }
 // _________________________________________________________
 
-int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
+void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
   std::string partName;
   std::vector<unsigned short>* partIdxVector;
   switch ( pidFlag )
@@ -639,12 +660,16 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     break;
   default:
     std::cerr << "StPicoHFLambdaCMaker::fillSingleParticleHistos: wrong particle code." << endl;
-    return -1;
+    return;
   }
 
   TH2D *etaPhiHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sEtaPhi", partName.data()) ));
   TH2D *phiPtHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sPhiPt", partName.data()) ));
   TH2D *nSigmaHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sNSigmaPt", partName.data()) ));
+  TH1D *dcaHist = static_cast<TH1D*>(mSinglePartList->FindObject( Form("%sDCA", partName.data()) ));
+  TH1D *nTracksHist = static_cast<TH1D*>(mSinglePartList->FindObject( Form("%stracks", partName.data()) ));
+
+  nTracksHist->Fill(partIdxVector->size());
   
   for(unsigned short idxPart = 0; idxPart < partIdxVector->size(); ++idxPart)
   {
@@ -654,6 +679,11 @@ int StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     StThreeVectorF const gMom = trk->gMom(mPrimVtx, mBField);
     etaPhiHist->Fill(gMom.phi(), gMom.pseudoRapidity());
     phiPtHist->Fill(pt, gMom.phi());
+        
+    StPhysicalHelixD helix = trk->dcaGeometry().helix();
+    helix.moveOrigin(helix.pathLength(mPrimVtx));
+    float dca = (mPrimVtx - helix.origin()).mag();
+    dcaHist->Fill(dca);
 
     float nSigma;
     switch (pidFlag)
@@ -690,7 +720,7 @@ void StPicoHFLambdaCMaker::calculateCentrality()
 }
 // _________________________________________________________
 
-int StPicoHFLambdaCMaker::fillControlHistos() {
+void StPicoHFLambdaCMaker::fillControlHistos() {
   // fill control plots for single particles
 
   int const centrality = mRefmultCorrUtil->getCentralityBin9() ;

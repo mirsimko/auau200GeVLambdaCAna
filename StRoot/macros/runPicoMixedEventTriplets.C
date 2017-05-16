@@ -65,7 +65,7 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   // ========================================================================================
   //   Testing 
   // ========================================================================================
-  Int_t nEvents = 1e5;
+  Int_t nEvents = 1e9;
   //Int_t nEvents = 1000;
   if (nEvents < 1e8)
     cout << "Warning: the number of events is set to " << nEvents << endl;

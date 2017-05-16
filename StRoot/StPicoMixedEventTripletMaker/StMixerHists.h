@@ -32,10 +32,10 @@ class StMixerHists
   StMixerHists(char* fileBaseName);
   ~StMixerHists();
 
-  void fillSameEvt(const StThreeVectorF& vtx);
-  void fillMixedEvt(const StThreeVectorF& vtx);
-  void fillSameEvtTriplet(StMixerTriplet const* const, int charge);
-  void fillMixedEvtTriplet(StMixerTriplet const* const, int charge);
+  void fillSameEvt(const StThreeVectorF& vtx, float weight);
+  void fillMixedEvt(const StThreeVectorF& vtx, float weight);
+  void fillSameEvtTriplet(StMixerTriplet const* const, int charge, float weight);
+  void fillMixedEvtTriplet(StMixerTriplet const* const, int charge, float weight);
   void closeFile();
  private:
   TH2F* mSE_Vtx;
@@ -45,32 +45,32 @@ class StMixerHists
   TH2F* mME_LS;
   TH2F* mME_US;
 };
-inline void StMixerHists::fillSameEvt(const StThreeVectorF& vtx)
+inline void StMixerHists::fillSameEvt(const StThreeVectorF& vtx, float weight)
 {
-  mSE_Vtx->Fill(vtx.x(), vtx.y());
+  mSE_Vtx->Fill(vtx.x(), vtx.y(), weight);
 }
-inline void StMixerHists::fillMixedEvt(const StThreeVectorF& vtx)
+inline void StMixerHists::fillMixedEvt(const StThreeVectorF& vtx, float weight)
 {
-  mME_Vtx->Fill(vtx.x(), vtx.y());
+  mME_Vtx->Fill(vtx.x(), vtx.y(), weight);
 }
-inline void StMixerHists::fillSameEvtTriplet(StMixerTriplet const* const triplet, int charge)
+inline void StMixerHists::fillSameEvtTriplet(StMixerTriplet const* const triplet, int charge, float weight)
 {
   if(charge == 3 || charge == 4 ) // binary b011 for LC+ or b100 for LC-
   {
-    mSE_US-> Fill(triplet->pt(),triplet->m());
+    mSE_US-> Fill(triplet->pt(),triplet->m(), weight);
   }
   else
   {
-    mSE_LS-> Fill(triplet->pt(),triplet->m());
+    mSE_LS-> Fill(triplet->pt(),triplet->m(), weight);
   }
   cout << "SE triplet" << endl;
 }
-inline void StMixerHists::fillMixedEvtTriplet(StMixerTriplet const* const triplet, int charge)
+inline void StMixerHists::fillMixedEvtTriplet(StMixerTriplet const* const triplet, int charge, float weight)
 {
   if(charge == 3 || charge == 4 ) // binary b011 for LC+ or b100 for LC-
-    mME_US-> Fill(triplet->pt(),triplet->m());
+    mME_US-> Fill(triplet->pt(),triplet->m(), weight);
   else
-    mME_LS-> Fill(triplet->pt(),triplet->m());
+    mME_LS-> Fill(triplet->pt(),triplet->m(), weight);
   cout << "ME triplet" << endl;
 }
 #endif
