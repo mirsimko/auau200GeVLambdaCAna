@@ -95,8 +95,8 @@ protected:
 private:
   int createCandidates();
   int analyzeCandidates();
-  int fillControlHistos();
-  int fillSingleParticleHistos(int pidFlag);
+  void fillControlHistos();
+  void fillSingleParticleHistos(int pidFlag);
   void calculateCentrality();
 
   // -- private members --------------------------

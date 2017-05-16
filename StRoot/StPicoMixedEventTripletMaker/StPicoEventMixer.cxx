@@ -132,7 +132,7 @@ void StPicoEventMixer::mixEvents() {
       if( iEvt2 == 0  && iEvt3 == 0)
       {
 	StMixerEvent *evt  = mEvents.at(0);
-	mHists->fillSameEvt(evt->vertex());
+	mHists->fillSameEvt(evt->vertex(), evt->weight());
 	if(fillSinglePartHists)
 	{
 	  const bool isSame = true;
@@ -146,10 +146,10 @@ void StPicoEventMixer::mixEvents() {
 	if(iEvt3 == iEvt2 || iEvt2 == 0 || iEvt3 == 0)
 	  continue;
 
-	mHists->fillMixedEvt(mEvents.at(0)->vertex());
+	mHists->fillMixedEvt(mEvents.at(0)->vertex(), mEvents.at(0)->weight());
 	if(fillSinglePartHists)
 	{
-	  const bool isSame = true;
+	  const bool isSame = false;
 	  fillTracks(mEvents.at(0),isSame,StHFCuts::kProton);
 	  fillTracks(mEvents.at(iEvt2),isSame,StHFCuts::kKaon);
 	  fillTracks(mEvents.at(iEvt3),isSame,StHFCuts::kPion);
@@ -212,11 +212,11 @@ void StPicoEventMixer::mixEvents() {
 
 	    if(iEvt2 == 0 && iEvt2 == 0)
 	    {
-	      mHists->fillSameEvtTriplet(&triplet, signBits );
+	      mHists->fillSameEvtTriplet(&triplet, signBits ,mEvents.at(0)->weight());
 	    }
 	    else
 	    {
-	      mHists->fillMixedEvtTriplet(&triplet, signBits);
+	      mHists->fillMixedEvtTriplet(&triplet, signBits, mEvents.at(0)->weight());
 	    }
 	  } //first event track loop 
 	} //second event track loop
@@ -258,6 +258,8 @@ void StPicoEventMixer::fillTracks(StMixerEvent* evt, bool isSameEvt, int pidFlag
   TH2D *etaPhiHist = static_cast<TH2D*>(mSingleParticleList->FindObject(Form("%sEtaPhi%s",particleName.data(), evtName.data())));
   TH2D *phiPtHist  = static_cast<TH2D*>(mSingleParticleList->FindObject(Form("%sPhiPt%s",particleName.data(), evtName.data())));
   TH1D *dcaHist = static_cast<TH1D*>(mSingleParticleList->FindObject(Form("%sDCA%s",particleName.data(), evtName.data())));
+  TH1D *nTracksHist = static_cast<TH1D*>(mSingleParticleList->FindObject(Form("%stracks%s",particleName.data(), evtName.data())));
+  nTracksHist->Fill(nTracks);
 
   // particle loop
   const float weight = evt->weight();
@@ -278,8 +280,8 @@ void StPicoEventMixer::fillTracks(StMixerEvent* evt, bool isSameEvt, int pidFlag
     const float pt = trk.gMom().perp();
     const float dca  = (trk.origin() - evt->vertex()).mag();
 
-    etaPhiHist->Fill(eta,phi,weight);
-    phiPtHist->Fill(phi,pt, weight);
+    etaPhiHist->Fill(phi,eta,weight);
+    phiPtHist->Fill(pt,phi, weight);
     dcaHist->Fill(dca, weight);
   }
 

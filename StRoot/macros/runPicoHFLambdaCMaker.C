@@ -151,8 +151,8 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
   // set refmultCorr ... required for the centrality data
   StRefMultCorr* grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr_P16id();
-  mRefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
-  mRefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
+  grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
+  grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
   picoHFLambdaCMaker->setRefMutCorr(grefmultCorrUtil);
   if(!picoHFLambdaCMaker->getRefMultCorr())
   {

@@ -77,9 +77,9 @@ StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* p
 
   for (int i = 0; i < 2; ++i)
   {
-    mSingePartHists->Add(new TH1D(Form("centrality%s", evtNames[i].data()),Form("centrality%s", evtNames[i].data()), 10, -1.5, 8.5));
-    mSingePartHists->Add(new TH1D(Form("centralityCorrection%s", evtNames[i].data()),Form("centrality corrected %s", evtNames[i].data()), 10, -1.5, 8.5));
-    mSingePartHists->Add(new TH1D(Form("refMult%s", evtNames[i].data()), Form("corrected refferernce multiplicity %s", evtNames[i].data()), 100, 0, 800));
+    // mSingePartHists->Add(new TH1D(Form("centrality%s", evtNames[i].data()),Form("centrality%s", evtNames[i].data()), 10, -1.5, 8.5));
+    // mSingePartHists->Add(new TH1D(Form("centralityCorrection%s", evtNames[i].data()),Form("centrality corrected %s", evtNames[i].data()), 10, -1.5, 8.5));
+    // mSingePartHists->Add(new TH1D(Form("refMult%s", evtNames[i].data()), Form("corrected refferernce multiplicity %s", evtNames[i].data()), 100, 0, 800));
 
     for (int iPart = 0; iPart < 3; ++iPart)
     {
@@ -96,15 +96,28 @@ StPicoMixedEventMaker::StPicoMixedEventMaker(char const* name, StPicoDstMaker* p
       // DCA
       mSingePartHists->Add(new TH1D(Form("%sDCA%s",partNames[ iPart ].data(), evtNames[i].data()),
 				    Form("%s DCA %s",partNames[ iPart ].data(), evtNames[i].data()), 
-				    50, 0, 10));
+				    200, 0, 0.02));
+      // nTracks
+      mSingePartHists->Add(new TH1D(Form("%stracks%s",partNames[ iPart ].data(), evtNames[i].data()),
+				    Form("Number of %s tracks %s",partNames[ iPart ].data(), evtNames[i].data()), 
+				    100, -0.5, 99.5));
     }
   }
+
+  // loop over all histograms to set Sumw2
+  TH1* hist = static_cast<TH1*>(mSingePartHists->First());
+  hist->Sumw2();
+  while(hist != static_cast<TH1*>(mSingePartHists->Last()))
+  {
+    hist = static_cast<TH1*>(mSingePartHists->After(hist));
+    hist->Sumw2();
+  }
+
 }
 
 // _________________________________________________________
 StPicoMixedEventMaker::~StPicoMixedEventMaker() {
 
-  delete mGRefMultCorrUtil;
   for(int iVz =0 ; iVz < 10 ; ++iVz){
     for(int iCentrality = 0 ; iCentrality < 9 ; ++iCentrality){
       delete mPicoEventMixer[iVz][iCentrality];
@@ -131,7 +144,6 @@ Int_t StPicoMixedEventMaker::Init() {
 	mPicoEventMixer[iVz][iCentrality]->setFillSinglePartHists(fillSingleTrackHistos);
       }
     }
-    mGRefMultCorrUtil = new StRefMultCorr("grefmult");
     // if(!LoadEventPlaneCorr(mRunId)){
     // LOG_WARN << "Event plane calculations unavalable! Skipping"<<endm;
     // return kStOk;

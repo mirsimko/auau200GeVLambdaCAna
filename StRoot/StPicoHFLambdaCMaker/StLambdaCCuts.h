@@ -80,6 +80,7 @@ namespace StLambdaCCuts
 				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
       hfCuts->setCutSecondaryTripletDcaToPvMax(LCdcaToPv);
 
+      hfCuts->setCutSecondaryTripletPtMin(3.);
     }
   } // namespace threePartDecayRead
   //___________________________________________________________________
