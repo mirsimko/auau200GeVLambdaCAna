@@ -46,7 +46,7 @@ class StPicoEventMixer {
 
   StPicoEventMixer(char* category);
   ~StPicoEventMixer();
-  bool addPicoEvent(StPicoDst const* picoDst);
+  bool addPicoEvent(StPicoDst const* picoDst, float weight = 1.);
   void setEventBuffer(int buffer);
   void setSameEvtNtuple(TNtuple *tuple)  { mSETuple = tuple; }
   void setMixedEvtNtuple(TNtuple *tuple) { mMETuple = tuple; }

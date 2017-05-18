@@ -210,7 +210,7 @@ Int_t StPicoMixedEventMaker::Make() {
     //     7            40-45%             5-10%
     //     8            35-40%             0- 5%
 
-    if( mPicoEventMixer[vz_bin][centrality] -> addPicoEvent(picoDst) ==  true )
+    if( mPicoEventMixer[vz_bin][centrality] -> addPicoEvent(picoDst, mGRefMultCorrUtil->getWeight()) ==  true )
       mPicoEventMixer[vz_bin][centrality]->mixEvents();
 
     return kStOk;

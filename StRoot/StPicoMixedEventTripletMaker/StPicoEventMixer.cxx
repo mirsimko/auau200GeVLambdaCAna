@@ -48,7 +48,7 @@ void StPicoEventMixer::finish() {
   mHists->closeFile();
 }
 //-----------------------------------------------------------
-bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
+bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst, float weight)
 {
   if( !isGoodEvent(picoDst) )
     return false;
@@ -57,6 +57,7 @@ bool StPicoEventMixer::addPicoEvent(StPicoDst const* const picoDst)
   StMixerEvent* event = new StMixerEvent(pVertex, picoDst->event()->bField());
 
   event->addPicoEvent(*(picoDst->event()));
+  event->setWeight(weight);
 
   bool isTpcPi = false;
   bool isTofPi = false;
