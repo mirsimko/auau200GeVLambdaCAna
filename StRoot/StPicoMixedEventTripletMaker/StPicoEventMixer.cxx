@@ -210,13 +210,13 @@ void StPicoEventMixer::mixEvents() {
 	    signBits <<=1;
 	    signBits += (pion.charge() > 0);
 
-	    cout << "charge = " << signBits << endl;
+	    // cout << "charge = " << signBits << endl;
 	    // Fill the NTuples here
 	    // tbd
 
 	    if(iEvt2 == 0 && iEvt2 == 0)
 	    {
-	      cout << "Evt " << mEvents.at(0)->eventId() << endl;
+	      // cout << "Evt " << mEvents.at(0)->eventId() << endl;
 	      mHists->fillSameEvtTriplet(&triplet, signBits ,mEvents.at(0)->weight());
 	    }
 	    else

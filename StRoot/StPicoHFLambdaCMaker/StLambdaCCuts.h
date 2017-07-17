@@ -72,8 +72,8 @@ namespace StLambdaCCuts
       const float LCdecayLengthMin  = 0.0234;  // minimum  60um
       const float LCdecayLengthMax  = 9999.;
       const float LCcosThetaMin     = 0.995;   // minimum
-      const float LCminMass         = 2.1;
-      const float LCmaxMass         = 2.5;
+      const float LCminMass         = 0.;
+      const float LCmaxMass         = 3.;
       const float LCdcaToPv         = 0.01;
 	
       hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax,

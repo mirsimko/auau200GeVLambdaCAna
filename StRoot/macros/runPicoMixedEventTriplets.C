@@ -100,7 +100,7 @@ void runPicoMixedEventTriplets(const Char_t *inputFile="test.list", const Char_t
   StHFCuts* hfCuts = new StHFCuts("lambdaCBaseCuts");
 
   StPicoMixedEventMaker* picoMixedEventMaker = new StPicoMixedEventMaker("picoMixedEventMaker", picoDstMaker, grefmultCorrUtil, hfCuts, outputFile, sInputListHF);
-  picoMixedEventMaker->setBufferSize(5); // store 5 events
+  picoMixedEventMaker->setBufferSize(7); // store 5 events
   // test refMultCorr
   if(!picoMixedEventMaker->getRefMultCorr())
   {
