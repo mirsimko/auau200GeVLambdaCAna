@@ -680,7 +680,7 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     etaPhiHist->Fill(gMom.phi(), gMom.pseudoRapidity());
     phiPtHist->Fill(pt, gMom.phi());
         
-    StPhysicalHelixD helix = trk->dcaGeometry().helix();
+    StPhysicalHelixD helix = trk->helix(mBField);
     helix.moveOrigin(helix.pathLength(mPrimVtx));
     float dca = (mPrimVtx - helix.origin()).mag();
     dcaHist->Fill(dca);

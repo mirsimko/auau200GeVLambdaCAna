@@ -14,12 +14,12 @@ void loadSharedHFLibraries() {
   gSystem->Load("StBTofUtil");
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StPicoCutsBase");
-  gSystem->Load("StPicoPrescales");
+  // gSystem->Load("StPicoPrescales");
   gSystem->Load("StPicoHFMaker");
   gSystem->Load("StRefMultCorr");
   cout << " loading of shared HF libraries are done" << endl;
 
   // -->>> ADD your own library/class HERE 
   gSystem->Load("StPicoHFLambdaCMaker");
-  gSystem->Load("StPicoMixedEventTripletMaker");
+  // gSystem->Load("StPicoMixedEventTripletMaker");
  }
