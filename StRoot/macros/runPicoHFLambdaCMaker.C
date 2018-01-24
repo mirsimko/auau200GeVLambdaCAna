@@ -378,7 +378,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     }
     else if (makerMode == StPicoHFMaker::kRead || makerMode == StPicoHFMaker::kAnalyze) {
       // moved to a sepparate header file
-      StLambdaCCuts::threePartDecayRead::setLambdaCCuts(hfCuts);
+      StLambdaCCuts::threePartDecayReadRun16::setLambdaCCuts(hfCuts);
     }
   }
   // making sure that StRefMultCorr is initiated (it is only used for the p,K,pi channel when analyzing candidates)

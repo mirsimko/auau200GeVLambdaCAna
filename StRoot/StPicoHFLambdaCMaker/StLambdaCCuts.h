@@ -88,5 +88,63 @@ namespace StLambdaCCuts
     }
   } // namespace threePartDecayRead
   //___________________________________________________________________
+
+
+  // a little more open cuts for run16 testing
+  namespace threePartDecayReadRun16
+  {
+    void setLambdaCCuts(StHFCuts * hfCuts)
+    {
+      if(!hfCuts)
+      {
+	using namespace std;
+	cerr << "threePartDecay::setCuts(...): no StHFCuts; exitting..." << endl;
+	return;
+      }
+
+      hfCuts->setCutPrimaryDCAtoVtxMax(std::numeric_limits<float>::max());    // DCA to check for TOF usage
+
+      const float piDcaMin = 0.006;
+      const float kDcaMin = 0.009;
+      const float pDcaMin = 0.007;
+
+      hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kPion);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kPion);
+      hfCuts->setCutDcaMin(piDcaMin, StPicoCutsBase::kPion);          // minimum 50um
+      hfCuts->setCutTPCNSigma(3., StPicoCutsBase::kPion);
+      hfCuts->setCutTOFDeltaOneOverBeta(0.03, StPicoCutsBase::kPion);
+      // hfCuts->setCutPtotRangeHybridTOF(0., 0., StPicoCutsBase::kPion); // TOF is not used for pions
+
+      hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kProton);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kProton);
+      hfCuts->setCutDcaMin(pDcaMin, StPicoCutsBase::kProton);        // minimum 50um
+      hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kProton);
+      hfCuts->setCutTOFDeltaOneOverBeta(0.03, StPicoCutsBase::kProton);
+      // hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kProton);
+
+      hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kKaon);
+      hfCuts->setCutEtaMax(1.,StPicoCutsBase::kKaon);
+      hfCuts->setCutDcaMin(kDcaMin, StPicoCutsBase::kKaon);          // minimum 50um
+      hfCuts->setCutTPCNSigma(2, StPicoCutsBase::kKaon);
+      hfCuts->setCutTOFDeltaOneOverBeta(0.03, StPicoCutsBase::kKaon);
+      // hfCuts->setCutPtotRangeTOF(0., 0., StPicoCutsBase::kKaon);
+
+      // -- LambdaC
+      const float LCdcaDaughtersMax = 0.0055;   // maximum 300um
+      const float LCdecayLengthMin  = 0.02;  // minimum  60um
+      const float LCdecayLengthMax  = 9999.;
+      const float LCcosThetaMin     = 0.994;   // minimum
+      const float LCminMass         = 2.1;
+      const float LCmaxMass         = 2.5;
+      const float LCdcaToPv         = 0.01;
+	
+      hfCuts->setCutSecondaryTriplet(LCdcaDaughtersMax, LCdcaDaughtersMax, LCdcaDaughtersMax,
+				     LCdecayLengthMin, LCdecayLengthMax, LCcosThetaMin, LCminMass, LCmaxMass);
+      hfCuts->setCutSecondaryTripletDcaToPvMax(LCdcaToPv);
+
+      hfCuts->setCutSecondaryTripletPtMin(3.);
+    }
+  }
+  //___________________________________________________________________
 }
 #endif
