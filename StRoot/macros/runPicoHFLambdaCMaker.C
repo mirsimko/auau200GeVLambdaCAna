@@ -36,6 +36,7 @@
 #include "TStopwatch.h"
 
 #include "StPicoDstMaker/StPicoDstMaker.h"
+#include "StPicoEvent/StPicoEvent.h"
 #include "StPicoHFMaker/StPicoHFEvent.h"
 #include "StPicoHFMaker/StHFCuts.h"
 #include "StRefMultCorr/StRefMultCorr.h"
@@ -73,7 +74,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
-  Int_t nEvents = 1e9;
+  Int_t nEvents = 100;
 
   if (nEvents < 1e8)
     cout << "Warning: the number of events is set to " << nEvents << endl;
@@ -139,7 +140,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     exit(1);
   }
 
-  StPicoDstMaker* picoDstMaker = new StPicoDstMaker(0, sInputFile, "picoDstMaker");
+  StPicoDstMaker* picoDstMaker = new StPicoDstMaker(StPicoDstMaker::IoRead, sInputFile, "picoDstMaker");
   StPicoHFLambdaCMaker* picoHFLambdaCMaker = new StPicoHFLambdaCMaker("picoHFLambdaCMaker", picoDstMaker, outputFile, sInputListHF);
   picoHFLambdaCMaker->setMakerMode(makerMode);
   picoHFLambdaCMaker->setDecayChannel(decayChannel);
