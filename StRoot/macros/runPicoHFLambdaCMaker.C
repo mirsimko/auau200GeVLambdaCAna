@@ -31,7 +31,7 @@
 #include "TSystem.h"
 #include "TChain.h"
 
-#include "StMaker.h"
+// #include "StMaker.h"
 #include "StChain.h"
 #include "TStopwatch.h"
 
@@ -67,7 +67,8 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 			   const unsigned int decayChannel = 0 /* kPionKaonProton */) { 
   // -- Check STAR Library. Please set SL_version to the original star library used in the production 
   //    from http://www.star.bnl.gov/devcgi/dbProdOptionRetrv.pl
-  string SL_version = "SL16j";
+  // string SL_version = "SL16j";
+  string SL_version = "SL18a";
   string env_SL = getenv ("STAR");
   if (env_SL.find(SL_version)==string::npos) {
       cout<<"Environment Star Library does not match the requested library in runPicoHFLambdaCMaker.C. Exiting..."<<endl;
@@ -140,7 +141,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
     exit(1);
   }
 
-  StPicoDstMaker* picoDstMaker = new StPicoDstMaker(StPicoDstMaker::IoRead, sInputFile, "picoDstMaker");
+  StPicoDstMaker* picoDstMaker = new StPicoDstMaker(static_cast<StPicoDstMaker::PicoIoMode>(StPicoDstMaker::IoRead), sInputFile, "picoDstMaker");
   StPicoHFLambdaCMaker* picoHFLambdaCMaker = new StPicoHFLambdaCMaker("picoHFLambdaCMaker", picoDstMaker, outputFile, sInputListHF);
   picoHFLambdaCMaker->setMakerMode(makerMode);
   picoHFLambdaCMaker->setDecayChannel(decayChannel);
@@ -151,9 +152,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
 
 
   // set refmultCorr ... required for the centrality data
-  StRefMultCorr* grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr_P16id();
-  grefmultCorrUtil->setVzForWeight(6, -6.0, 6.0);
-  grefmultCorrUtil->readScaleForWeight("StRoot/StRefMultCorr/macros/weight_grefmult_vpd30_vpd5_Run14.txt");
+  StRefMultCorr* grefmultCorrUtil = CentralityMaker::instance()->getgRefMultCorr_P16id(); //new StRefMultCorr, info about Run16, SL16d in the same file as for Run14, SL16d
   picoHFLambdaCMaker->setRefMutCorr(grefmultCorrUtil);
   if(!picoHFLambdaCMaker->getRefMultCorr())
   {

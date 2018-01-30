@@ -17,6 +17,8 @@ namespace StLambdaCCuts
   //___________________________________________________________________
   void setEventCuts(StHFCuts * hfCuts)
   {
+    cout << "Setting event cuts ..." << endl;
+
     if(!hfCuts)
     {
       using namespace std;
@@ -95,6 +97,7 @@ namespace StLambdaCCuts
   {
     void setLambdaCCuts(StHFCuts * hfCuts)
     {
+      cout << "Setting Lc cuts ..." << endl;
       if(!hfCuts)
       {
 	using namespace std;

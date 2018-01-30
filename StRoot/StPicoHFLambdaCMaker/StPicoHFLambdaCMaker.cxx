@@ -122,7 +122,6 @@ int StPicoHFLambdaCMaker::InitHF() {
   }
 
   mRunNumber = 0;
-
   return kStOK;
 }
 
