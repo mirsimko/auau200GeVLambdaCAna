@@ -83,33 +83,36 @@ int StPicoHFLambdaCMaker::InitHF() {
   mSinglePartList->SetName("HFSinglePartHists");
 
   std::string partNames[3] = {"pi", "p", "K"};
+  std::string chargeNames[2] = {"plus", "minus"};
   // create single particle hists
   mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
   mSinglePartList->Add(new TH1D("centralityCorrection","centrality corrected", 10, -1.5, 8.5));
-
-  mSinglePartList->Add(new TH2D("piEtaPhi","pi Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-  mSinglePartList->Add(new TH2D("pEtaPhi","p Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-  mSinglePartList->Add(new TH2D("KEtaPhi","K Eta phi distribution", 100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
-
-  mSinglePartList->Add(new TH2D("piPhiPt", "pi phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-  mSinglePartList->Add(new TH2D("pPhiPt", "p phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-  mSinglePartList->Add(new TH2D("KPhiPt", "K phi vs pT", 100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
-
-  mSinglePartList->Add(new TH2D("piNSigmaPt","pi nSigma vs pT", 100, 0, 10, 50, -4, 4));
-  mSinglePartList->Add(new TH2D("pNSigmaPt","p nSigma vs pT", 100, 0, 10, 50, -4, 4));
-  mSinglePartList->Add(new TH2D("KNSigmaPt","K nSigma vs pT", 100, 0, 10, 50, -4, 4));
-
   mSinglePartList->Add(new TH1D("refMult", "corrected refferernce multiplicity", 100, 0, 800));
 
-  for (int iPart = 0; iPart < 3; ++iPart)
+  for(int iPart = 0; iPart < 3; ++iPart)
   {
-    mSinglePartList->Add(new TH1D((partNames[iPart] + static_cast<std::string>("DCA")).data(),
-				  (partNames[iPart] + static_cast<std::string>(" DCA")).data(), 
-				  200, 0, 0.02));
+    for(int charge = 0; charge < 2; ++charge)
+    {
+      mSinglePartList->Add(new TH2D( ( partNames[iPart] + chargeNames[charge] + static_cast<std::string>("EtaPhi") ).data(), 
+	    (partNames[iPart] + chargeNames[charge] + static_cast<std::string>(" Eta phi distribution") ).data(),
+	    100, -TMath::Pi(), TMath::Pi(), 100, -1.1, 1.1));
 
-    mSinglePartList->Add(new TH1D((partNames[iPart] + static_cast<std::string>("tracks")).data(),
-				  (static_cast<std::string>("Number of ") + partNames[iPart] + static_cast<std::string>(" tracks")).data(), 
-				  100, -0.5, 99.5));
+      mSinglePartList->Add(new TH2D(( partNames[iPart] + chargeNames[charge] + static_cast<std::string>("PhiPt")).data(),
+	    ( partNames[iPart] + chargeNames[charge] + static_cast<std::string>(" phi vs pT") ).data(), 
+	    100, 0, 15, 100, -TMath::Pi(), TMath::Pi()));
+
+      mSinglePartList->Add(new TH2D(( partNames[iPart] + chargeNames[charge] + static_cast<std::string>("NSigmaPt")).data(),
+	    ( partNames[iPart] + chargeNames[charge] + " nSigma vs pT" ).data(),
+	    100, 0, 10, 50, -4, 4));
+
+      mSinglePartList->Add(new TH1D((partNames[iPart] + chargeNames[charge]+ static_cast<std::string>("DCA")).data(),
+	    (partNames[iPart] + chargeNames[charge] + static_cast<std::string>(" DCA")).data(), 
+	    200, 0, 0.02));
+
+      mSinglePartList->Add(new TH1D((partNames[iPart] + chargeNames[charge] + static_cast<std::string>("tracks")).data(),
+	    (static_cast<std::string>("Number of ") + partNames[iPart] + chargeNames[charge] + static_cast<std::string>(" tracks")).data(), 
+	    100, -0.5, 99.5));
+    }
   }
 
   // loop over all histograms to set Sumw2
@@ -662,27 +665,50 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     return;
   }
 
-  TH2D *etaPhiHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sEtaPhi", partName.data()) ));
-  TH2D *phiPtHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sPhiPt", partName.data()) ));
-  TH2D *nSigmaHist = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%sNSigmaPt", partName.data()) ));
-  TH1D *dcaHist = static_cast<TH1D*>(mSinglePartList->FindObject( Form("%sDCA", partName.data()) ));
-  TH1D *nTracksHist = static_cast<TH1D*>(mSinglePartList->FindObject( Form("%stracks", partName.data()) ));
+  std::string sign[2] = {"minus", "plus"};
+  TH2D *etaPhiHist  [2];
+  TH2D *phiPtHist   [2];
+  TH2D *nSigmaHist  [2];
+  TH1D *dcaHist     [2];
+  TH1D *nTracksHist [2];
 
-  nTracksHist->Fill(partIdxVector->size());
+  for(int iCharge = 0; iCharge < 2; ++iCharge)
+  {
+    etaPhiHist[iCharge]  = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%s%sEtaPhi",   partName.data(), sign[iCharge].data()) ));
+    phiPtHist[iCharge]   = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%s%sPhiPt",    partName.data(), sign[iCharge].data()) ));
+    nSigmaHist[iCharge]  = static_cast<TH2D*>(mSinglePartList->FindObject( Form("%s%sNSigmaPt", partName.data(), sign[iCharge].data()) ));
+    dcaHist[iCharge]     = static_cast<TH1D*>(mSinglePartList->FindObject( Form("%s%sDCA",      partName.data(), sign[iCharge].data()) ));
+    nTracksHist[iCharge] = static_cast<TH1D*>(mSinglePartList->FindObject( Form("%s%stracks",   partName.data(), sign[iCharge].data()) ));
+  }
+
+  unsigned int Nminus = 0;
+  unsigned int Nplus  = 0;
   
   for(unsigned short idxPart = 0; idxPart < partIdxVector->size(); ++idxPart)
   {
     StPicoTrack *const trk = mPicoDst->track((*partIdxVector)[idxPart]);
 
+    unsigned int iCharge;
+    if(trk < 0)
+    {
+      iCharge = 0;
+      ++Nminus;
+    }
+    else
+    {
+      iCharge = 1;
+      ++Nplus;
+    }
+
     float const pt = trk->gPt();
     StThreeVectorF const gMom = trk->gMom(mPrimVtx, mBField);
-    etaPhiHist->Fill(gMom.phi(), gMom.pseudoRapidity());
-    phiPtHist->Fill(pt, gMom.phi());
+    etaPhiHist[iCharge]->Fill(gMom.phi(), gMom.pseudoRapidity());
+    phiPtHist[iCharge]->Fill(pt, gMom.phi());
         
     StPhysicalHelixD helix = trk->helix(mBField);
     helix.moveOrigin(helix.pathLength(mPrimVtx));
     float dca = (mPrimVtx - helix.origin()).mag();
-    dcaHist->Fill(dca);
+    dcaHist[iCharge]->Fill(dca);
 
     float nSigma;
     switch (pidFlag)
@@ -697,8 +723,11 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
       nSigma = trk->nSigmaPion();
       break;
     }
-    nSigmaHist->Fill(pt, nSigma);
+    nSigmaHist[iCharge]->Fill(pt, nSigma);
   }
+
+  nTracksHist[0]->Fill(Nminus);
+  nTracksHist[1]->Fill(Nplus );
 }
 // _________________________________________________________
 
@@ -730,8 +759,8 @@ void StPicoHFLambdaCMaker::fillControlHistos() {
   static_cast<TH1D*>(mSinglePartList->FindObject("refMult"))->Fill(refMultCorr);
 
   fillSingleParticleHistos(StHFCuts::kProton);
-  fillSingleParticleHistos(StHFCuts::kPion);
-  fillSingleParticleHistos(StHFCuts::kKaon);
+  fillSingleParticleHistos(StHFCuts::kPion  );
+  fillSingleParticleHistos(StHFCuts::kKaon  );
 }
 
 // _________________________________________________________

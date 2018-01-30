@@ -75,7 +75,7 @@ void runPicoHFLambdaCMaker(const Char_t *inputFile="test.list", const Char_t *ou
       exit(1);
   }
   
-  Int_t nEvents = 100;
+  Int_t nEvents = 1e5;
 
   if (nEvents < 1e8)
     cout << "Warning: the number of events is set to " << nEvents << endl;
