@@ -690,7 +690,7 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     StPicoTrack *const trk = mPicoDst->track((*partIdxVector)[idxPart]);
 
     unsigned int iCharge;
-    if(trk < 0)
+    if(trk->charge() < 0)
     {
       iCharge = 0;
       ++Nminus;
