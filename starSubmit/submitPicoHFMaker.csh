@@ -7,7 +7,7 @@
 #    all submission related files will end up there
 #
 #  - in ${baseFolder} the script expects (links or the actual folders)
-#      .sl64_gcc482
+#      .sl73_gcc485
 #      StRoot                     ( from the git repo )
 #      run14AuAu200GeVPrescales   ( from the git repo )
 #      starSubmit                 ( from the git repo )
@@ -26,14 +26,14 @@
 #    1 - kProtonK0short
 #    2 - kLambdaPion
 #    3 - Mixed Event
-set decayChannel=3
+set decayChannel=0
 
 if ( $decayChannel == 0 ) then
     set tree=LambdaC.kPionKaonProton.picoHFtree
 else if ( $decayChannel == 1 ) then
     set tree=LambdaC.kProtonK0short.picoHFtree
 else if ( $decayChannel == 2 ) then
-    set tree=LambdaC.kLambdaPion.picoHFtree
+    set tree=LambdaC.kLabdaPion.picoHFtree
 else if ( $decayChannel == 3 ) then
     set tree=LambdaC.MixedEvent.picoHFtree
 endif
@@ -41,8 +41,7 @@ endif
 # ###############################################
 
 # -- baseFolder of job
-set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
-# set baseFolder=/global/project/projectdirs/starprod/rnc/jthaeder/lambdaC
+set baseFolder=/gpfs/mnt/gpfs01/star/pwg/msimko/LambdaC/run16
 
 # --input file 
 #    makerMode 0,1 : list must contain picoDst.root files
@@ -55,7 +54,7 @@ set baseFolder=/global/project/projectdirs/star/pwg/starhf/simkomir/LambdaC
 #set input=${baseFolder}/LambdaCtreeLists/LambdaC.kProtonK0shortNoPt.picoHFtree/test.list
 # set input=${baseFolder}/lists/${tree}/${tree}_all.list
 # set input=${baseFolder}/treeLists/${tree}_allTrees.list
-set input=${baseFolder}/picoList_all_cleaned.list
+set input=${baseFolder}/${1}
 # set input=${baseFolder}/prodListAug15.list
 # set input=${baseFolder}/20160817.picoDst.Miro.list
 # set input=${baseFolder}/divideList/listAll0.list
@@ -66,7 +65,7 @@ set input=${baseFolder}/picoList_all_cleaned.list
 #    1 - kWrite
 #    2 - kRead
 #    3 - Mixed Event
-set makerMode=3
+set makerMode=0
 
 # -- set root macro
 if ( $decayChannel == 3 && $makerMode == 3 ) then
@@ -80,7 +79,7 @@ endif
 
 
 # -- set filename for bad run list
-set badRunListFileName="picoList_bad_MB.list"
+set badRunListFileName="BadRunList_MB.list"
 
 # ###############################################
 # -- CHANGE CAREFULLY BELOW THAT LINE
@@ -93,17 +92,17 @@ set treeName=${tree}
 set productionId=`date +%F_%H-%M`
 
 # -- set STAR software version
-set starVersion=SL16d
+set starVersion=SL18a
 
 # -- production base path (to find picoDsts to corresponding trees
-set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/physics2/P16id
+set productionbasePath=root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu_200_production_2016/ReversedFullField/P16ij
 
 # -- submission xml file 
 set xmlFile=submitPicoHFMaker.xml
 
 # -- set min and mx number of files
 set minNFiles=400
-set maxNFiles=700
+set maxNFiles=800
 
 # ###############################################
 # -- DON'T CHANGE BELOW THAT LINE
@@ -123,7 +122,7 @@ mkdir -p report err log list csh
 # -----------------------------------------------
 
 # -- check for prerequisits and create links
-set folders=".sl64_gcc482 run14AuAu200GeVPrescales"
+set folders=".sl73_gcc485"
 
 echo -n "Checking prerequisits folders ...  "
 foreach folder ( $folders ) 

@@ -110,6 +110,9 @@ namespace StLambdaCCuts
 
       hfCuts->setCutPrimaryDCAtoVtxMax(std::numeric_limits<float>::max());    // DCA to check for TOF usage
 
+      // const float piDcaMin = 0.;
+      // const float kDcaMin =  0.;
+      // const float pDcaMin =  0.;
       const float piDcaMin = 0.006;
       const float kDcaMin = 0.009;
       const float pDcaMin = 0.007;

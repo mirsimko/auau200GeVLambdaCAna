@@ -83,7 +83,7 @@ int StPicoHFLambdaCMaker::InitHF() {
   mSinglePartList->SetName("HFSinglePartHists");
 
   std::string partNames[3] = {"pi", "p", "K"};
-  std::string chargeNames[2] = {"plus", "minus"};
+  std::string chargeNames[2] = {"Plus", "Minus"};
   // create single particle hists
   mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
   mSinglePartList->Add(new TH1D("centralityCorrection","centrality corrected", 10, -1.5, 8.5));
@@ -665,7 +665,7 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     return;
   }
 
-  std::string sign[2] = {"minus", "plus"};
+  std::string sign[2] = {"Minus", "Plus"};
   TH2D *etaPhiHist  [2];
   TH2D *phiPtHist   [2];
   TH2D *nSigmaHist  [2];
@@ -684,6 +684,7 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
   unsigned int Nminus = 0;
   unsigned int Nplus  = 0;
   
+  // cout << "Number of " << partName << "s: " << partIdxVector->size() << endl;
   for(unsigned short idxPart = 0; idxPart < partIdxVector->size(); ++idxPart)
   {
     StPicoTrack *const trk = mPicoDst->track((*partIdxVector)[idxPart]);
