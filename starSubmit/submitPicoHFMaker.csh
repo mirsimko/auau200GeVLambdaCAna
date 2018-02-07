@@ -33,7 +33,7 @@ if ( $decayChannel == 0 ) then
 else if ( $decayChannel == 1 ) then
     set tree=LambdaC.kProtonK0short.picoHFtree
 else if ( $decayChannel == 2 ) then
-    set tree=LambdaC.kLabdaPion.picoHFtree
+    set tree=LambdaC.kLambdaPion.picoHFtree
 else if ( $decayChannel == 3 ) then
     set tree=LambdaC.MixedEvent.picoHFtree
 endif
