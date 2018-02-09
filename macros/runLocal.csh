@@ -1,6 +1,5 @@
 #!/bin/tcsh
 
-
 starver SL16d
 
 # -- Test writing mode - which works on single file:
