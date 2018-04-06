@@ -83,7 +83,7 @@ int StPicoHFLambdaCMaker::InitHF() {
   mSinglePartList->SetName("HFSinglePartHists");
 
   std::string partNames[3] = {"pi", "p", "K"};
-  std::string chargeNames[2] = {"plus", "minus"};
+  std::string chargeNames[2] = {"Plus", "Minus"};
   // create single particle hists
   mSinglePartList->Add(new TH1D("centrality","centrality", 10, -1.5, 8.5));
   mSinglePartList->Add(new TH1D("centralityCorrection","centrality corrected", 10, -1.5, 8.5));
@@ -162,17 +162,17 @@ int StPicoHFLambdaCMaker::MakeHF() {
   if(mFillParticleHistos)
     fillControlHistos();
 
-  if (isMakerMode() == StPicoHFMaker::kWrite) {
-    createCandidates();
-  }
-  else if (isMakerMode() == StPicoHFMaker::kRead) {
-    // -- the reading back of the perviously written trees happens in the background
-    analyzeCandidates();
-  }
-  else if (isMakerMode() == StPicoHFMaker::kAnalyze) {
-    createCandidates();
-    analyzeCandidates();
-  }
+  // if (isMakerMode() == StPicoHFMaker::kWrite) {
+  //   createCandidates();
+  // }
+  // else if (isMakerMode() == StPicoHFMaker::kRead) {
+  //   // -- the reading back of the perviously written trees happens in the background
+  //   analyzeCandidates();
+  // }
+  // else if (isMakerMode() == StPicoHFMaker::kAnalyze) {
+  //   createCandidates();
+  //   analyzeCandidates();
+  // }
 
   // redirecting cout back
   // cout.rdbuf(coutbuf);
@@ -666,7 +666,7 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
     return;
   }
 
-  std::string sign[2] = {"minus", "plus"};
+  std::string sign[2] = {"Minus", "Plus"};
   TH2D *etaPhiHist  [2];
   TH2D *phiPtHist   [2];
   TH2D *nSigmaHist  [2];

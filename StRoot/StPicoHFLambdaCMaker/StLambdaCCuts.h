@@ -46,12 +46,12 @@ namespace StLambdaCCuts
 
       hfCuts->setCutPrimaryDCAtoVtxMax(std::numeric_limits<float>::max());    // DCA to check for TOF usage
 
-      const float piDcaMin = 0.0065;
-      const float kDcaMin = 0.0096;
-      const float pDcaMin = 0.0075;
-      // const float piDcaMin = std::numeric_limits<float>::lowest();
-      // const float kDcaMin =  std::numeric_limits<float>::lowest();
-      // const float pDcaMin =  std::numeric_limits<float>::lowest();
+      // const float piDcaMin = 0.0065;
+      // const float kDcaMin = 0.0096;
+      // const float pDcaMin = 0.0075;
+      const float piDcaMin = std::numeric_limits<float>::lowest();
+      const float kDcaMin =  std::numeric_limits<float>::lowest();
+      const float pDcaMin =  std::numeric_limits<float>::lowest();
 
       hfCuts->setCutPtRange(0.5, 999., StPicoCutsBase::kPion);
       hfCuts->setCutEtaMax(1.,StPicoCutsBase::kPion);
