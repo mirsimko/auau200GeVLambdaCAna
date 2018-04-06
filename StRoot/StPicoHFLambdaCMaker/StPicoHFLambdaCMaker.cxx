@@ -162,17 +162,17 @@ int StPicoHFLambdaCMaker::MakeHF() {
   if(mFillParticleHistos)
     fillControlHistos();
 
-  // if (isMakerMode() == StPicoHFMaker::kWrite) {
-  //   createCandidates();
-  // }
-  // else if (isMakerMode() == StPicoHFMaker::kRead) {
-  //   // -- the reading back of the perviously written trees happens in the background
-  //   analyzeCandidates();
-  // }
-  // else if (isMakerMode() == StPicoHFMaker::kAnalyze) {
-  //   createCandidates();
-  //   analyzeCandidates();
-  // }
+  if (isMakerMode() == StPicoHFMaker::kWrite) {
+    createCandidates();
+  }
+  else if (isMakerMode() == StPicoHFMaker::kRead) {
+    // -- the reading back of the perviously written trees happens in the background
+    analyzeCandidates();
+  }
+  else if (isMakerMode() == StPicoHFMaker::kAnalyze) {
+    createCandidates();
+    analyzeCandidates();
+  }
 
   // redirecting cout back
   // cout.rdbuf(coutbuf);
