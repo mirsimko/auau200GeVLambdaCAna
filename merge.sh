@@ -17,7 +17,7 @@ mergeFolder () {
 
     # -- split
     mkdir -p $outSplitListFolder
-    split -l 10 -d -a 3 $inSplitList ${outSplitListFolder}/inlist.sublist.${mergeLevel}. #5 files
+    split -l 10 -d -a 3 $inSplitList ${outSplitListFolder}/inlist.sublist.${mergeLevel}.   #5 files
     
     for ii in `find  ${outSplitListFolder} -name "inlist.sublist.${mergeLevel}.*"` ; do 
 	sub=`echo $ii | cut -d '.' -f 5`
