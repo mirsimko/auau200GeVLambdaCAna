@@ -102,13 +102,8 @@ set productionbasePath=/project/projectdirs/starprod/picodsts/Run14/AuAu/200GeV/
 set xmlFile=submitPicoHFMaker.xml
 
 # -- set min and mx number of files
-<<<<<<< HEAD
-set minNFiles=400
-set maxNFiles=700
-=======
 set minNFiles=200
 set maxNFiles=400
->>>>>>> dc7f5da... author
 
 # ###############################################
 # -- DON'T CHANGE BELOW THAT LINE
