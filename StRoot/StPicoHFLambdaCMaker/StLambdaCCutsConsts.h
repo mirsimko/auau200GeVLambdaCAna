@@ -29,8 +29,8 @@ namespace LambdaCthreePartDecayReadConsts
   extern const float LCdecayLengthMin  = 0.0234;  // minimum  60um
   extern const float LCdecayLengthMax  = 9999.;
   extern const float LCcosThetaMin     = 0.995;   // minimum
-  extern const float LCminMass         = 0.;
-  extern const float LCmaxMass         = 3.;
+  extern const float LCminMass         = 2.1;
+  extern const float LCmaxMass         = 2.6;
   extern const float LCdcaToPv         = 0.01;
 }
 

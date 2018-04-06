@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# root files  merging script originally written by Jochen Thaeder
 
 # baseDir=2015-08-28_16-27
 
