@@ -6,6 +6,10 @@
 // For later consideration: 
 // Should be moved to a config file ... a config manager should be written
 
+#include <limits>
+
+class std::numeric_limits<float>;
+
 
 namespace LambdaCthreePartDecayReadConsts
 {
@@ -34,6 +38,34 @@ namespace LambdaCthreePartDecayReadConsts
   extern const float LCdcaToPv         = 0.01;
 }
 
+
+namespace openCuts
+{
+  // extern const float piDcaMin = 0;
+  // extern const float kDcaMin = 0;
+  // extern const float pDcaMin = 0;
+  extern const float piDcaMin = 0;
+  extern const float kDcaMin =  0;
+  extern const float pDcaMin =  0;
+
+  extern const float minDaughtersPt = 0;
+
+  extern const float piTpcNSigma = 3.;
+  extern const float KTpcNSigma  = 2.;
+  extern const float pTpcNSigma  = 2.;
+
+  extern const float tofDeltaOneOverBeta = 0.03;
+
+  // -- LambdaC
+  extern const float LCdcaDaughtersMax = 2;   // maximum 300um
+  // extern const float LCdecayLengthMin  = 0.0234;  // minimum  60um
+  extern const float LCdecayLengthMin  = 0;
+  extern const float LCdecayLengthMax  = 9999.;
+  extern const float LCcosThetaMin     = 0;   // minimum
+  extern const float LCminMass         = 2.1;
+  extern const float LCmaxMass         = 2.6;
+  extern const float LCdcaToPv         = 2;
+}
 
 
 #endif

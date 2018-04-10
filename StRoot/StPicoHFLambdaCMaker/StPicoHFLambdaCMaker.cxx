@@ -342,16 +342,17 @@ int StPicoHFLambdaCMaker::createCandidates() {
 	  if (mIdxPicoProtons[idxProton] == mIdxPicoPions[idxPion] || mIdxPicoKaons[idxKaon] == mIdxPicoPions[idxPion]) 
 	    continue;
 
-	  // StHFTriplet lambdaC(&tmpKaonProton, pion,
-			      // mHFCuts->getHypotheticalMass(StHFCuts::kPion),
-			      // mIdxPicoPions[idxPion], mPrimVtx, mBField);
+	  // cout << mIdxPicoKaons[idxKaon] << ", " << mIdxPicoProtons[idxProton] << ", " << mIdxPicoPions[idxPion] << endl;
+	  StHFTriplet lambdaC(&tmpKaonProton, pion,
+			      mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+			      mIdxPicoPions[idxPion], mPrimVtx, mBField);
 	  // StHFTriplet lambdaC(&tmpKaonPion, proton,
 		   	      // mHFCuts->getHypotheticalMass(StHFCuts::kProton), 
 		   	      // mIdxPicoProtons[idxProton], mPrimVtx, mBField);
-	  StHFTriplet lambdaC(kaon, proton, pion,
-			      mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), mHFCuts->getHypotheticalMass(StHFCuts::kPion),
-			      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion],
-			      mPrimVtx, mBField);
+	  // StHFTriplet lambdaC(kaon, proton, pion,
+		// 	      mHFCuts->getHypotheticalMass(StHFCuts::kKaon), mHFCuts->getHypotheticalMass(StHFCuts::kProton), mHFCuts->getHypotheticalMass(StHFCuts::kPion),
+		// 	      mIdxPicoKaons[idxKaon], mIdxPicoProtons[idxProton], mIdxPicoPions[idxPion],
+		// 	      mPrimVtx, mBField);
 	  if (!mHFCuts->isGoodSecondaryVertexTriplet(lambdaC)) 
 	    continue;
 
@@ -532,6 +533,7 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
     TClonesArray const * aLambdaC = mPicoHFEvent->aHFSecondaryVertices();
     
     for (unsigned int idxLambdaC = 0; idxLambdaC <  mPicoHFEvent->nHFSecondaryVertices(); ++idxLambdaC) { 
+
       StHFTriplet const* lambdaC = static_cast<StHFTriplet*>(aLambdaC->At(idxLambdaC));
 
       // if (mPicoHFEvent->eventId() != 164112)
@@ -548,8 +550,8 @@ int StPicoHFLambdaCMaker::analyzeCandidates() {
       StPicoTrack const* kaon   = mPicoDst->track(lambdaC->particle1Idx());
       StPicoTrack const* proton = mPicoDst->track(lambdaC->particle2Idx());
       StPicoTrack const* pion   = mPicoDst->track(lambdaC->particle3Idx());
-     
-      if(!isKaon(kaon) || !isProton(proton) || !isPion(pion))
+
+      if( !(isKaon(kaon) && isProton(proton) && isPion(pion)) )
 	continue;
 
       float const pionBeta = mHFCuts->getTofBeta(pion);

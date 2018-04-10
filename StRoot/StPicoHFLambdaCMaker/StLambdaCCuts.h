@@ -38,6 +38,7 @@ namespace StLambdaCCuts
 
   namespace threePartDecayRead
   {
+    // using namespace openCuts;
     using namespace LambdaCthreePartDecayReadConsts;
 
     void setLambdaCCuts(StHFCuts * hfCuts)
