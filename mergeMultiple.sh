@@ -3,6 +3,13 @@
 outFileName=run16LambdaCoutput.root
 mergedFiles=merge/picoHFLambdaCMaker.root
 
+if [ -f "$outFileName" ]
+then
+  echo Output file already exists
+  echo Exitting ..
+  exit 1
+fi
+
 if [ ! -d "$1" ]
 then
   echo The arguments must be directories

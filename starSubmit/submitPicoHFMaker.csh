@@ -95,14 +95,14 @@ set productionId=`date +%F_%H-%M`
 set starVersion=SL18a
 
 # -- production base path (to find picoDsts to corresponding trees
-set productionbasePath=root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu_200_production_2016/ReversedFullField/P16ij
+set productionbasePath=root://xrdstar.rcf.bnl.gov:1095//home/starlib/home/starreco/reco/AuAu200_production2_2016/ReversedFullField/P16ij
 
 # -- submission xml file 
 set xmlFile=submitPicoHFMaker.xml
 
 # -- set min and mx number of files
-set minNFiles=200
-set maxNFiles=400
+set minNFiles=100
+set maxNFiles=100
 
 # ###############################################
 # -- DON'T CHANGE BELOW THAT LINE
@@ -265,7 +265,7 @@ echo ']>'					       	       >> $hackTemplate
 
 tail -n +2 ${xmlFile} >> $hackTemplate
 
-star-submit -u ie $hackTemplate
+star-submit -debug info -u ie $hackTemplate
 
 #star-submit-template -template ${xmlFile} -entities listOfFiles=${input},basePath=${baseFolder},prodId=${productionId},mMode=${makerMode},treeName=${treeName},decayChannel=${decayChannel},productionBasePath=${productionbasePath},rootMacro=${rootMacro},starVersion=${starVersion},minNFiles=${minNFiles},maxNFiles=${maxNFiles}
 popd > /dev/null
