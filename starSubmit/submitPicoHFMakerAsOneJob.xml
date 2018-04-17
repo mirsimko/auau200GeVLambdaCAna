@@ -1,1 +1,43 @@
-/star/u/msimko/LambdaC/run16/auau200GeVRun14/starSubmit/submitPicoHFMaker.xml
+<?xml version="1.0" encoding="utf-8" ?>
+<job >
+  <stdout URL="file:&basePath;/jobs/&prodId;/log/$JOBID.out"/>
+  <stderr URL="file:&basePath;/jobs/&prodId;/err/$JOBID.err"/>
+
+  <Generator>
+    <Location>./report/</Location>
+    <ScriptLocation>./csh/</ScriptLocation>
+    <ListLocation>./list/</ListLocation>
+  </Generator>
+  
+  <command>
+    starver &starVersion;
+    
+    setenv PRODPATH &basePath;/production/&prodId;
+    setenv LOGPATH  &basePath;/jobs/&prodId;/log
+
+    mkdir -p ${PRODPATH} ${LOGPATH}
+
+    if ("&mMode;" == "1") then
+         &basePath;/jobs/&prodId;/starSubmit/parseFileList.csh &listOfFiles; &basePath; &prodId; &mMode; &treeName; ${JOBID} &rootMacro; picoList_badRuns.list &productionBasePath; &decayChannel; &starVersion;
+    else if ("&mMode;" == "3") then
+        root -q -b -l StRoot/macros/loadSharedHFLibraries.C StRoot/macros/&rootMacro;++\(\"&listOfFiles;\",\"&prodId;_$JOBINDEX\",\"picoList_badRuns.list\"\) &gt;&amp; ${JOBID}.log
+        tar -zcvf ${JOBID}.log.tgz ${JOBID}.log
+    else
+        root -q -b -l StRoot/macros/loadSharedHFLibraries.C StRoot/macros/&rootMacro;++\(\"&listOfFiles;\",\"&prodId;_$JOBINDEX\",&mMode;,\"picoList_badRuns.list\",\"&treeName;\",\"&productionBasePath;\",&decayChannel;\) &gt;&amp; ${JOBID}.log
+    endif
+
+  </command>
+
+  <output fromScratch="*.root"    toURL="$PRODPATH/" />
+  <output fromScratch="*.log" toURL="$LOGPATH/" />
+  
+  <SandBox installer="ZIP">
+    <Package name="LocalLibraries">
+      <File>file:./StRoot/</File>
+      <File>file:./.sl73_gcc485/</File>
+      <File>file:./picoList_badRuns.list</File>
+      <File>file:./starSubmit/parseFileList.csh</File>
+      <File>file:./st_sstStream_pico.list</File>
+    </Package>
+  </SandBox>
+</job>
