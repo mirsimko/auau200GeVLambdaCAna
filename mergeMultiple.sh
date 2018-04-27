@@ -1,6 +1,6 @@
 #!/bin/bash
 
-outFileName=run16LambdaCoutput.root
+outFileName=run16LambdaCoutputNew.root
 mergedFiles=merge/picoHFLambdaCMaker.root
 
 if [ -f "$outFileName" ]
@@ -25,6 +25,11 @@ do
     echo ======================================
     echo Merging in $1
     echo ======================================
+    if [ -d "$1"/merge ]
+    then
+      echo deleting previous merge directory
+      rm -rf "$1"/merge
+    fi
     ./merge.sh "$1"
 
     # save the merged directory
@@ -46,8 +51,10 @@ done
 echo ======================================
 echo merging ${directories[*]} into $outFileName ..
 echo ======================================
+
 hadd "$outFileName" ${directories[*]}
 
 echo
-echo Done ..
+echo Done 
+echo $numberOfDirs directories merged
 exit 0
