@@ -52,6 +52,7 @@ fi
 touch ${inList}
 
 current=`pwd`
+find ${current}/${baseDir} -name "*.root" | sort
 for ii in `find ${current}/${baseDir} -name "*.root" | sort` ; do
     size=`stat -c %s $ii`
     if [ $size -gt 30000 ] ; then

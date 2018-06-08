@@ -107,7 +107,7 @@ int StPicoHFLambdaCMaker::InitHF() {
 
       mSinglePartList->Add(new TH1D((partNames[iPart] + chargeNames[charge]+ static_cast<std::string>("DCA")).data(),
 	    (partNames[iPart] + chargeNames[charge] + static_cast<std::string>(" DCA")).data(), 
-	    200, 0, 0.02));
+	    200, -0.1, 0.1));
 
       mSinglePartList->Add(new TH1D((partNames[iPart] + chargeNames[charge] + static_cast<std::string>("tracks")).data(),
 	    (static_cast<std::string>("Number of ") + partNames[iPart] + chargeNames[charge] + static_cast<std::string>(" tracks")).data(), 
@@ -170,8 +170,8 @@ int StPicoHFLambdaCMaker::MakeHF() {
     analyzeCandidates();
   }
   else if (isMakerMode() == StPicoHFMaker::kAnalyze) {
-    createCandidates();
-    analyzeCandidates();
+    // createCandidates();
+    // analyzeCandidates();
   }
 
   // redirecting cout back
@@ -708,7 +708,7 @@ void StPicoHFLambdaCMaker::fillSingleParticleHistos(int pidFlag) {
         
     StPhysicalHelixD helix = trk->dcaGeometry().helix();
     helix.moveOrigin(helix.pathLength(mPrimVtx));
-    float dca = (mPrimVtx - helix.origin()).mag();
+    float dca = float(helix.geometricSignedDistance(mPrimVtx));
     dcaHist[iCharge]->Fill(dca);
 
     float nSigma;

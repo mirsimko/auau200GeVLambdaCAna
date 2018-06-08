@@ -9,12 +9,12 @@
 
 namespace LambdaCthreePartDecayReadConsts
 {
-  extern const float piDcaMin = 0.0065;
-  extern const float kDcaMin = 0.0096;
-  extern const float pDcaMin = 0.0075;
-  // extern const float piDcaMin = std::numeric_limits<float>::lowest();
-  // extern const float kDcaMin =  std::numeric_limits<float>::lowest();
-  // extern const float pDcaMin =  std::numeric_limits<float>::lowest();
+  // extern const float piDcaMin = 0.0065;
+  // extern const float kDcaMin = 0.0096;
+  // extern const float pDcaMin = 0.0075;
+  extern const float piDcaMin = std::numeric_limits<float>::lowest();
+  extern const float kDcaMin =  std::numeric_limits<float>::lowest();
+  extern const float pDcaMin =  std::numeric_limits<float>::lowest();
 
   extern const float minDaughtersPt = 0.5;
 
